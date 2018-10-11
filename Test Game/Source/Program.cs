@@ -7,7 +7,9 @@ namespace Test_Game
     {
         static void Main()
         {
-            new TestGame().Run();
+            TestGame test =  new TestGame();
+            test.Resolution = new Vector2(1920, 1080);
+            test.Run();
         }
     }
 
@@ -15,6 +17,7 @@ namespace Test_Game
     {
         protected override void Update(GameTime gameTime)
         {
+            Resolution = new Vector2(1280, 720);
             Console.WriteLine("Update");
         }
 

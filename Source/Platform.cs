@@ -40,6 +40,8 @@ namespace SharpSlugsEngine
             }
         }
 
+        public abstract void ResizeWindow(int x, int y);
+
         public abstract void BeginRun();
     }
 

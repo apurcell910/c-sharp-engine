@@ -8,8 +8,8 @@ namespace SharpSlugsEngine
 {
     public struct GameTime
     {
-        TimeSpan deltaTime = new TimeSpan();
-        TimeSpan totalTime = new TimeSpan();
+        public TimeSpan deltaTime;
+        public TimeSpan totalTime;
     }
 
 

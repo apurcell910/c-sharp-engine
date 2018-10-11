@@ -1,14 +1,16 @@
 ﻿using System;
 using System.Diagnostics;
-
+using System.Windows.Forms;
 namespace SharpSlugsEngine
 {
     public abstract class Game
     {
-        StopWatch globalClock = new StopWatch();
-        TimeSpan deltaTick = new TimeSpan();
+        private Stopwatch globalClock = new Stopwatch();
+        private TimeSpan deltaUpdate = new TimeSpan(0);
+        private TimeSpan deltaDraw = new TimeSpan(0);
         /// <summary>
         /// Controls whether or not the game should lock to the monitor's refresh rate.
+        /// Overrides <see cref="TargetFramerate"/> if applicable.
         /// Overrides <see cref="TargetFramerate"/> if applicable.
         /// </summary>
         public bool Vsync { get; protected set; } //TODO: Sprint 1, user story 1, task 6 (Timothy)
@@ -38,6 +40,7 @@ namespace SharpSlugsEngine
             {
                 _resolution = value;
 
+                platform.ResizeWindow(_resolution.X, _resolution.Y);
                 //Update resolution of game window
                 //TODO: Sprint 1, user story 1, task 5 (Harpreet)
             }
@@ -78,15 +81,19 @@ namespace SharpSlugsEngine
             GameTime updateTime = new GameTime();
             GameTime drawTime = new GameTime();
 
-            updateTime.deltaTime -= deltaTick;
-            updateTime.totalTime = globalClock.elapsedTime;
+            updateTime.deltaTime = globalClock.Elapsed - deltaUpdate;
+            updateTime.totalTime = globalClock.Elapsed;
             Update(updateTime);
+            deltaUpdate = globalClock.Elapsed;
             //TODO: Sprint 1, user story 1, task 7 (Timothy)
-            drawTime.deltaTime -= deltaTick;
-            drawTime.totalTime = globalClock.elapsedTime;
+            drawTime.deltaTime = globalClock.Elapsed - deltaDraw;
+            drawTime.totalTime = globalClock.Elapsed;
             Draw(drawTime);
-
-            deltaTick = globalClock.elapsedTime;
+            deltaDraw = globalClock.Elapsed;
+            
+            Console.WriteLine("Time elapsed since last update: {0}", updateTime.deltaTime);
+            Console.WriteLine("Time elapsed since last draw: {0}", drawTime.deltaTime);
+            Console.WriteLine("Time elapsed since beginning: {0}", globalClock.Elapsed);
         }
 
         /// <summary>

@@ -7,17 +7,16 @@ namespace SharpSlugsEngine
 {
     internal class WindowsPlatform : Platform
     {
-        private readonly Form form;
-
+        internal readonly Reform form;
         public WindowsPlatform(Game game) : base(game)
         {
             //Placeholder settings for now
-            form = new Form
+            form = new Reform
             {
                 Text = "Game Title Placeholder",
                 Size = new Size(1280, 720),
                 FormBorderStyle = FormBorderStyle.FixedSingle,
-                BackColor = Color.CornflowerBlue
+                BackColor = Color.HotPink
             };
         }
 
@@ -47,6 +46,11 @@ namespace SharpSlugsEngine
             }
         }
 
+        public override void ResizeWindow(int x, int y)
+        {
+            form.Size = new Size(x, y);
+            form.Center();
+        }
         #region Native Calls
         /// <summary>
         /// Retrieves a message from the queue associated with the current thread.
