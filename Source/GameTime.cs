@@ -8,6 +8,9 @@ namespace SharpSlugsEngine
 {
     public struct GameTime
     {
-        //TODO: Sprint 1, user story 1, task 4 (Harpreet)
+        TimeSpan deltaTime = new TimeSpan();
+        TimeSpan totalTime = new TimeSpan();
     }
+
+
 }

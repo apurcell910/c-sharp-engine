@@ -1,7 +1,12 @@
-﻿namespace SharpSlugsEngine
+﻿using System;
+using System.Diagnostics;
+
+namespace SharpSlugsEngine
 {
     public abstract class Game
     {
+        StopWatch globalClock = new StopWatch();
+        TimeSpan deltaTick = new TimeSpan();
         /// <summary>
         /// Controls whether or not the game should lock to the monitor's refresh rate.
         /// Overrides <see cref="TargetFramerate"/> if applicable.
@@ -63,17 +68,25 @@
             LoadContent();
 
             //Begin running the game loop
+            globalClock.Start();
             platform.BeginRun();
         }
 
         internal void ProcessFrame()
         {
             //TODO: Sprint 1, user story 1, task 4 (Harpreet)
-            GameTime time = new GameTime();
-            Update(time);
+            GameTime updateTime = new GameTime();
+            GameTime drawTime = new GameTime();
 
+            updateTime.deltaTime -= deltaTick;
+            updateTime.totalTime = globalClock.elapsedTime;
+            Update(updateTime);
             //TODO: Sprint 1, user story 1, task 7 (Timothy)
-            Draw(time);
+            drawTime.deltaTime -= deltaTick;
+            drawTime.totalTime = globalClock.elapsedTime;
+            Draw(drawTime);
+
+            deltaTick = globalClock.elapsedTime;
         }
 
         /// <summary>
