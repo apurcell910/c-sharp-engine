@@ -1,14 +1,26 @@
 ﻿using System;
+using System.Drawing;
+using System.Windows.Forms;
 
 namespace SharpSlugsEngine
 {
     internal abstract class Platform
     {
-        protected Game game;
+        protected readonly Game game;
+        internal readonly Reform form;
 
         protected Platform(Game game)
         {
             this.game = game;
+
+            //Placeholder settings for now
+            form = new Reform
+            {
+                Text = "Game Title Placeholder",
+                Size = new Size(1280, 720),
+                FormBorderStyle = FormBorderStyle.FixedSingle,
+                BackColor = Color.HotPink
+            };
         }
         
         /// <summary>

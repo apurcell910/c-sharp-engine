@@ -66,6 +66,9 @@ namespace SharpSlugsEngine
 
             //Create platform
             platform = Platform.Create(this);
+
+            //Create graphics manager
+            Graphics = new GraphicsManager(this, platform);
         }
 
         /// <summary>

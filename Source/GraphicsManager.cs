@@ -8,5 +8,13 @@ namespace SharpSlugsEngine
 {
     public class GraphicsManager
     {
+        private readonly Game game;
+        private readonly Platform platform;
+
+        internal GraphicsManager(Game game, Platform platform)
+        {
+            this.game = game;
+            this.platform = platform;
+        }
     }
 }

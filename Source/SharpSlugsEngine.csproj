@@ -43,6 +43,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="GraphicsManager.cs" />
     <Compile Include="Reform.cs">
       <SubType>Form</SubType>
     </Compile>

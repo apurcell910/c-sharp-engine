@@ -7,17 +7,10 @@ namespace SharpSlugsEngine
 {
     internal class WindowsPlatform : Platform
     {
-        internal readonly Reform form;
+        //Constructor needs to exist, even if we're just calling base
         public WindowsPlatform(Game game) : base(game)
         {
-            //Placeholder settings for now
-            form = new Reform
-            {
-                Text = "Game Title Placeholder",
-                Size = new Size(1280, 720),
-                FormBorderStyle = FormBorderStyle.FixedSingle,
-                BackColor = Color.HotPink
-            };
+            
         }
 
         public override void BeginRun()
