@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Windows.Forms;
+
+
 namespace SharpSlugsEngine
 {
     public abstract class Game
@@ -8,6 +9,12 @@ namespace SharpSlugsEngine
         private Stopwatch globalClock = new Stopwatch();
         private TimeSpan deltaUpdate = new TimeSpan(0);
         private TimeSpan deltaDraw = new TimeSpan(0);
+
+        /// <summary>
+        /// Graphics Manager for the Game object.
+        /// </summary>
+        public GraphicsManager Graphics { get; private set; }
+
         /// <summary>
         /// Controls whether or not the game should lock to the monitor's refresh rate.
         /// Overrides <see cref="TargetFramerate"/> if applicable.
