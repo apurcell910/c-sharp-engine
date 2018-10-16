@@ -90,17 +90,18 @@ namespace SharpSlugsEngine
             GameTime drawTime = new GameTime();
 
             updateTime.deltaTime = globalClock.Elapsed - deltaUpdate;
+            deltaUpdate = globalClock.Elapsed;
             updateTime.totalTime = globalClock.Elapsed;
             Update(updateTime);
-            deltaUpdate = globalClock.Elapsed;
 
             //TODO: Sprint 1, user story 1, task 7 (Timothy)
             drawTime.deltaTime = globalClock.Elapsed - deltaDraw;
+            deltaDraw = globalClock.Elapsed;
             drawTime.totalTime = globalClock.Elapsed;
+
             Graphics.Begin();
             Draw(drawTime);
             Graphics.End();
-            deltaDraw = globalClock.Elapsed;
         }
 
         /// <summary>
