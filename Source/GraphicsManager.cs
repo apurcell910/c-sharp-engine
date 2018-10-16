@@ -57,7 +57,7 @@ namespace SharpSlugsEngine
             bitmapGraphics.DrawLine(pen, a, b, x, y);
         }
 
-        public void DrawLine(Vector2 p1, Vector2 p2, Color color)
+        public void DrawLine(Point p1, Point p2, Color color)
             => DrawLine(p1.X, p1.Y, p2.X, p2.Y, color);
 
         public void DrawCircle(int x, int y, int r, Color color, bool fill = true)
@@ -69,7 +69,7 @@ namespace SharpSlugsEngine
                 bitmapGraphics.DrawEllipse(pen, x - r, y - r, 2 * r, 2 * r);
         }
 
-        public void DrawCircle(Vector2 p, int r, Color color, bool fill = true)
+        public void DrawCircle(Point p, int r, Color color, bool fill = true)
             => DrawCircle(p.X, p.Y, r, color, fill);
     }
 }

@@ -45,7 +45,7 @@ namespace SharpSlugsEngine
             {
                 _resolution = value;
 
-                platform.ResizeWindow(_resolution.X, _resolution.Y);
+                platform.ResizeWindow((int)_resolution.X, (int)_resolution.Y);
                 //Update resolution of game window
                 //TODO: Sprint 1, user story 1, task 5 (Harpreet)
             }
