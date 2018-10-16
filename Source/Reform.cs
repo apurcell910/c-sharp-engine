@@ -9,6 +9,11 @@ namespace SharpSlugsEngine
 {
     internal class Reform : Form
     {
+        public Reform()
+        {
+            //DoubleBuffered = true;
+        }
+
         public void Center()
         {
             CenterToScreen();

@@ -18,7 +18,6 @@ namespace SharpSlugsEngine
         /// <summary>
         /// Controls whether or not the game should lock to the monitor's refresh rate.
         /// Overrides <see cref="TargetFramerate"/> if applicable.
-        /// Overrides <see cref="TargetFramerate"/> if applicable.
         /// </summary>
         public bool Vsync { get; protected set; } //TODO: Sprint 1, user story 1, task 6 (Timothy)
 
@@ -98,7 +97,9 @@ namespace SharpSlugsEngine
             //TODO: Sprint 1, user story 1, task 7 (Timothy)
             drawTime.deltaTime = globalClock.Elapsed - deltaDraw;
             drawTime.totalTime = globalClock.Elapsed;
+            Graphics.Begin();
             Draw(drawTime);
+            Graphics.End();
             deltaDraw = globalClock.Elapsed;
             
             Console.WriteLine("Time elapsed since last update: {0}", updateTime.deltaTime);
