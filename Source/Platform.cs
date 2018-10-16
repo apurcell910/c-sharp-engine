@@ -4,12 +4,15 @@ using System.Windows.Forms;
 
 namespace SharpSlugsEngine
 {
-    internal abstract class Platform
+    internal class Platform
     {
+        private IAsyncResult result;
+        private MethodInvoker invoker;
+
         protected readonly Game game;
         internal readonly Reform form;
 
-        protected Platform(Game game)
+        public Platform(Game game)
         {
             this.game = game;
 
@@ -21,44 +24,42 @@ namespace SharpSlugsEngine
                 FormBorderStyle = FormBorderStyle.FixedSingle,
                 BackColor = Color.HotPink
             };
+
+            invoker = new MethodInvoker(PlatformIdle);
         }
-        
-        /// <summary>
-        /// Creates an OS specific Platform object.
-        /// </summary>
-        /// <param name="game">The Game object that runs this Platform.</param>
-        /// <returns>The new Platform object.</returns>
-        public static Platform Create(Game game)
+
+        public void BeginRun()
         {
-            //Handle platforms here so the Game class doesn't need to know what system it's running on
-            if (Environment.OSVersion.Platform == PlatformID.MacOSX)
+            //Hook the app idle and begin the game
+            Application.Idle += PlatformIdle;
+            Application.Run(form);
+
+            //Unhook after the game closes
+            //Not strictly necessary, but good practice
+            Application.Idle -= PlatformIdle;
+        }
+
+        private void PlatformIdle(object sender, EventArgs e) => PlatformIdle();
+
+        private void PlatformIdle()
+        {
+            if (result != null)
             {
-                //TODO: Implement OSXPlatform class
-                throw new InvalidOperatingSystemException();
-            }
-            else if (Environment.OSVersion.Platform == PlatformID.Unix)
-            {
-                //TODO: Implement UnixPlatform class
-                throw new InvalidOperatingSystemException();
-            }
-            else if (Environment.OSVersion.Platform == PlatformID.Xbox)
-            {
-                //Not gonna worry about Xbox, nothing to do here
-                throw new InvalidOperatingSystemException();
+                form.EndInvoke(result);
+                result = null;
             }
             else
             {
-                return new WindowsPlatform(game);
+                result = form.BeginInvoke(invoker);
             }
+
+            game.ProcessFrame();
         }
 
-        public abstract void ResizeWindow(int x, int y);
-
-        public abstract void BeginRun();
-    }
-
-    public class InvalidOperatingSystemException : Exception
-    {
-        public InvalidOperatingSystemException() : base($"Unsupported operating system: {Environment.OSVersion.Platform}") { }
+        public void ResizeWindow(int x, int y)
+        {
+            form.Size = new Size(x, y);
+            form.Center();
+        }
     }
 }

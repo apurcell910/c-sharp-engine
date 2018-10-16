@@ -63,7 +63,7 @@ namespace SharpSlugsEngine
             _resolution = new Vector2(1280, 720);
 
             //Create platform
-            platform = Platform.Create(this);
+            platform = new Platform(this);
 
             //Create graphics manager
             Graphics = new GraphicsManager(this, platform);
