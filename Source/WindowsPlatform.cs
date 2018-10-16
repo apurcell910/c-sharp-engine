@@ -8,10 +8,7 @@ namespace SharpSlugsEngine
     internal class WindowsPlatform : Platform
     {
         //Constructor needs to exist, even if we're just calling base
-        public WindowsPlatform(Game game) : base(game)
-        {
-            
-        }
+        public WindowsPlatform(Game game) : base(game) { }
 
         public override void BeginRun()
         {
@@ -44,6 +41,7 @@ namespace SharpSlugsEngine
             form.Size = new Size(x, y);
             form.Center();
         }
+
         #region Native Calls
         /// <summary>
         /// Retrieves a message from the queue associated with the current thread.

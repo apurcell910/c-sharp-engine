@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
 
-
 namespace SharpSlugsEngine
 {
     public abstract class Game
@@ -94,6 +93,7 @@ namespace SharpSlugsEngine
             updateTime.totalTime = globalClock.Elapsed;
             Update(updateTime);
             deltaUpdate = globalClock.Elapsed;
+
             //TODO: Sprint 1, user story 1, task 7 (Timothy)
             drawTime.deltaTime = globalClock.Elapsed - deltaDraw;
             drawTime.totalTime = globalClock.Elapsed;
@@ -101,10 +101,6 @@ namespace SharpSlugsEngine
             Draw(drawTime);
             Graphics.End();
             deltaDraw = globalClock.Elapsed;
-            
-            Console.WriteLine("Time elapsed since last update: {0}", updateTime.deltaTime);
-            Console.WriteLine("Time elapsed since last draw: {0}", drawTime.deltaTime);
-            Console.WriteLine("Time elapsed since beginning: {0}", globalClock.Elapsed);
         }
 
         /// <summary>
