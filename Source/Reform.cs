@@ -1,4 +1,5 @@
-﻿using System.Windows.Forms;
+﻿using System.Drawing;
+using System.Windows.Forms;
 
 namespace SharpSlugsEngine 
 {
@@ -6,7 +7,11 @@ namespace SharpSlugsEngine
     {
         public void Center()
         {
-            CenterToScreen();
+            Screen currentScreen = Screen.FromControl(this);
+            Rectangle area = currentScreen.WorkingArea;
+
+            Top = (area.Height - Height) / 2;
+            Left = (area.Width - Width) / 2;
         }
     }
 }
