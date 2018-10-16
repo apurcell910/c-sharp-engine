@@ -42,10 +42,14 @@ namespace SharpSlugsEngine
             bitmapGraphics.Dispose();
         }
 
-        public void DrawRectangle(Rectangle rect, Color color)
+        public void DrawRectangle(Rectangle rect, Color color, bool fill = true)
         {
             myBrush.Color = color;
-            bitmapGraphics.FillRectangle(myBrush, rect);
+
+            if (fill)
+                bitmapGraphics.FillRectangle(myBrush, rect);
+            else
+                bitmapGraphics.DrawRectangle(myPen, rect);
         }
 
         public void DrawRectangle(int x, int y, int w, int h, Color color)
@@ -57,6 +61,9 @@ namespace SharpSlugsEngine
             bitmapGraphics.DrawLine(myPen, a, b, x, y);
         }
 
+        public void DrawLine(Vector2 p1, Vector2 p2, Color color)
+            => DrawLine(p1.X, p1.Y, p2.X, p2.Y, color);
+
         public void DrawCircle(int x, int y, int r, Color color, bool fill = true)
         {
             myBrush.Color = color;
@@ -65,5 +72,8 @@ namespace SharpSlugsEngine
             else
                 bitmapGraphics.DrawEllipse(myPen, x - r, y - r, 2 * r, 2 * r);
         }
+
+        public void DrawCircle(Vector2 p, int r, Color color, bool fill = true)
+            => DrawCircle(p.X, p.Y, r, color, fill);
     }
 }
