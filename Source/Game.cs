@@ -10,6 +10,11 @@ namespace SharpSlugsEngine
         private TimeSpan deltaDraw = new TimeSpan(0);
 
         /// <summary>
+        /// Sprites manager for anything that needs to be displayed each goaround;
+        /// </summary>
+        public Sprite sprites { get; private set; }
+
+        /// <summary>
         /// Graphics Manager for the Game object.
         /// </summary>
         public GraphicsManager Graphics { get; private set; }
@@ -67,6 +72,9 @@ namespace SharpSlugsEngine
 
             //Create graphics manager
             Graphics = new GraphicsManager(this, platform);
+
+            //Create sprites
+            sprites = new Sprite(Graphics);
         }
 
         /// <summary>

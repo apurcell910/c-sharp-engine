@@ -7,10 +7,10 @@ using System.Threading.Tasks;
 
 namespace SharpSlugsEngine {
     class SpriteObj {
-        private Rectangle rect;
-        private Color color;
-        private bool fill;
-        private bool disp;
+        internal Rectangle rect;
+        internal Color color;
+        internal bool fill;
+        internal bool disp;
 
         public SpriteObj(Rectangle rect, Color color, bool fill = true) {
             this.rect = rect;
@@ -25,14 +25,7 @@ namespace SharpSlugsEngine {
             this.rect.Height = y2;
             this.color = color;
             this.fill = fill;
-        }
-
-        /// <summary>
-        /// Changes wheter or not to display the sprite
-        /// </summary>
-        /// <param name="disp">If true, display the sprite, if false, don't</param>
-        public void display(bool disp) {
-            this.disp = disp;
+            disp = false;
         }
     }
 }
