@@ -8,6 +8,7 @@ namespace SharpSlugsEngine
         private Stopwatch globalClock = new Stopwatch();
         private TimeSpan deltaUpdate = new TimeSpan(0);
         private TimeSpan deltaDraw = new TimeSpan(0);
+        private TimeSpan targetSpf = new TimeSpan(0);    //targetted seconds per frame
 
         /// <summary>
         /// Sprites manager for anything that needs to be displayed each goaround;
@@ -85,6 +86,7 @@ namespace SharpSlugsEngine
             //Call setup functions
             Initialize();
             LoadContent();
+            CheckValues();
 
             //Begin running the game loop
             globalClock.Start();
@@ -103,14 +105,53 @@ namespace SharpSlugsEngine
             Update(updateTime);
 
             //TODO: Sprint 1, user story 1, task 7 (Timothy)
-            drawTime.deltaTime = globalClock.Elapsed - deltaDraw;
-            deltaDraw = globalClock.Elapsed;
-            drawTime.totalTime = globalClock.Elapsed;
 
-            Graphics.Begin();
-            sprites.spriteDraw(); //Draw all of the sprites. May move later
-            Draw(drawTime);
-            Graphics.End();
+            
+            drawTime.deltaTime = globalClock.Elapsed - deltaDraw;
+            if (targetSpf != TimeSpan.Zero)
+            {
+                if (targetSpf.TotalMilliseconds >= drawTime.deltaTime.TotalMilliseconds) //if the targetUpdate is within 1/4 of a second of time passed
+                {
+                    deltaDraw = globalClock.Elapsed;
+                    drawTime.totalTime = globalClock.Elapsed;
+
+                    Graphics.Begin();
+                    sprites.spriteDraw();
+                    Draw(drawTime);
+                    Graphics.End();
+                }
+                //else skip graphics step.
+            }
+            else
+            {
+                deltaDraw = globalClock.Elapsed;
+                drawTime.totalTime = globalClock.Elapsed;
+
+                Graphics.Begin();
+                sprites.spriteDraw();
+                Draw(drawTime);
+                Graphics.End();
+            }
+        }
+
+        internal void CheckValues() //Use initialized values to fill out rest of needed values.
+        {
+            if (Vsync == false)
+            {
+                if (TargetFramerate == -1)
+                {
+                    targetSpf = TimeSpan.Zero;
+                }
+                else
+                {
+                    targetSpf = new TimeSpan((long)((TimeSpan.TicksPerSecond) / TargetFramerate));
+                }
+            }
+            else
+            {
+                targetSpf = TimeSpan.Zero;//todo: Implement VSync
+            }
+            
         }
 
         /// <summary>
