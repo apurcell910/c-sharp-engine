@@ -29,6 +29,9 @@ namespace SharpSlugsEngine
         {
             buffer = new Bitmap(platform.form.Width, platform.form.Height, formGraphics);
             bitmapGraphics = Graphics.FromImage(buffer);
+
+            brush.Color = platform.form.BackColor;
+            bitmapGraphics.FillRectangle(brush, new Rectangle(0, 0, buffer.Width, buffer.Height));
         }
 
         internal void End()
