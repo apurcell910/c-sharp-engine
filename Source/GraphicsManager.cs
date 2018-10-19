@@ -78,6 +78,16 @@ namespace SharpSlugsEngine
                 bitmapGraphics.DrawEllipse(pen, x - r, y - r, 2 * r, 2 * r);
         }
 
+        //Other way to draw an ellipse by defining bounds with rectangle
+        public void DrawEllipse(int x, int y, int w, int h, Color color, bool fill = true) {
+            brush.Color = color;
+            if (fill) {
+                bitmapGraphics.FillEllipse(brush, x, y, w, h);
+            } else {
+                bitmapGraphics.DrawEllipse(pen, x, y, w, h);
+            }
+        }
+
         public void DrawCircle(Point p, int r, Color color, bool fill = true)
             => DrawCircle(p.X, p.Y, r, color, fill);
     }
