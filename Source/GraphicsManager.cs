@@ -51,8 +51,8 @@ namespace SharpSlugsEngine
                 bitmapGraphics.DrawRectangle(pen, rect);
         }
 
-        public void DrawRectangle(int x, int y, int w, int h, Color color)
-            => DrawRectangle(new Rectangle(x, y, w, h), color);
+        public void DrawRectangle(int x, int y, int w, int h, Color color, bool fill = true)
+            => DrawRectangle(new Rectangle(x, y, w, h), color, fill);
 
         public void DrawLine(int a, int b, int x, int y, Color color)
         {

@@ -27,13 +27,66 @@ namespace SharpSlugsEngine {
         public void spriteDraw() {
             foreach (KeyValuePair<String, SpriteObj> obj in spr) {
                 if (obj.Value.disp) {
-                    Graphics.DrawRectangle(obj.Value.rect, obj.Value.color, obj.Value.fill);
+                    Graphics.DrawRectangle(obj.Value.x, obj.Value.y, obj.Value.w, obj.Value.h, obj.Value.color, obj.Value.fill);
                 }
             }
         }
 
+        /// <summary>
+        /// Change wheter or not to display the sprite
+        /// </summary>
+        /// <param name="key">The name of the sprite to edit</param>
+        /// <param name="disp">true to display, false to not display.</param>
         public void display(string key, bool disp) {
             this.spr[key].disp = disp;
+        }
+
+        /// <summary>
+        /// Move the sprite x and y pixels
+        /// </summary>
+        /// <param name="key">The name of the sprite to move</param>
+        /// <param name="x">How much to change the x value by. A negative value moves the sprite to the left.</param>
+        /// <param name="y">How much to change the y value by. A negative value moves the sprite up.</param>
+        public void move(string key, int x, int y) {
+            this.spr[key].x += x;
+            this.spr[key].y += y;
+        }
+
+        /// <summary>
+        /// Rotate the sprite by r (degrees or radians?)
+        /// </summary>
+        /// <param name="key">Sprite to edit</param>
+        /// <param name="r">How many (degrees/radians?) to rotate the sprite by.</param>
+        public void rotate(string key, double r) {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Scale the x value of the sprite
+        /// </summary>
+        /// <param name="key">Sprite to edit</param>
+        /// <param name="scale">How much to scale it by(decimal to make it smaller)</param>
+        public void scaleX(string key, double scale) {
+            spr[key].w = (int)Math.Round(spr[key].w * scale);
+        }
+
+        /// <summary>
+        /// Scale the Y value of the sprite
+        /// </summary>
+        /// <param name="key">Sprite to edit</param>
+        /// <param name="scale">How much to scale it by(decimal to make it smaller)</param>
+        public void scaleY(string key, double scale) {
+            spr[key].h = (int)Math.Round(scale * spr[key].h);
+        }
+
+        /// <summary>
+        /// Scale entire sprite
+        /// </summary>
+        /// <param name="key">Sprite to edit</param>
+        /// <param name="scale">How much to scale it by(decimal to make it smaller)</param>
+        public void scale(string key, double scale) {
+            spr[key].w = (int)Math.Round(spr[key].w * scale);
+            spr[key].h = (int)Math.Round(scale * spr[key].h);
         }
     }
 }
