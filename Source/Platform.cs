@@ -17,7 +17,7 @@ namespace SharpSlugsEngine
             this.game = game;
 
             //Placeholder settings for now
-            form = new Reform
+            form = new Reform(game)
             {
                 Text = "Game Title Placeholder",
                 Size = new Size(1280, 720),
@@ -26,6 +26,8 @@ namespace SharpSlugsEngine
             };
 
             invoker = new MethodInvoker(PlatformIdle);
+
+            form.Hook();
         }
 
         public void BeginRun()
@@ -60,6 +62,7 @@ namespace SharpSlugsEngine
         {
             form.Size = new Size(x, y);
             form.Center();
+            game.Graphics.RecreateGraphics();
         }
     }
 }

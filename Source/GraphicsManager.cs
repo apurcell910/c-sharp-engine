@@ -25,6 +25,12 @@ namespace SharpSlugsEngine
             formGraphics = platform.form.CreateGraphics();
         }
 
+        internal void RecreateGraphics()
+        {
+            formGraphics.Dispose();
+            formGraphics = platform.form.CreateGraphics();
+        }
+
         internal void Begin()
         {
             buffer = new Bitmap(platform.form.Width, platform.form.Height, formGraphics);
