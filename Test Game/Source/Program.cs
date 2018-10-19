@@ -17,6 +17,10 @@ namespace Test_Game
     class TestGame : Game
     {
         int i;
+        protected override void Initialize()
+        {
+            TargetFramerate = 1;
+        }
         protected override void LoadContent() {
             sprites.add("rect1", new Rectangle(400, 400, 50, 50), Color.Red);
             sprites.display("rect1", true);
