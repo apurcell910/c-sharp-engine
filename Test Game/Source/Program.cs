@@ -18,8 +18,12 @@ namespace Test_Game
     {
         int i;
         protected override void LoadContent() {
-            sprites.add("rect1", new Rectangle(400, 400, 50, 50), Color.Red);
+            sprites.add("rect1", new Rectangle(400, 400, 50, 50), Color.Red, Shape.RECTANGLE);
+            sprites.add("ellipse", 800, 300, 40, 80, Color.White, Shape.ELLIPSE);
+            sprites.add("line", new Point(30, 20), new Point(800, 300), Color.Violet, Shape.LINE);
             sprites.display("rect1", true);
+            sprites.display("ellipse", true);
+            sprites.display("line", true);
             i = 0;
         }
         protected override void Update(GameTime gameTime)
@@ -43,6 +47,8 @@ namespace Test_Game
                 sprites.display("rect1", true);
             }
             i++;
+            sprites.moveX("ellipse", -5);
+            sprites.scaleY("ellipse", 1.01);
         }
 
         protected override void Draw(GameTime gameTime)

@@ -21,13 +21,23 @@ namespace SharpSlugsEngine {
         /// <param name="rect"></param>
         /// <param name="color"></param>
         /// <param name="fill"></param>
-        public void add(String key, Rectangle rect, Color color, bool fill = true) => spr.Add(key, new SpriteObj(rect, color, fill));
-        public void add(String key, int x1, int y1, int x2, int y2, Color color, bool fill = true) => spr.Add(key, new SpriteObj(x1, y1, x2, y2, color, fill));
+        public void add(String key, Rectangle rect, Color color, Shape type, bool fill = true) {
+            spr.Add(key, new SpriteObj(rect, color, Shape.RECTANGLE, fill));
+        }
+
+        public void add(String key, int x, int y, int w, int h, Color color, Shape type, bool fill = true) => spr.Add(key, new SpriteObj(x, y, w, h, color, type, fill));
+        public void add(String key, Point p1, Point p2, Color color, Shape type, bool fill = true) => spr.Add(key, new SpriteObj(p1.X, p1.Y, p2.X - p1.X, p2.Y - p1.Y, color, type, fill));
 
         public void spriteDraw() {
             foreach (KeyValuePair<String, SpriteObj> obj in spr) {
                 if (obj.Value.disp) {
-                    Graphics.DrawRectangle(obj.Value.x, obj.Value.y, obj.Value.w, obj.Value.h, obj.Value.color, obj.Value.fill);
+                    if (obj.Value.type == Shape.RECTANGLE) {
+                        Graphics.DrawRectangle(obj.Value.x, obj.Value.y, obj.Value.w, obj.Value.h, obj.Value.color, obj.Value.fill);
+                    } else if (obj.Value.type == Shape.ELLIPSE) {
+                        Graphics.DrawEllipse(obj.Value.x, obj.Value.y, obj.Value.w, obj.Value.h, obj.Value.color, obj.Value.fill);
+                    } else if (obj.Value.type == Shape.LINE) {
+                        Graphics.DrawLine(obj.Value.x, obj.Value.y, obj.Value.x + obj.Value.w, obj.Value.y + obj.Value.h, obj.Value.color);
+                    }
                 }
             }
         }
@@ -49,6 +59,14 @@ namespace SharpSlugsEngine {
         /// <param name="y">How much to change the y value by. A negative value moves the sprite up.</param>
         public void move(string key, int x, int y) {
             this.spr[key].x += x;
+            this.spr[key].y += y;
+        }
+
+        public void moveX(string key, int x) {
+            this.spr[key].x += x;
+        }
+
+        public void moveY(string key, int y) {
             this.spr[key].y += y;
         }
 

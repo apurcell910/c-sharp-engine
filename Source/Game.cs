@@ -108,7 +108,7 @@ namespace SharpSlugsEngine
             drawTime.totalTime = globalClock.Elapsed;
 
             Graphics.Begin();
-            sprites.spriteDraw();
+            sprites.spriteDraw(); //Draw all of the sprites. May move later
             Draw(drawTime);
             Graphics.End();
         }
