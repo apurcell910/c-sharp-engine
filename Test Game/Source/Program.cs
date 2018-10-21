@@ -26,6 +26,7 @@ namespace Test_Game
             sprites.add("ellipse", 800, 300, 40, 80, Color.White, Shape.ELLIPSE);
             sprites.add("line", new Point(30, 20), new Point(800, 300), Color.Violet, Shape.LINE);
             sprites.display("rect1", true);
+            sprites.setAnchor("rect1", 0.5);
             sprites.display("ellipse", true);
             sprites.display("line", true);
             i = 0;
@@ -33,7 +34,7 @@ namespace Test_Game
         protected override void Update(GameTime gameTime)
         {
             Resolution = new Vector2(1280, 720);
-            Console.WriteLine("Update");
+            //Console.WriteLine("Update");
             if (i == 50) {
                 sprites.scaleX("rect1", 2);
             }
@@ -58,7 +59,7 @@ namespace Test_Game
 
         protected override void Draw(GameTime gameTime)
         {
-            Console.WriteLine("Draw");
+            //Console.WriteLine("Draw");
             Graphics.DrawRectangle(50, 50, 100, 100, Color.Blue);
             Graphics.DrawLine(100, 100, 400, 400, Color.BlanchedAlmond);
             Graphics.DrawCircle(250, 250, 50, Color.FromArgb(69, 69, 69));

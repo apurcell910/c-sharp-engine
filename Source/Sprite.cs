@@ -32,9 +32,9 @@ namespace SharpSlugsEngine {
             foreach (KeyValuePair<String, SpriteObj> obj in spr) {
                 if (obj.Value.disp) {
                     if (obj.Value.type == Shape.RECTANGLE) {
-                        Graphics.DrawRectangle(obj.Value.x, obj.Value.y, obj.Value.w, obj.Value.h, obj.Value.color, obj.Value.fill, obj.Value.angle);
+                        Graphics.DrawRectangle(obj.Value.x, obj.Value.y, obj.Value.w, obj.Value.h, obj.Value.color, obj.Value.fill, obj.Value.angle, obj.Value.xAnchor, obj.Value.yAnchor);
                     } else if (obj.Value.type == Shape.ELLIPSE) {
-                        Graphics.DrawEllipse(obj.Value.x, obj.Value.y, obj.Value.w, obj.Value.h, obj.Value.color, obj.Value.fill, obj.Value.angle);
+                        Graphics.DrawEllipse(obj.Value.x, obj.Value.y, obj.Value.w, obj.Value.h, obj.Value.color, obj.Value.fill, obj.Value.angle, obj.Value.xAnchor, obj.Value.yAnchor);
                     } else if (obj.Value.type == Shape.LINE) {
                         Graphics.DrawLine(obj.Value.x, obj.Value.y, obj.Value.x + obj.Value.w, obj.Value.y + obj.Value.h, obj.Value.color);
                     }
@@ -74,7 +74,7 @@ namespace SharpSlugsEngine {
         /// Rotate the sprite by r (degrees or radians?)
         /// </summary>
         /// <param name="key">Sprite to edit</param>
-        /// <param name="r">How many (degrees/radians?) to rotate the sprite by.</param>
+        /// <param name="r">How many degrees to rotate the sprite by.</param>
         public void rotate(string key, float r) {
             this.spr[key].angle += r;
         }
@@ -105,6 +105,19 @@ namespace SharpSlugsEngine {
         public void scale(string key, double scale) {
             spr[key].w = (int)Math.Round(spr[key].w * scale);
             spr[key].h = (int)Math.Round(scale * spr[key].h);
+        }
+
+        public void setAnchor(string key, double anchor) {
+            spr[key].xAnchor = anchor;
+            spr[key].yAnchor = anchor;
+        }
+
+        public void setAnchorX(string key, double anchor) {
+            spr[key].xAnchor = anchor;
+        }
+
+        public void setAnchorY(string key, double anchor) {
+            spr[key].yAnchor = anchor;
         }
     }
 }

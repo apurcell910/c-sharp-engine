@@ -54,12 +54,12 @@ namespace SharpSlugsEngine
 
         //To draw rectangle at angle:
         //https://stackoverflow.com/questions/10210134/using-a-matrix-to-rotate-rectangles-individually
-        public void DrawRectangle(Rectangle rect, Color color, bool fill = true, float angle = 0)
+        public void DrawRectangle(Rectangle rect, Color color, bool fill = true, float angle = 0, double xAnchor = 0, double yAnchor = 0)
         {
             brush.Color = color;
 
             using (Matrix m = new Matrix()) {
-                m.RotateAt(angle, new PointF(rect.X, rect.Y));
+                m.RotateAt(angle, new PointF((float)(rect.X + (rect.Width * xAnchor)), (float)(rect.Y + (rect.Height * yAnchor))));
                 bitmapGraphics.Transform = m;
                 if (fill)
                     bitmapGraphics.FillRectangle(brush, rect);
@@ -69,8 +69,8 @@ namespace SharpSlugsEngine
             }
         }
 
-        public void DrawRectangle(int x, int y, int w, int h, Color color, bool fill = true, float angle = 0)
-            => DrawRectangle(new Rectangle(x, y, w, h), color, fill, angle);
+        public void DrawRectangle(int x, int y, int w, int h, Color color, bool fill = true, float angle = 0, double xAnchor = 0, double yAnchor = 0)
+            => DrawRectangle(new Rectangle(x, y, w, h), color, fill, angle, xAnchor, yAnchor);
 
         public void DrawLine(int a, int b, int x, int y, Color color)
         {
@@ -92,11 +92,11 @@ namespace SharpSlugsEngine
         }
 
         //Other way to draw an ellipse by defining bounds with rectangle
-        public void DrawEllipse(int x, int y, int w, int h, Color color, bool fill = true, float angle = 0) {
+        public void DrawEllipse(int x, int y, int w, int h, Color color, bool fill = true, float angle = 0, double xAnchor = 0, double yAnchor = 0) {
             brush.Color = color;
 
             using (Matrix m = new Matrix()) {
-                m.RotateAt(angle, new PointF(x, y));
+                m.RotateAt(angle, new PointF((float)(x + (w * xAnchor)), (float)(y + (h * yAnchor))));
                 bitmapGraphics.Transform = m;
                 if (fill)
                     bitmapGraphics.FillEllipse(brush, x, y, w, h);
@@ -106,7 +106,7 @@ namespace SharpSlugsEngine
             }
         }
 
-        public void DrawCircle(Point p, int r, Color color, bool fill = true, float )
+        public void DrawCircle(Point p, int r, Color color, bool fill = true)
             => DrawCircle(p.X, p.Y, r, color, fill);
     }
 }

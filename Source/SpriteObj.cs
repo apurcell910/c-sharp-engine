@@ -18,7 +18,7 @@ namespace SharpSlugsEngine {
         internal bool fill;
         internal bool disp;
         internal float angle;
-        //TODO: Add offset value, mainly for rotating, that the object will rotate around.
+        internal double xAnchor, yAnchor;
 
         public SpriteObj(Rectangle rect, Color color, Shape type, bool fill = true, float angle = 0) {
             this.x = rect.X;
@@ -30,6 +30,7 @@ namespace SharpSlugsEngine {
             this.fill = fill;
             this.angle = angle;
             disp = false;
+            xAnchor = yAnchor = 0;
         }
 
         public SpriteObj(int x, int y, int w, int h, Color color, Shape type, bool fill = true, float angle = 0) {
@@ -42,6 +43,7 @@ namespace SharpSlugsEngine {
             this.fill = fill;
             this.angle = angle;
             disp = false;
+            xAnchor = yAnchor = 0;
         }
     }
 }
