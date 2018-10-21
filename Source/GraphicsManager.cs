@@ -1,4 +1,5 @@
 ﻿using System.Drawing;
+using System.Drawing.Drawing2D;
 
 namespace SharpSlugsEngine
 {
@@ -47,18 +48,29 @@ namespace SharpSlugsEngine
             bitmapGraphics.Dispose();
         }
 
-        public void DrawRectangle(Rectangle rect, Color color, bool fill = true)
+
+        //Feel like I should just make these take a SpriteObj as well. Maybe for later, shouldn't be too
+        //difficult to do.
+
+        //To draw rectangle at angle:
+        //https://stackoverflow.com/questions/10210134/using-a-matrix-to-rotate-rectangles-individually
+        public void DrawRectangle(Rectangle rect, Color color, bool fill = true, float angle = 0)
         {
             brush.Color = color;
 
-            if (fill)
-                bitmapGraphics.FillRectangle(brush, rect);
-            else
-                bitmapGraphics.DrawRectangle(pen, rect);
+            using (Matrix m = new Matrix()) {
+                m.RotateAt(angle, new PointF(rect.X, rect.Y));
+                bitmapGraphics.Transform = m;
+                if (fill)
+                    bitmapGraphics.FillRectangle(brush, rect);
+                else
+                    bitmapGraphics.DrawRectangle(pen, rect);
+                bitmapGraphics.ResetTransform();
+            }
         }
 
-        public void DrawRectangle(int x, int y, int w, int h, Color color, bool fill = true)
-            => DrawRectangle(new Rectangle(x, y, w, h), color, fill);
+        public void DrawRectangle(int x, int y, int w, int h, Color color, bool fill = true, float angle = 0)
+            => DrawRectangle(new Rectangle(x, y, w, h), color, fill, angle);
 
         public void DrawLine(int a, int b, int x, int y, Color color)
         {
@@ -72,6 +84,7 @@ namespace SharpSlugsEngine
         public void DrawCircle(int x, int y, int r, Color color, bool fill = true)
         {
             brush.Color = color;
+
             if (fill)
                 bitmapGraphics.FillEllipse(brush, x - r, y - r, 2 * r, 2 * r);
             else
@@ -79,16 +92,21 @@ namespace SharpSlugsEngine
         }
 
         //Other way to draw an ellipse by defining bounds with rectangle
-        public void DrawEllipse(int x, int y, int w, int h, Color color, bool fill = true) {
+        public void DrawEllipse(int x, int y, int w, int h, Color color, bool fill = true, float angle = 0) {
             brush.Color = color;
-            if (fill) {
-                bitmapGraphics.FillEllipse(brush, x, y, w, h);
-            } else {
-                bitmapGraphics.DrawEllipse(pen, x, y, w, h);
+
+            using (Matrix m = new Matrix()) {
+                m.RotateAt(angle, new PointF(x, y));
+                bitmapGraphics.Transform = m;
+                if (fill)
+                    bitmapGraphics.FillEllipse(brush, x, y, w, h);
+                else
+                    bitmapGraphics.DrawEllipse(pen, x, y, w, h);
+                bitmapGraphics.ResetTransform();
             }
         }
 
-        public void DrawCircle(Point p, int r, Color color, bool fill = true)
+        public void DrawCircle(Point p, int r, Color color, bool fill = true, float )
             => DrawCircle(p.X, p.Y, r, color, fill);
     }
 }

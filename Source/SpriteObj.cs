@@ -17,8 +17,10 @@ namespace SharpSlugsEngine {
         internal Shape type;
         internal bool fill;
         internal bool disp;
+        internal float angle;
+        //TODO: Add offset value, mainly for rotating, that the object will rotate around.
 
-        public SpriteObj(Rectangle rect, Color color, Shape type, bool fill = true) {
+        public SpriteObj(Rectangle rect, Color color, Shape type, bool fill = true, float angle = 0) {
             this.x = rect.X;
             this.y = rect.Y;
             this.w = rect.Width;
@@ -26,10 +28,11 @@ namespace SharpSlugsEngine {
             this.color = color;
             this.type = type;
             this.fill = fill;
+            this.angle = angle;
             disp = false;
         }
 
-        public SpriteObj(int x, int y, int w, int h, Color color, Shape type, bool fill) {
+        public SpriteObj(int x, int y, int w, int h, Color color, Shape type, bool fill = true, float angle = 0) {
             this.x = x;
             this.y = y;
             this.w = w;
@@ -37,6 +40,7 @@ namespace SharpSlugsEngine {
             this.color = color;
             this.type = type;
             this.fill = fill;
+            this.angle = angle;
             disp = false;
         }
     }

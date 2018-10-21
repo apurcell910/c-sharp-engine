@@ -53,6 +53,7 @@ namespace Test_Game
             i++;
             sprites.moveX("ellipse", -5);
             sprites.scaleY("ellipse", 1.01);
+            sprites.rotate("rect1", 1);
         }
 
         protected override void Draw(GameTime gameTime)

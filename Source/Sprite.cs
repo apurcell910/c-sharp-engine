@@ -25,16 +25,16 @@ namespace SharpSlugsEngine {
             spr.Add(key, new SpriteObj(rect, color, Shape.RECTANGLE, fill));
         }
 
-        public void add(String key, int x, int y, int w, int h, Color color, Shape type, bool fill = true) => spr.Add(key, new SpriteObj(x, y, w, h, color, type, fill));
-        public void add(String key, Point p1, Point p2, Color color, Shape type, bool fill = true) => spr.Add(key, new SpriteObj(p1.X, p1.Y, p2.X - p1.X, p2.Y - p1.Y, color, type, fill));
+        public void add(String key, int x, int y, int w, int h, Color color, Shape type, bool fill = true, float angle = 0) => spr.Add(key, new SpriteObj(x, y, w, h, color, type, fill, angle));
+        public void add(String key, Point p1, Point p2, Color color, Shape type, bool fill = true, float angle = 0) => spr.Add(key, new SpriteObj(p1.X, p1.Y, p2.X - p1.X, p2.Y - p1.Y, color, type, fill, angle));
 
         public void spriteDraw() {
             foreach (KeyValuePair<String, SpriteObj> obj in spr) {
                 if (obj.Value.disp) {
                     if (obj.Value.type == Shape.RECTANGLE) {
-                        Graphics.DrawRectangle(obj.Value.x, obj.Value.y, obj.Value.w, obj.Value.h, obj.Value.color, obj.Value.fill);
+                        Graphics.DrawRectangle(obj.Value.x, obj.Value.y, obj.Value.w, obj.Value.h, obj.Value.color, obj.Value.fill, obj.Value.angle);
                     } else if (obj.Value.type == Shape.ELLIPSE) {
-                        Graphics.DrawEllipse(obj.Value.x, obj.Value.y, obj.Value.w, obj.Value.h, obj.Value.color, obj.Value.fill);
+                        Graphics.DrawEllipse(obj.Value.x, obj.Value.y, obj.Value.w, obj.Value.h, obj.Value.color, obj.Value.fill, obj.Value.angle);
                     } else if (obj.Value.type == Shape.LINE) {
                         Graphics.DrawLine(obj.Value.x, obj.Value.y, obj.Value.x + obj.Value.w, obj.Value.y + obj.Value.h, obj.Value.color);
                     }
@@ -75,8 +75,8 @@ namespace SharpSlugsEngine {
         /// </summary>
         /// <param name="key">Sprite to edit</param>
         /// <param name="r">How many (degrees/radians?) to rotate the sprite by.</param>
-        public void rotate(string key, double r) {
-            throw new NotImplementedException();
+        public void rotate(string key, float r) {
+            this.spr[key].angle += r;
         }
 
         /// <summary>
