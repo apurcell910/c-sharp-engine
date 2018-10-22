@@ -110,6 +110,7 @@ namespace SharpSlugsEngine
             drawTime.deltaTime = globalClock.Elapsed - deltaDraw;
             if (targetSpf != TimeSpan.Zero)
             {
+                //TODO: FIX THIS TIMOHTY
                 if (targetSpf.TotalMilliseconds >= drawTime.deltaTime.TotalMilliseconds) //if the targetUpdate is within 1/4 of a second of time passed
                 {
                     deltaDraw = globalClock.Elapsed;
