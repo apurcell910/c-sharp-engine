@@ -43,7 +43,7 @@ namespace SharpSlugsEngine {
         }
 
         /// <summary>
-        /// Change wheter or not to display the sprite
+        /// Change whether or not to display the sprite
         /// </summary>
         /// <param name="key">The name of the sprite to edit</param>
         /// <param name="disp">true to display, false to not display.</param>
