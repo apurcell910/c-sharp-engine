@@ -46,6 +46,7 @@
     <Compile Include="DeviceManager.cs" />
     <Compile Include="Xbox360Controller.cs" />
     <Compile Include="InputDevice.cs" />
+    <Compile Include="ContentManager.cs" />
     <Compile Include="Sprite.cs" />
     <Compile Include="GraphicsManager.cs" />
     <Compile Include="Reform.cs">

@@ -7,11 +7,21 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace SharpSlugsEngine {
-    public class Sprite {
+    public class Sprite
+    {
         internal Dictionary<String, SpriteObj> spr = new Dictionary<String, SpriteObj>();
         private GraphicsManager Graphics;
-        public Sprite(GraphicsManager Graphics) {
+        private ContentManager ContentManager;
+
+        public Sprite(GraphicsManager Graphics)
+        {
             this.Graphics = Graphics;
+        }
+
+        public Sprite(GraphicsManager Graphics, ContentManager ContentManager)
+        {
+            this.Graphics = Graphics;
+            this.ContentManager = ContentManager;
         }
 
         /// <summary>
@@ -21,19 +31,34 @@ namespace SharpSlugsEngine {
         /// <param name="rect"></param>
         /// <param name="color"></param>
         /// <param name="fill"></param>
-        public void add(String key, Rectangle rect, Color color, bool fill = true) => spr.Add(key, new SpriteObj(rect, color, fill));
-        public void add(String key, int x1, int y1, int x2, int y2, Color color, bool fill = true) => spr.Add(key, new SpriteObj(x1, y1, x2, y2, color, fill));
+        public void add(String key, Rectangle rect, Color color, Shape type, bool fill = true) {
+            spr.Add(key, new SpriteObj(rect, color, Shape.RECTANGLE, fill));
+        }
 
+        public void add(String key, int x, int y, int w, int h, Color color, Shape type, bool fill = true, float angle = 0) => spr.Add(key, new SpriteObj(x, y, w, h, color, type, fill, angle));
+        public void add(String key, Point p1, Point p2, Color color, Shape type, bool fill = true, float angle = 0) => spr.Add(key, new SpriteObj(p1.X, p1.Y, p2.X - p1.X, p2.Y - p1.Y, color, type, fill, angle));
+        public void add(String key, int x, int y, int scale, String path, Shape type) => spr.Add(key, new SpriteObj(x, y, scale, path, type));
         public void spriteDraw() {
             foreach (KeyValuePair<String, SpriteObj> obj in spr) {
                 if (obj.Value.disp) {
-                    Graphics.DrawRectangle(obj.Value.x, obj.Value.y, obj.Value.w, obj.Value.h, obj.Value.color, obj.Value.fill);
+                    if (obj.Value.type == Shape.RECTANGLE) {
+                        Graphics.DrawRectangle(obj.Value.x, obj.Value.y, obj.Value.w, obj.Value.h, obj.Value.color, obj.Value.fill, obj.Value.angle, obj.Value.xAnchor, obj.Value.yAnchor);
+                    } else if (obj.Value.type == Shape.ELLIPSE) {
+                        Graphics.DrawEllipse(obj.Value.x, obj.Value.y, obj.Value.w, obj.Value.h, obj.Value.color, obj.Value.fill, obj.Value.angle, obj.Value.xAnchor, obj.Value.yAnchor);
+                    } else if (obj.Value.type == Shape.LINE) {
+                        Graphics.DrawLine(obj.Value.x, obj.Value.y, obj.Value.x + obj.Value.w, obj.Value.y + obj.Value.h, obj.Value.color);
+                    } else if(obj.Value.type == Shape.FILE)
+                    {
+                        Bitmap test = ContentManager.AddImage(obj.Value.path, obj.Value.scale);
+                        Bitmap[] multitest = ContentManager.SplitImage(obj.Value.path, obj.Value.scale);
+                        Graphics.DrawBMP(test, obj.Value.x, obj.Value.y);
+                    }
                 }
             }
         }
 
         /// <summary>
-        /// Change wheter or not to display the sprite
+        /// Change whether or not to display the sprite
         /// </summary>
         /// <param name="key">The name of the sprite to edit</param>
         /// <param name="disp">true to display, false to not display.</param>
@@ -52,13 +77,21 @@ namespace SharpSlugsEngine {
             this.spr[key].y += y;
         }
 
+        public void moveX(string key, int x) {
+            this.spr[key].x += x;
+        }
+
+        public void moveY(string key, int y) {
+            this.spr[key].y += y;
+        }
+
         /// <summary>
         /// Rotate the sprite by r (degrees or radians?)
         /// </summary>
         /// <param name="key">Sprite to edit</param>
-        /// <param name="r">How many (degrees/radians?) to rotate the sprite by.</param>
-        public void rotate(string key, double r) {
-            throw new NotImplementedException();
+        /// <param name="r">How many degrees to rotate the sprite by.</param>
+        public void rotate(string key, float r) {
+            this.spr[key].angle += r;
         }
 
         /// <summary>
@@ -87,6 +120,19 @@ namespace SharpSlugsEngine {
         public void scale(string key, double scale) {
             spr[key].w = (int)Math.Round(spr[key].w * scale);
             spr[key].h = (int)Math.Round(scale * spr[key].h);
+        }
+
+        public void setAnchor(string key, double anchor) {
+            spr[key].xAnchor = anchor;
+            spr[key].yAnchor = anchor;
+        }
+
+        public void setAnchorX(string key, double anchor) {
+            spr[key].xAnchor = anchor;
+        }
+
+        public void setAnchorY(string key, double anchor) {
+            spr[key].yAnchor = anchor;
         }
     }
 }

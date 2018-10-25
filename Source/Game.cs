@@ -8,6 +8,7 @@ namespace SharpSlugsEngine
         private Stopwatch globalClock = new Stopwatch();
         private TimeSpan deltaUpdate = new TimeSpan(0);
         private TimeSpan deltaDraw = new TimeSpan(0);
+        private TimeSpan targetSpf = new TimeSpan(0);    //targetted seconds per frame
 
         public DeviceManager Controllers { get; private set; }
 
@@ -20,6 +21,8 @@ namespace SharpSlugsEngine
         /// Graphics Manager for the Game object.
         /// </summary>
         public GraphicsManager Graphics { get; private set; }
+
+        public ContentManager Content { get; private set; }
 
         /// <summary>
         /// Controls whether or not the game should lock to the monitor's refresh rate.
@@ -74,12 +77,15 @@ namespace SharpSlugsEngine
 
             //Create graphics manager
             Graphics = new GraphicsManager(this, platform);
-
+            
             //Create Device Manager
             Controllers = new DeviceManager(this);
+            
+            //Create Content Manager
+            Content = new ContentManager();
 
             //Create sprites
-            sprites = new Sprite(Graphics);
+            sprites = new Sprite(Graphics, Content);
         }
 
         /// <summary>
@@ -90,6 +96,8 @@ namespace SharpSlugsEngine
             //Call setup functions
             Initialize();
             LoadContent();
+            
+            CheckValues();
             
             //Begin running the game loop
             globalClock.Start();
@@ -110,14 +118,54 @@ namespace SharpSlugsEngine
             Update(updateTime);
 
             //TODO: Sprint 1, user story 1, task 7 (Timothy)
-            drawTime.deltaTime = globalClock.Elapsed - deltaDraw;
-            deltaDraw = globalClock.Elapsed;
-            drawTime.totalTime = globalClock.Elapsed;
 
-            Graphics.Begin();
-            sprites.spriteDraw();
-            Draw(drawTime);
-            Graphics.End();
+            
+            drawTime.deltaTime = globalClock.Elapsed - deltaDraw;
+            if (targetSpf != TimeSpan.Zero)
+            {
+                //TODO: FIX THIS TIMOHTY
+                if (targetSpf.TotalMilliseconds >= drawTime.deltaTime.TotalMilliseconds) //if the targetUpdate is within 1/4 of a second of time passed
+                {
+                    deltaDraw = globalClock.Elapsed;
+                    drawTime.totalTime = globalClock.Elapsed;
+
+                    Graphics.Begin();
+                    sprites.spriteDraw();
+                    Draw(drawTime);
+                    Graphics.End();
+                }
+                //else skip graphics step.
+            }
+            else
+            {
+                deltaDraw = globalClock.Elapsed;
+                drawTime.totalTime = globalClock.Elapsed;
+
+                Graphics.Begin();
+                sprites.spriteDraw();
+                Draw(drawTime);
+                Graphics.End();
+            }
+        }
+
+        internal void CheckValues() //Use initialized values to fill out rest of needed values.
+        {
+            if (Vsync == false)
+            {
+                if (TargetFramerate == -1)
+                {
+                    targetSpf = TimeSpan.Zero;
+                }
+                else
+                {
+                    targetSpf = new TimeSpan((long)((TimeSpan.TicksPerSecond) / TargetFramerate));
+                }
+            }
+            else
+            {
+                targetSpf = TimeSpan.Zero;//todo: Implement VSync
+            }
+            
         }
 
         /// <summary>

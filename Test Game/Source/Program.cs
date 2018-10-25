@@ -1,5 +1,9 @@
 ﻿using System;
+<<<<<<< HEAD
 using System.Collections.Generic;
+=======
+using System.IO;
+>>>>>>> b3ecdc304f60c6d289ac529f8225264ed75a17c1
 using SharpSlugsEngine;
 using System.Drawing;
 
@@ -21,6 +25,8 @@ namespace Test_Game
         
         protected override void Initialize()
         {
+            TargetFramerate = 1;
+            
             Controllers.ControllerAdded += (newController) =>
             {
                 Console.WriteLine("New 360 controller added");
@@ -42,10 +48,18 @@ namespace Test_Game
                 newController.DPadRightPressed += () => Console.WriteLine("DPadRight Pressed");
             };
         }
-
+        
         protected override void LoadContent() {
-            sprites.add("rect1", new Rectangle(400, 400, 50, 50), Color.Red);
+            sprites.add("rect1", new Rectangle(400, 400, 50, 50), Color.Red, Shape.RECTANGLE);
+            sprites.add("ellipse", 800, 300, 40, 80, Color.White, Shape.ELLIPSE);
+            sprites.add("line", new Point(30, 20), new Point(800, 300), Color.Violet, Shape.LINE);
+            sprites.add("file", 500, 500, 1,  @"C:\Users\Harpreet\Pictures\test.bmp", Shape.FILE);
             sprites.display("rect1", true);
+            sprites.setAnchor("rect1", 0.5);
+            sprites.display("ellipse", true);
+            sprites.display("line", true);
+            sprites.display("file", true);
+
             i = 0;
         }
         protected override void Update(GameTime gameTime)
@@ -69,6 +83,9 @@ namespace Test_Game
                 sprites.display("rect1", true);
             }
             i++;
+            sprites.moveX("ellipse", -5);
+            sprites.scaleY("ellipse", 1.01);
+            sprites.rotate("rect1", 1);
         }
 
         protected override void Draw(GameTime gameTime)
