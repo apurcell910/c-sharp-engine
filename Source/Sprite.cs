@@ -7,11 +7,21 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace SharpSlugsEngine {
-    public class Sprite {
+    public class Sprite
+    {
         internal Dictionary<String, SpriteObj> spr = new Dictionary<String, SpriteObj>();
         private GraphicsManager Graphics;
-        public Sprite(GraphicsManager Graphics) {
+        private ContentManager ContentManager;
+
+        public Sprite(GraphicsManager Graphics)
+        {
             this.Graphics = Graphics;
+        }
+
+        public Sprite(GraphicsManager Graphics, ContentManager ContentManager)
+        {
+            this.Graphics = Graphics;
+            this.ContentManager = ContentManager;
         }
 
         /// <summary>
@@ -27,7 +37,7 @@ namespace SharpSlugsEngine {
 
         public void add(String key, int x, int y, int w, int h, Color color, Shape type, bool fill = true, float angle = 0) => spr.Add(key, new SpriteObj(x, y, w, h, color, type, fill, angle));
         public void add(String key, Point p1, Point p2, Color color, Shape type, bool fill = true, float angle = 0) => spr.Add(key, new SpriteObj(p1.X, p1.Y, p2.X - p1.X, p2.Y - p1.Y, color, type, fill, angle));
-
+        public void add(String key, int x, int y, int scale, String path, Shape type) => spr.Add(key, new SpriteObj(x, y, scale, path, type));
         public void spriteDraw() {
             foreach (KeyValuePair<String, SpriteObj> obj in spr) {
                 if (obj.Value.disp) {
@@ -37,6 +47,11 @@ namespace SharpSlugsEngine {
                         Graphics.DrawEllipse(obj.Value.x, obj.Value.y, obj.Value.w, obj.Value.h, obj.Value.color, obj.Value.fill, obj.Value.angle, obj.Value.xAnchor, obj.Value.yAnchor);
                     } else if (obj.Value.type == Shape.LINE) {
                         Graphics.DrawLine(obj.Value.x, obj.Value.y, obj.Value.x + obj.Value.w, obj.Value.y + obj.Value.h, obj.Value.color);
+                    } else if(obj.Value.type == Shape.FILE)
+                    {
+                        Bitmap test = ContentManager.AddImage(obj.Value.path, obj.Value.scale);
+                        Bitmap[] multitest = ContentManager.SplitImage(obj.Value.path, obj.Value.scale);
+                        Graphics.DrawBMP(test, obj.Value.x, obj.Value.y);
                     }
                 }
             }

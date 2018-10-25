@@ -43,6 +43,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ContentManager.cs" />
     <Compile Include="Sprite.cs" />
     <Compile Include="GraphicsManager.cs" />
     <Compile Include="Reform.cs">

@@ -20,6 +20,8 @@ namespace SharpSlugsEngine
         /// </summary>
         public GraphicsManager Graphics { get; private set; }
 
+        public ContentManager Content { get; private set; }
+
         /// <summary>
         /// Controls whether or not the game should lock to the monitor's refresh rate.
         /// Overrides <see cref="TargetFramerate"/> if applicable.
@@ -74,8 +76,10 @@ namespace SharpSlugsEngine
             //Create graphics manager
             Graphics = new GraphicsManager(this, platform);
 
+            Content = new ContentManager();
+
             //Create sprites
-            sprites = new Sprite(Graphics);
+            sprites = new Sprite(Graphics, Content);
         }
 
         /// <summary>

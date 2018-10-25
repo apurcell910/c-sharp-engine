@@ -92,7 +92,8 @@ namespace SharpSlugsEngine
         }
 
         //Other way to draw an ellipse by defining bounds with rectangle
-        public void DrawEllipse(int x, int y, int w, int h, Color color, bool fill = true, float angle = 0, double xAnchor = 0, double yAnchor = 0) {
+        public void DrawEllipse(int x, int y, int w, int h, Color color, bool fill = true, float angle = 0, double xAnchor = 0, double yAnchor = 0)
+        {
             brush.Color = color;
 
             using (Matrix m = new Matrix()) {
@@ -108,5 +109,11 @@ namespace SharpSlugsEngine
 
         public void DrawCircle(Point p, int r, Color color, bool fill = true)
             => DrawCircle(p.X, p.Y, r, color, fill);
+
+        //TODO THIS MIGHT NEED TO CHANGE -> HARPREET
+        public void DrawBMP(Bitmap bmp, int x, int y)
+        {
+            bitmapGraphics.DrawImage(bmp, x, y);
+        }
     }
 }
