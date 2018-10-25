@@ -9,6 +9,8 @@ namespace SharpSlugsEngine
         private TimeSpan deltaUpdate = new TimeSpan(0);
         private TimeSpan deltaDraw = new TimeSpan(0);
 
+        public DeviceManager Controllers { get; private set; }
+
         /// <summary>
         /// Sprites manager for anything that needs to be displayed each goaround;
         /// </summary>
@@ -73,6 +75,9 @@ namespace SharpSlugsEngine
             //Create graphics manager
             Graphics = new GraphicsManager(this, platform);
 
+            //Create Device Manager
+            Controllers = new DeviceManager(this);
+
             //Create sprites
             sprites = new Sprite(Graphics);
         }
@@ -85,7 +90,7 @@ namespace SharpSlugsEngine
             //Call setup functions
             Initialize();
             LoadContent();
-
+            
             //Begin running the game loop
             globalClock.Start();
             platform.BeginRun();
@@ -100,6 +105,8 @@ namespace SharpSlugsEngine
             updateTime.deltaTime = globalClock.Elapsed - deltaUpdate;
             deltaUpdate = globalClock.Elapsed;
             updateTime.totalTime = globalClock.Elapsed;
+
+            Controllers.Update(updateTime);
             Update(updateTime);
 
             //TODO: Sprint 1, user story 1, task 7 (Timothy)
