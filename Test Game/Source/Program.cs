@@ -1,9 +1,5 @@
 ﻿using System;
-<<<<<<< HEAD
-using System.Collections.Generic;
-=======
 using System.IO;
->>>>>>> b3ecdc304f60c6d289ac529f8225264ed75a17c1
 using SharpSlugsEngine;
 using System.Drawing;
 
@@ -53,7 +49,7 @@ namespace Test_Game
             sprites.add("rect1", new Rectangle(400, 400, 50, 50), Color.Red, Shape.RECTANGLE);
             sprites.add("ellipse", 800, 300, 40, 80, Color.White, Shape.ELLIPSE);
             sprites.add("line", new Point(30, 20), new Point(800, 300), Color.Violet, Shape.LINE);
-            sprites.add("file", 500, 500, 1,  @"C:\Users\Harpreet\Pictures\test.bmp", Shape.FILE);
+            sprites.add("file", 500, 500, 1,  @"..\..\Content\test.bmp", Shape.FILE);
             sprites.display("rect1", true);
             sprites.setAnchor("rect1", 0.5);
             sprites.display("ellipse", true);
