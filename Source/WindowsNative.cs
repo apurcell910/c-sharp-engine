@@ -4,6 +4,9 @@ using System.Threading;
 
 namespace SharpSlugsEngine
 {
+    /// <summary>
+    /// Just a place to dump all the DllImport stuff
+    /// </summary>
     internal static class WindowsNative
     {
         private static Guid _hidGuid = Guid.Empty;
@@ -60,7 +63,7 @@ namespace SharpSlugsEngine
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
         internal struct SP_DEVICE_INTERFACE_DETAIL_DATA
         {
-            public int Size;
+            public int cbSize;
 
             [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
             public string DevicePath;

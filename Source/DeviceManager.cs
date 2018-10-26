@@ -39,15 +39,19 @@ namespace SharpSlugsEngine
 
                 foreach (DeviceDescriptor desc in Devices)
                 {
+                    //Only have a class for 360 controllers so far, ignore anything else
                     InputDevice device = new InputDevice(desc, this);
                     if (device.VendorID == 0x45E && device.ProductID == 0x28E && !controllers.Any(controller => controller.Path == device.DevicePath))
                     {
                         Xbox360Controller newController = new Xbox360Controller(device);
                         controllers.Add(newController);
+
+                        //Tell the game there's a new controller if it's subscribed to the event
                         _controllerAdded?.Invoke(newController);
                     }
                     else
                     {
+                        //Make sure the InputDevice closes its connection
                         device.Dispose();
                     }
                 }
@@ -71,6 +75,7 @@ namespace SharpSlugsEngine
         {
             List<DeviceDescriptor> devices = new List<DeviceDescriptor>();
 
+            //Get the device information set for connected HID devices
             Guid hidClass = WindowsNative.HidGuid;
             IntPtr infoSet = WindowsNative.SetupDiGetClassDevs(ref hidClass, null, 0, WindowsNative.DIGCF_PRESENT | WindowsNative.DIGCF_DEVICEINTERFACE);
 
@@ -80,8 +85,8 @@ namespace SharpSlugsEngine
                 WindowsNative.SP_DEVINFO_DATA infoData = new WindowsNative.SP_DEVINFO_DATA();
                 infoData.SetupDefaults();
 
+                //Loop through all the elements in the info set
                 int deviceIndex = 0;
-
                 while (WindowsNative.SetupDiEnumDeviceInfo(infoSet, deviceIndex, ref infoData))
                 {
                     deviceIndex++;
@@ -89,18 +94,23 @@ namespace SharpSlugsEngine
                     WindowsNative.SP_DEVICE_INTERFACE_DATA deviceInterfaceData = new WindowsNative.SP_DEVICE_INTERFACE_DATA();
                     deviceInterfaceData.cbSize = Marshal.SizeOf(deviceInterfaceData);
 
+                    //Loop through all the devices
                     int deviceInterfaceIndex = 0;
-
                     while (WindowsNative.SetupDiEnumDeviceInterfaces(infoSet, ref infoData, ref hidClass, deviceInterfaceIndex, ref deviceInterfaceData))
                     {
                         deviceInterfaceIndex++;
 
                         int bufferSize = 0;
-                        WindowsNative.SP_DEVICE_INTERFACE_DETAIL_DATA interfaceDetail = new WindowsNative.SP_DEVICE_INTERFACE_DETAIL_DATA();
-                        interfaceDetail.Size = IntPtr.Size == 4 ? 4 + Marshal.SystemDefaultCharSize : 8;
 
+                        //If IntPtr.Size == 4, we're on 32 bit Windows
+                        //This check is untested because nobody uses 32 bit Windows in 2018
+                        WindowsNative.SP_DEVICE_INTERFACE_DETAIL_DATA interfaceDetail = new WindowsNative.SP_DEVICE_INTERFACE_DETAIL_DATA();
+                        interfaceDetail.cbSize = IntPtr.Size == 4 ? 4 + Marshal.SystemDefaultCharSize : 8;
+
+                        //Call this once just to get the right value for bufferSize
                         WindowsNative.SetupDiGetDeviceInterfaceDetail(infoSet, ref deviceInterfaceData, IntPtr.Zero, 0, ref bufferSize, IntPtr.Zero);
 
+                        //Actually fill the detail struct and get device path
                         string path = WindowsNative.SetupDiGetDeviceInterfaceDetail(infoSet, ref deviceInterfaceData, ref interfaceDetail, bufferSize, ref bufferSize, IntPtr.Zero) ? interfaceDetail.DevicePath : null;
                         
                         byte[] descriptionBuffer = new byte[1024];
@@ -109,6 +119,8 @@ namespace SharpSlugsEngine
 
                         WindowsNative.DEVPROPKEY key = WindowsNative.DEVPKEY_Device_BusReportedDeviceDesc;
 
+                        //Attempt to get description using SetupDiGetDevicePropertyW
+                        //This only works on Vista+
                         if (WindowsNative.SetupDiGetDevicePropertyW(infoSet, ref infoData, ref key, ref propertyType, descriptionBuffer, descriptionBuffer.Length, ref requiredSize, 0))
                         {
                             string desc = Encoding.Unicode.GetString(descriptionBuffer);
@@ -122,6 +134,8 @@ namespace SharpSlugsEngine
                             requiredSize = 0;
                             int regType = 0;
 
+                            //If this attempt at getting the description fails, no big deal
+                            //Device path is all that really matters
                             WindowsNative.SetupDiGetDeviceRegistryProperty(infoSet, ref infoData, 0, ref regType, descriptionBuffer, descriptionBuffer.Length, ref requiredSize);
 
                             string desc = Encoding.UTF8.GetString(descriptionBuffer);
@@ -132,6 +146,7 @@ namespace SharpSlugsEngine
                     }
                 }
 
+                //Free the allocated memory to prevent a leak
                 WindowsNative.SetupDiDestroyDeviceInfoList(infoSet);
             }
 

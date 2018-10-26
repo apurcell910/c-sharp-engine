@@ -12,13 +12,20 @@ namespace SharpSlugsEngine
         internal string Path => _device.DevicePath;
 
         public ButtonState State { get; private set; }
+        public bool IsConnected => _device._connected;
 
         internal Xbox360Controller(InputDevice device)
         {
+            //Everything is gonna break anyway if device is null, might as well throw an obvious exception
             _device = device ?? throw new ArgumentNullException();
-            
+
+            //Magic numbers for 360 controllers, obtained from https://www.the-sz.com/products/usbid/index.php
+            if (device.VendorID != 0x45E || device.ProductID != 0x28E) throw new ArgumentException("Device is not an Xbox 360 controller");
+
+            //Just hooking this to be able to pass the event up further. Could implement better
             _device.OnDisconnect += OnDisconnect;
 
+            //Begin reading data from the controller
             _device.ReadAsync(ReadDeviceBytes);
         }
 
@@ -29,23 +36,27 @@ namespace SharpSlugsEngine
 
         private void OnConnect()
         {
+            //Pass the event upward and restart reading data
             _connected?.Invoke();
             _device.ReadAsync(ReadDeviceBytes);
         }
 
         public void Update()
         {
-            if (_device == null) return;
+            if (_device == null) throw new NullReferenceException("_device cannot be null");
 
+            //Try to reconnect if applicable
             if (!_device._connected)
             {
                 if (_device.TryReconnect()) OnConnect();
                 return;
             }
 
+            //Update the current/old controller state from the asynchronous reading
             _oldState = _currentState;
             _currentState = _asyncState;
 
+            //Just a ton of boilerplate here
             Button a = new Button(_currentState.A.IsPressed, _currentState.A.IsPressed && !_oldState.A.IsPressed);
             Button b = new Button(_currentState.B.IsPressed, _currentState.B.IsPressed && !_oldState.B.IsPressed);
             Button x = new Button(_currentState.X.IsPressed, _currentState.X.IsPressed && !_oldState.X.IsPressed);
@@ -77,13 +88,15 @@ namespace SharpSlugsEngine
 
         private void ReadDeviceBytes(byte[] bytes)
         {
-            if (_device == null || !_device._connected) return;
+            if (_device == null) throw new NullReferenceException("_device cannot be null");
+            if (!_device._connected) return;
 
             bool dpadUp = false;
             bool dpadDown = false;
             bool dpadLeft = false;
             bool dpadRight = false;
 
+            //bytes[12] appears to go clockwise around the dpad in increments of 4
             switch (bytes[12] / 4)
             {
                 case 1:
@@ -116,6 +129,7 @@ namespace SharpSlugsEngine
                     break;
             }
 
+            //bytes[11] contains a bitmask of all the buttons
             bool a = (bytes[11] & 1) != 0;
             bool b = (bytes[11] & 2) != 0;
             bool x = (bytes[11] & 4) != 0;
@@ -127,9 +141,11 @@ namespace SharpSlugsEngine
 
             _asyncState = new ButtonState(a, b, x, y, lb, rb, back, start, dpadLeft, dpadRight, dpadUp, dpadDown);
 
+            //Can't forget to begin the next read
             _device.ReadAsync(ReadDeviceBytes);
         }
 
+        //More boilerplate
         public delegate void ButtonPressed();
 
         //Hiding the actual events with backing fields prevents setting them to null
