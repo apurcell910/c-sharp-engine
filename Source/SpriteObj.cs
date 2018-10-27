@@ -10,7 +10,7 @@ namespace SharpSlugsEngine {
         RECTANGLE,
         ELLIPSE,
         LINE,
-        FILE
+        BMP
     }
     class SpriteObj {
         internal int x, y, w, h, scale;
@@ -20,7 +20,7 @@ namespace SharpSlugsEngine {
         internal bool disp;
         internal float angle;
         internal double xAnchor, yAnchor;
-        internal String path;
+        internal Bitmap bmp;
 
         public SpriteObj(Rectangle rect, Color color, Shape type, bool fill = true, float angle = 0) {
             this.x = rect.X;
@@ -49,12 +49,12 @@ namespace SharpSlugsEngine {
         }
 
         //HARPREET: THIS IS FOR THE CONTENT MANAGER
-        public SpriteObj(int x, int y, int scale, String path, Shape type)
+        public SpriteObj(int x, int y, int scale, Bitmap bmp, Shape type)
         {
             this.x = x;
             this.y = y;
             this.scale = scale;
-            this.path = path;
+            this.bmp = bmp;
             this.type = type;
         }
     }
