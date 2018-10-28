@@ -50,15 +50,8 @@ namespace Test_Game
             Bitmap [] bmp = manager.SplitImage(@"..\..\Content\test.bmp", 4, "test_bmp");
             Bitmap[] scaled = manager.ScaleImage(bmp, 4);
             manager.printNames();
-            sprites.add("rect1", new Rectangle(400, 400, 50, 50), Color.Red, Shape.RECTANGLE);
-            sprites.add("ellipse", 800, 300, 40, 80, Color.White, Shape.ELLIPSE);
-            sprites.add("line", new Point(30, 20), new Point(800, 300), Color.Violet, Shape.LINE);
-            sprites.add("bmp", 0, 0, 0, scaled[1], Shape.BMP);
+            sprites.add("rect1", new SRectangle(400, 400, 100, 100, Color.Black));
             sprites.display("rect1", true);
-            sprites.setAnchor("rect1", 0.5);
-            sprites.display("ellipse", true);
-            sprites.display("line", true);
-            sprites.display("bmp", true);
 
             i = 0;
         }
@@ -66,26 +59,7 @@ namespace Test_Game
         {
             Resolution = new Vector2(1280, 720);
             //Console.WriteLine("Update");
-            if (i == 50) {
-                sprites.scaleX("rect1", 2);
-            }
-            if (i == 100) {
-                sprites.scaleY("rect1", 0.5);
-            }
-            if (i == 150) {
-                sprites.move("rect1", 100, -200);
-            }
-            if (i == 200) {
-                sprites.display("rect1", false);
-                sprites.scale("rect1", 2);
-            }
-            if (i == 300) {
-                sprites.display("rect1", true);
-            }
-            i++;
-            sprites.moveX("ellipse", -5);
-            sprites.scaleY("ellipse", 1.01);
-            sprites.rotate("rect1", 1);
+            
         }
 
         protected override void Draw(GameTime gameTime)
