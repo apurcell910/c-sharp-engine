@@ -26,7 +26,7 @@ namespace SharpSlugsEngine {
 
         public void Draw() {
             foreach (KeyValuePair<String, Sprite> obj in sprites) {
-                if (obj.Value.display && obj.Value.alive) {
+                if (obj.Value.disp && obj.Value.alive) {
                     obj.Value.Draw(Graphics);
                 }
             }
@@ -42,7 +42,7 @@ namespace SharpSlugsEngine {
         /// <param name="key">The name of the sprite to edit</param>
         /// <param name="disp">true to display, false to not display.</param>
         public void display(string key, bool disp) {
-            this.sprites[key].display = disp;
+            sprites[key].display(disp);
         }
 
         /// <summary>
@@ -52,16 +52,15 @@ namespace SharpSlugsEngine {
         /// <param name="x">How much to change the x value by. A negative value moves the sprite to the left.</param>
         /// <param name="y">How much to change the y value by. A negative value moves the sprite up.</param>
         public void move(string key, int x, int y) {
-            this.sprites[key].x += x;
-            this.sprites[key].y += y;
+            this.sprites[key].move(x, y);
         }
 
         public void moveX(string key, int x) {
-            this.sprites[key].x += x;
+            this.sprites[key].moveX(x);
         }
 
         public void moveY(string key, int y) {
-            this.sprites[key].y += y;
+            this.sprites[key].moveY(y);
         }
 
         /// <summary>
@@ -70,7 +69,7 @@ namespace SharpSlugsEngine {
         /// <param name="key">Sprite to edit</param>
         /// <param name="r">How many degrees to rotate the sprite by.</param>
         public void rotate(string key, float r) {
-            this.sprites[key].angle += r;
+            this.sprites[key].rotate(r);
         }
 
         /// <summary>
@@ -79,7 +78,7 @@ namespace SharpSlugsEngine {
         /// <param name="key">Sprite to edit</param>
         /// <param name="scale">How much to scale it by(decimal to make it smaller)</param>
         public void scaleX(string key, double scale) {
-            sprites[key].w = (int)Math.Round(sprites[key].w * scale);
+            sprites[key].scaleX(scale);
         }
 
         /// <summary>
@@ -88,7 +87,7 @@ namespace SharpSlugsEngine {
         /// <param name="key">Sprite to edit</param>
         /// <param name="scale">How much to scale it by(decimal to make it smaller)</param>
         public void scaleY(string key, double scale) {
-            sprites[key].h = (int)Math.Round(scale * sprites[key].h);
+            sprites[key].scaleY(scale);
         }
 
         /// <summary>
@@ -97,21 +96,19 @@ namespace SharpSlugsEngine {
         /// <param name="key">Sprite to edit</param>
         /// <param name="scale">How much to scale it by(decimal to make it smaller)</param>
         public void scale(string key, double scale) {
-            sprites[key].w = (int)Math.Round(sprites[key].w * scale);
-            sprites[key].h = (int)Math.Round(scale * sprites[key].h);
+            sprites[key].scale(scale);
         }
 
         public void setAnchor(string key, double anchor) {
-            sprites[key].xAnchor = anchor;
-            sprites[key].yAnchor = anchor;
+            sprites[key].setAnchor(anchor);
         }
 
         public void setAnchorX(string key, double anchor) {
-            sprites[key].xAnchor = anchor;
+            sprites[key].setAnchorX(anchor);
         }
 
         public void setAnchorY(string key, double anchor) {
-            sprites[key].yAnchor = anchor;
+            sprites[key].setAnchorY(anchor);
         }
 
         public void kill(string key) {

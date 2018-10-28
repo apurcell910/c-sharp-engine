@@ -13,30 +13,50 @@ namespace SharpSlugsEngine {
         public SImage(int x, int y, Bitmap image) {
             this.x = x;
             this.y = y;
-            this.w = 0;//This and h not needed for now, but could be useful;
-            this.h = 0;
             this.image = image;
-            display = false;
+            this.w = image.Width;
+            this.h = image.Height;
+            disp = false;
             alive = true;
             angle = 0;
             xAnchor = yAnchor = 0;
         }
-        /*public Image(int x, int y, string path) {
+        public SImage(int x, int y, string path) {
             this.x = x;
             this.y = y;
-            this.w = 0;//This and h not needed for now, but could be useful;
-            this.h = 0;
-            
-
-
-            display = false;
+            this.image = new Bitmap(path);
+            this.w = this.image.Width;
+            this.h = this.image.Height;
+            disp = false;
             alive = true;
             angle = 0;
             xAnchor = yAnchor = 0;
-        }*/
+        }
+        public SImage(int x, int y, int w, int h, Bitmap image) {
+            this.x = x;
+            this.y = y;
+            this.image = image;
+            this.w = w;
+            this.h = h;
+            disp = false;
+            alive = true;
+            angle = 0;
+            xAnchor = yAnchor = 0;
+        }
+        public SImage(int x, int y, int w, int h, string path) {
+            this.x = x;
+            this.y = y;
+            this.image = new Bitmap(path);
+            this.w = w;
+            this.h = h;
+            disp = false;
+            alive = true;
+            angle = 0;
+            xAnchor = yAnchor = 0;
+        }
 
         public override void Draw(GraphicsManager graphics) {
-            graphics.DrawBMP(image, x, y);
+            graphics.DrawBMP(image, x, y, w, h);
         }
     }
 }

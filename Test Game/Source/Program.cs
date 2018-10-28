@@ -56,6 +56,9 @@ namespace Test_Game
             sprites.display("line", true);
             sprites.add("img", new SImage(400, 500, scaled[1]));
             sprites.display("img", true);
+            sprites.add("img2", new SImage(800, 100, "../../Content/test.bmp"));
+            sprites.scale("img2", 0.3333333);
+            sprites.display("img2", true);
         }
         protected override void Update(GameTime gameTime)
         {

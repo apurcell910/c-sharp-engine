@@ -12,10 +12,12 @@ namespace SharpSlugsEngine {
         public Line(Point p1, Point p2, Color color) {
             this.x = p1.X;
             this.y = p1.Y;
+            //These are due to how it is stored in Sprite, to avoid confusion
+            //Also helps for when moving the line, the entire line is moved
             this.w = p2.X - p1.X;
-            this.h = p2.Y - p1.Y; //These are due to how it is stored in Sprite, to avoid confusion
+            this.h = p2.Y - p1.Y; 
             this.color = color;
-            display = false;
+            disp = false;
             alive = true;
             angle = 0; //Unused, just here so it doesn't complain;
             xAnchor = yAnchor = 0;
@@ -27,7 +29,7 @@ namespace SharpSlugsEngine {
             this.w = x2 - x1;
             this.h = y2 - y1;
             this.color = color;
-            display = false;
+            disp = false;
             alive = true;
             angle = 0;
             xAnchor = yAnchor = 0;

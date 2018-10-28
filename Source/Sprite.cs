@@ -13,7 +13,7 @@ namespace SharpSlugsEngine {
         public float angle;
         public double xAnchor, yAnchor;
         public bool alive;
-        public bool display;
+        public bool disp;
         public virtual void Draw(GraphicsManager graphics) { }
         public virtual void Update() { }
 
@@ -22,7 +22,7 @@ namespace SharpSlugsEngine {
         /// </summary>
         public void kill() {
             alive = false;
-            display = false;
+            disp = false;
         }
 
         /// <summary>
@@ -30,6 +30,73 @@ namespace SharpSlugsEngine {
         /// </summary>
         public void reincarnate() {
             alive = true;
+        }
+
+        public void display(bool disp) {
+            this.disp = disp;
+        }
+
+        public void move(int x, int y) {
+            this.x += x;
+            this.y += y;
+        }
+
+        public void moveX(int x) {
+            this.x += x;
+        }
+
+        public void moveY(int y) {
+            this.y += y;
+        }
+
+        /// <summary>
+        /// Rotate the sprite by r (degrees or radians?)
+        /// </summary>
+        /// <param name="key">Sprite to edit</param>
+        /// <param name="r">How many degrees to rotate the sprite by.</param>
+        public void rotate(float r) {
+            this.angle += r;
+        }
+
+        /// <summary>
+        /// Scale the x value of the sprite
+        /// </summary>
+        /// <param name="key">Sprite to edit</param>
+        /// <param name="scale">How much to scale it by(decimal to make it smaller)</param>
+        public void scaleX(double scale) {
+            w = (int)Math.Round(w * scale);
+        }
+
+        /// <summary>
+        /// Scale the Y value of the sprite
+        /// </summary>
+        /// <param name="key">Sprite to edit</param>
+        /// <param name="scale">How much to scale it by(decimal to make it smaller)</param>
+        public void scaleY(double scale) {
+            h = (int)Math.Round(scale * h);
+        }
+
+        /// <summary>
+        /// Scale entire sprite
+        /// </summary>
+        /// <param name="key">Sprite to edit</param>
+        /// <param name="scale">How much to scale it by(decimal to make it smaller)</param>
+        public void scale(double scale) {
+            w = (int)Math.Round(w * scale);
+            h = (int)Math.Round(scale * h);
+        }
+
+        public void setAnchor(double anchor) {
+            xAnchor = anchor;
+            yAnchor = anchor;
+        }
+
+        public void setAnchorX(double anchor) {
+            xAnchor = anchor;
+        }
+
+        public void setAnchorY(double anchor) {
+            yAnchor = anchor;
         }
     }
 }

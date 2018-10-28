@@ -17,7 +17,7 @@ namespace SharpSlugsEngine {
             this.h = h;
             this.color = color;
             this.fill = fill;
-            display = false;
+            disp = false;
             alive = true;
             angle = 0;
             xAnchor = yAnchor = 0;
