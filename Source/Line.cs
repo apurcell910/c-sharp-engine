@@ -12,8 +12,8 @@ namespace SharpSlugsEngine {
         public Line(Point p1, Point p2, Color color) {
             this.x = p1.X;
             this.y = p1.Y;
-            this.w = p2.X-p1.X;
-            this.h = p2.Y-p1.Y; //These are due to how it is stored in Sprite, to avoid confusion
+            this.w = p2.X - p1.X;
+            this.h = p2.Y - p1.Y; //These are due to how it is stored in Sprite, to avoid confusion
             this.color = color;
             display = false;
             alive = true;
@@ -22,7 +22,7 @@ namespace SharpSlugsEngine {
         }
 
         public override void Draw(GraphicsManager graphics) {
-            graphics.DrawLine(x, y, x+w, y+h, color);
+            graphics.DrawLine(x, y, x + w, y + h, color);
         }
     }
 }

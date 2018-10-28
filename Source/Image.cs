@@ -1,26 +1,41 @@
 ﻿using System;
+using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace SharpSlugsEngine {
-    class Image : Sprite {
-        public Rect(int x, int y, int w, int h, Color color, bool fill = true) {
+    public class Image : Sprite {
+        Bitmap image;
+        public Image(int x, int y, Bitmap image) {
             this.x = x;
             this.y = y;
-            this.w = w;
-            this.h = h;
-            this.color = color;
-            this.fill = fill;
+            this.w = 0;//This and h not needed for now, but could be useful;
+            this.h = 0;
+            this.image = image;
             display = false;
             alive = true;
             angle = 0;
             xAnchor = yAnchor = 0;
         }
+        /*public Image(int x, int y, string path) {
+            this.x = x;
+            this.y = y;
+            this.w = 0;//This and h not needed for now, but could be useful;
+            this.h = 0;
+            
+
+
+            display = false;
+            alive = true;
+            angle = 0;
+            xAnchor = yAnchor = 0;
+        }*/
 
         public override void Draw(GraphicsManager graphics) {
-            graphics.DrawRectangle(x, y, w, h, color, fill, angle, xAnchor, yAnchor);
+            graphics.DrawBMP(image, x, y);
         }
     }
 }

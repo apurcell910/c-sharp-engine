@@ -17,8 +17,6 @@ namespace Test_Game
 
     class TestGame : Game
     {
-        int i;
-        
         protected override void Initialize()
         {
             TargetFramerate = 1;
@@ -50,10 +48,8 @@ namespace Test_Game
             Bitmap [] bmp = manager.SplitImage(@"..\..\Content\test.bmp", 4, "test_bmp");
             Bitmap[] scaled = manager.ScaleImage(bmp, 4);
             manager.printNames();
-            sprites.add("rect1", new Rect(400, 400, 100, 100, Color.Black));
-            sprites.display("rect1", true);
-
-            i = 0;
+            //sprites.add("rect1", new S);
+            //sprites.display("rect1", true);
         }
         protected override void Update(GameTime gameTime)
         {

@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace SharpSlugsEngine {
-    class Ellipse : Sprite {
+    public class Ellipse : Sprite {
         public Color color;
         public bool fill;
 

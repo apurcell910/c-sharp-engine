@@ -45,6 +45,8 @@
   <ItemGroup>
     <Compile Include="DeviceManager.cs" />
     <Compile Include="Ellipse.cs" />
+    <Compile Include="Image.cs" />
+    <Compile Include="Line.cs" />
     <Compile Include="SpriteList.cs" />
     <Compile Include="Rect.cs" />
     <Compile Include="Xbox360Controller.cs" />
