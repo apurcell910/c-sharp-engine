@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace SharpSlugsEngine {
-    class Line : Sprite {
+    public class Line : Sprite {
         public Color color;
 
         public Line(Point p1, Point p2, Color color) {
@@ -18,6 +18,18 @@ namespace SharpSlugsEngine {
             display = false;
             alive = true;
             angle = 0; //Unused, just here so it doesn't complain;
+            xAnchor = yAnchor = 0;
+        }
+
+        public Line(int x1, int y1, int x2, int y2, Color color) {
+            this.x = x1;
+            this.y = y1;
+            this.w = x2 - x1;
+            this.h = y2 - y1;
+            this.color = color;
+            display = false;
+            alive = true;
+            angle = 0;
             xAnchor = yAnchor = 0;
         }
 

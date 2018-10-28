@@ -48,8 +48,14 @@ namespace Test_Game
             Bitmap [] bmp = manager.SplitImage(@"..\..\Content\test.bmp", 4, "test_bmp");
             Bitmap[] scaled = manager.ScaleImage(bmp, 4);
             manager.printNames();
-            //sprites.add("rect1", new S);
-            //sprites.display("rect1", true);
+            sprites.add("rect", new Rect(400, 400, 50, 50, Color.Aqua));
+            sprites.add("ellipse", new Ellipse(800, 600, 120, 50, Color.Black));
+            sprites.add("line", new Line(200, 200, 800, 500, Color.Green));
+            sprites.display("rect", true);
+            sprites.display("ellipse", true);
+            sprites.display("line", true);
+            sprites.add("img", new SImage(400, 500, scaled[1]));
+            sprites.display("img", true);
         }
         protected override void Update(GameTime gameTime)
         {

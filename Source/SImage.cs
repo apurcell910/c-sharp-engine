@@ -7,9 +7,10 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace SharpSlugsEngine {
-    public class Image : Sprite {
+    //Name is to distingish from System.Drawing.Image
+    public class SImage : Sprite {
         Bitmap image;
-        public Image(int x, int y, Bitmap image) {
+        public SImage(int x, int y, Bitmap image) {
             this.x = x;
             this.y = y;
             this.w = 0;//This and h not needed for now, but could be useful;
