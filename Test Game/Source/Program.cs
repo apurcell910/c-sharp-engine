@@ -50,7 +50,7 @@ namespace Test_Game
             Bitmap [] bmp = manager.SplitImage(@"..\..\Content\test.bmp", 4, "test_bmp");
             Bitmap[] scaled = manager.ScaleImage(bmp, 4);
             manager.printNames();
-            sprites.add("rect1", new SRectangle(400, 400, 100, 100, Color.Black));
+            sprites.add("rect1", new Rect(400, 400, 100, 100, Color.Black));
             sprites.display("rect1", true);
 
             i = 0;

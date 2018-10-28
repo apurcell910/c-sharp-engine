@@ -26,7 +26,7 @@ namespace SharpSlugsEngine {
 
         public void Draw() {
             foreach (KeyValuePair<String, Sprite> obj in sprites) {
-                if (obj.Value.display) {
+                if (obj.Value.display && obj.Value.alive) {
                     obj.Value.Draw(Graphics);
                 }
             }
@@ -112,6 +112,14 @@ namespace SharpSlugsEngine {
 
         public void setAnchorY(string key, double anchor) {
             sprites[key].yAnchor = anchor;
+        }
+
+        public void kill(string key) {
+            sprites[key].kill();
+        }
+
+        public void reincarnate(string key) {
+            sprites[key].reincarnate();
         }
     }
 }

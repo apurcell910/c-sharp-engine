@@ -5,12 +5,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SharpSlugsEngine{
-    public class SRectangle : Sprite {
+namespace SharpSlugsEngine {
+    class Ellipse : Sprite {
         public Color color;
         public bool fill;
 
-        public SRectangle(int x, int y, int w, int h, Color color, bool fill = true) {
+        public Ellipse(int x, int y, int w, int h, Color color, bool fill = true) {
             this.x = x;
             this.y = y;
             this.w = w;
@@ -24,7 +24,7 @@ namespace SharpSlugsEngine{
         }
 
         public override void Draw(GraphicsManager graphics) {
-            graphics.DrawRectangle(x, y, w, h, color, fill, angle, xAnchor, yAnchor);
+            graphics.DrawEllipse(x, y, w, h, color, fill, angle, xAnchor, yAnchor);
         }
     }
 }

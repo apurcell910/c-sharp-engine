@@ -44,8 +44,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DeviceManager.cs" />
+    <Compile Include="Ellipse.cs" />
     <Compile Include="SpriteList.cs" />
-    <Compile Include="SRectangle.cs" />
+    <Compile Include="Rect.cs" />
     <Compile Include="Xbox360Controller.cs" />
     <Compile Include="InputDevice.cs" />
     <Compile Include="ContentManager.cs" />
@@ -57,7 +58,6 @@
     <Compile Include="Game.cs" />
     <Compile Include="GameTime.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SpriteObj.cs" />
     <Compile Include="Vector2.cs" />
     <Compile Include="Platform.cs" />
     <Compile Include="WindowsNative.cs" />

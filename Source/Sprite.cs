@@ -16,5 +16,20 @@ namespace SharpSlugsEngine {
         public bool display;
         public virtual void Draw(GraphicsManager graphics) { }
         public virtual void Update() { }
+
+        /// <summary>
+        /// For any sprite that will never be used again, "kills" it.
+        /// </summary>
+        public void kill() {
+            alive = false;
+            display = false;
+        }
+
+        /// <summary>
+        /// "Reincarnates" a dead sprite, must separately set display to true.
+        /// </summary>
+        public void reincarnate() {
+            alive = true;
+        }
     }
 }
