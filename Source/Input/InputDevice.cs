@@ -4,7 +4,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
 
-namespace SharpSlugsEngine
+namespace SharpSlugsEngine.Input
 {
     internal class InputDevice : IDisposable
     {

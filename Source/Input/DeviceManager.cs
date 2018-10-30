@@ -4,17 +4,30 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace SharpSlugsEngine
+namespace SharpSlugsEngine.Input
 {
     public class DeviceManager
     {
+        //Magic numbers assigned by manufacturers https://www.the-sz.com/products/usbid/index.php
+        internal const int VID_MICROSOFT = 0x45E;
+        internal const int VID_SONY = 0x54C;
+
+        internal const int PID_XBOX = 0x202;
+        internal const int PID_XBOX_360 = 0x28E;
+        internal const int PID_XBOX_ONE = 0x2D1;
+
+        internal const int PID_PLAYSTATION_3 = 0x268;
+        internal const int PID_PLAYSTATION_4 = 0x5C4;
+
         private Game _game;
         private TimeSpan _lastCheck = TimeSpan.FromTicks(0);
 
         internal List<DeviceDescriptor> Devices { get; private set; }
+
+        public GameController[] Controllers { get; private set; }
         public Xbox360Controller[] Xbox360Controllers { get; private set; }
 
-        public delegate void NewController(Xbox360Controller controller);
+        public delegate void NewController(GameController controller);
         private event NewController _controllerAdded;
         public event NewController ControllerAdded
         {
@@ -26,6 +39,7 @@ namespace SharpSlugsEngine
         {
             _game = game;
             Xbox360Controllers = new Xbox360Controller[0];
+            Controllers = new GameController[0];
         }
 
         public void Update(GameTime time)
@@ -34,17 +48,47 @@ namespace SharpSlugsEngine
             if ((time.totalTime - _lastCheck).TotalSeconds >= 1f)
             {
                 Devices = GetDevices();
-                List<Xbox360Controller> controllers = new List<Xbox360Controller>();
-                controllers.AddRange(Xbox360Controllers);
+                List<GameController> gameControllers = new List<GameController>();
+                gameControllers.AddRange(Controllers);
 
                 foreach (DeviceDescriptor desc in Devices)
                 {
-                    //Only have a class for 360 controllers so far, ignore anything else
+                    //Create an InputDevice in order to get the vendor and product ID
                     InputDevice device = new InputDevice(desc, this);
-                    if (device.VendorID == 0x45E && device.ProductID == 0x28E && !controllers.Any(controller => controller.Path == device.DevicePath))
+
+                    //Attempt to match the device to a known controller type
+                    GameController newController = null;
+                    if (!gameControllers.Any(controller => controller.Path == device.DevicePath))
                     {
-                        Xbox360Controller newController = new Xbox360Controller(device);
-                        controllers.Add(newController);
+                        switch (device.VendorID)
+                        {
+                            case VID_MICROSOFT:
+                                switch (device.ProductID)
+                                {
+                                    case PID_XBOX:
+                                        break;
+                                    case PID_XBOX_360:
+                                        newController = new Xbox360Controller(device);
+                                        break;
+                                    case PID_XBOX_ONE:
+                                        break;
+                                }
+                                break;
+                            case VID_SONY:
+                                switch (device.ProductID)
+                                {
+                                    case PID_PLAYSTATION_3:
+                                        break;
+                                    case PID_PLAYSTATION_4:
+                                        break;
+                                }
+                                break;
+                        }
+                    }
+
+                    if (newController != null)
+                    {
+                        gameControllers.Add(newController);
 
                         //Tell the game there's a new controller if it's subscribed to the event
                         _controllerAdded?.Invoke(newController);
@@ -56,11 +100,12 @@ namespace SharpSlugsEngine
                     }
                 }
 
-                Xbox360Controllers = controllers.ToArray();
+                Controllers = gameControllers.ToArray();
+                Xbox360Controllers = Controllers.Where(controller => controller is Xbox360Controller).Select(controller => controller as Xbox360Controller).ToArray();
                 _lastCheck = time.totalTime;
             }
 
-            foreach (Xbox360Controller controller in Xbox360Controllers)
+            foreach (GameController controller in Controllers)
             {
                 controller.Update();
             }

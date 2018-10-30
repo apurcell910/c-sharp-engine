@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using SharpSlugsEngine;
+using SharpSlugsEngine.Input;
 using System.Drawing;
 
 namespace Test_Game
@@ -25,23 +26,28 @@ namespace Test_Game
             
             Controllers.ControllerAdded += (newController) =>
             {
-                Console.WriteLine("New 360 controller added");
+                Console.WriteLine("New controller added: " + newController.Type);
 
-                newController.Disconnected += () => Console.WriteLine("Controller Disconnected");
-                newController.Connected += () => Console.WriteLine("Controller Connected");
+                if (newController.Type == ControllerType.Xbox360)
+                {
+                    Xbox360Controller controller = (Xbox360Controller)newController;
 
-                newController.APressed += () => Console.WriteLine("A Pressed");
-                newController.BPressed += () => Console.WriteLine("B Pressed");
-                newController.XPressed += () => Console.WriteLine("X Pressed");
-                newController.YPressed += () => Console.WriteLine("Y Pressed");
-                newController.LBPressed += () => Console.WriteLine("LB Pressed");
-                newController.RBPressed += () => Console.WriteLine("RB Pressed");
-                newController.BackPressed += () => Console.WriteLine("Back Pressed");
-                newController.StartPressed += () => Console.WriteLine("Start Pressed");
-                newController.DPadUpPressed += () => Console.WriteLine("DPadUp Pressed");
-                newController.DPadDownPressed += () => Console.WriteLine("DPadDown Pressed");
-                newController.DPadLeftPressed += () => Console.WriteLine("DPadLeft Pressed");
-                newController.DPadRightPressed += () => Console.WriteLine("DPadRight Pressed");
+                    controller.Disconnected += () => Console.WriteLine("Controller Disconnected");
+                    controller.Connected += () => Console.WriteLine("Controller Connected");
+
+                    controller.APressed += () => Console.WriteLine("A Pressed");
+                    controller.BPressed += () => Console.WriteLine("B Pressed");
+                    controller.XPressed += () => Console.WriteLine("X Pressed");
+                    controller.YPressed += () => Console.WriteLine("Y Pressed");
+                    controller.LBPressed += () => Console.WriteLine("LB Pressed");
+                    controller.RBPressed += () => Console.WriteLine("RB Pressed");
+                    controller.BackPressed += () => Console.WriteLine("Back Pressed");
+                    controller.StartPressed += () => Console.WriteLine("Start Pressed");
+                    controller.DPadUpPressed += () => Console.WriteLine("DPadUp Pressed");
+                    controller.DPadDownPressed += () => Console.WriteLine("DPadDown Pressed");
+                    controller.DPadLeftPressed += () => Console.WriteLine("DPadLeft Pressed");
+                    controller.DPadRightPressed += () => Console.WriteLine("DPadRight Pressed");
+                }
             };
         }
         

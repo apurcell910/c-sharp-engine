@@ -1,16 +1,17 @@
 ﻿using System;
 
-namespace SharpSlugsEngine
+namespace SharpSlugsEngine.Input
 {
-    public class Xbox360Controller
+    public class Xbox360Controller : GameController
     {
         private InputDevice _device;
         private ButtonState _asyncState;
         private ButtonState _oldState;
         private ButtonState _currentState;
 
-        internal string Path => _device.DevicePath;
+        internal override string Path => _device.DevicePath;
 
+        public override ControllerType Type => ControllerType.Xbox360;
         public ButtonState State { get; private set; }
         public bool IsConnected => _device._connected;
 
@@ -19,8 +20,11 @@ namespace SharpSlugsEngine
             //Everything is gonna break anyway if device is null, might as well throw an obvious exception
             _device = device ?? throw new ArgumentNullException();
 
-            //Magic numbers for 360 controllers, obtained from https://www.the-sz.com/products/usbid/index.php
-            if (device.VendorID != 0x45E || device.ProductID != 0x28E) throw new ArgumentException("Device is not an Xbox 360 controller");
+            //Make sure this is actually a 360 controller
+            if (device.VendorID != DeviceManager.VID_MICROSOFT || device.ProductID != DeviceManager.PID_XBOX_360)
+            {
+                throw new ArgumentException("Device is not an Xbox 360 controller");
+            }
 
             //Just hooking this to be able to pass the event up further. Could implement better
             _device.OnDisconnect += OnDisconnect;
@@ -41,7 +45,7 @@ namespace SharpSlugsEngine
             _device.ReadAsync(ReadDeviceBytes);
         }
 
-        public void Update()
+        internal override void Update()
         {
             if (_device == null) throw new NullReferenceException("_device cannot be null");
 

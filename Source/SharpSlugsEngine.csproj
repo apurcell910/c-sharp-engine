@@ -43,9 +43,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DeviceManager.cs" />
-    <Compile Include="Xbox360Controller.cs" />
-    <Compile Include="InputDevice.cs" />
+    <Compile Include="Input\DeviceManager.cs" />
+    <Compile Include="Input\GameController.cs" />
+    <Compile Include="Input\Xbox360Controller.cs" />
+    <Compile Include="Input\InputDevice.cs" />
     <Compile Include="ContentManager.cs" />
     <Compile Include="Sprite.cs" />
     <Compile Include="GraphicsManager.cs" />
