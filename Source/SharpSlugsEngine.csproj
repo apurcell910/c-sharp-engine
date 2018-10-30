@@ -47,13 +47,13 @@
     <Compile Include="Input\GameController.cs" />
     <Compile Include="Input\Xbox360Controller.cs" />
     <Compile Include="Input\InputDevice.cs" />
-    <Compile Include="Ellipse.cs" />
-    <Compile Include="SImage.cs" />
-    <Compile Include="Line.cs" />
-    <Compile Include="SpriteList.cs" />
-    <Compile Include="Rect.cs" />
+    <Compile Include="Sprite\Ellipse.cs" />
+    <Compile Include="Sprite\SImage.cs" />
+    <Compile Include="Sprite\Line.cs" />
+    <Compile Include="Sprite\SpriteList.cs" />
+    <Compile Include="Sprite\Rect.cs" />
     <Compile Include="ContentManager.cs" />
-    <Compile Include="Sprite.cs" />
+    <Compile Include="Sprite\Sprite.cs" />
     <Compile Include="GraphicsManager.cs" />
     <Compile Include="Reform.cs">
       <SubType>Form</SubType>

@@ -65,6 +65,8 @@ namespace Test_Game
             sprites.add("img2", new SImage(800, 100, "../../Content/test.bmp"));
             sprites.scale("img2", 0.3333333);
             sprites.display("img2", true);
+            sprites.add("test", new TestSprite(100, 100, 50, 75, Color.AliceBlue, true));
+            sprites.display("test", true);
         }
         protected override void Update(GameTime gameTime)
         {
@@ -79,6 +81,35 @@ namespace Test_Game
             Graphics.DrawRectangle(50, 50, 100, 100, Color.Blue);
             Graphics.DrawLine(100, 100, 400, 400, Color.BlanchedAlmond);
             Graphics.DrawCircle(250, 250, 50, Color.FromArgb(69, 69, 69));
+        }
+    }
+
+    //Test override of Sprite class based on Rectangle class
+    public class TestSprite : Sprite {
+        Color color;
+        bool fill;
+        public TestSprite(int x, int y, int w, int h, Color color, bool fill = true) {
+            this.x = x;
+            this.y = y;
+            this.w = w;
+            this.h = h;
+            this.color = color;
+            this.fill = fill;
+            disp = false;
+            alive = true;
+            angle = 0;
+            xAnchor = yAnchor = 0;
+        }
+
+        public override void Draw(GraphicsManager graphics) {
+            graphics.DrawRectangle(x, y, w, h, color, fill);
+        }
+
+        public override void Update() {
+            move(5, 10);
+            if (x > 720 || y > 1280) {
+                kill();
+            }
         }
     }
 }
