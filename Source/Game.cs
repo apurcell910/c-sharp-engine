@@ -86,7 +86,7 @@ namespace SharpSlugsEngine
             Content = new ContentManager();
 
             //Create sprites
-            sprites = new Sprite(Graphics, Content);
+            sprites = new Sprite(Graphics);
         }
 
         /// <summary>
