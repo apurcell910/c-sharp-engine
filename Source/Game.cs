@@ -16,7 +16,7 @@ namespace SharpSlugsEngine
         /// <summary>
         /// Sprites manager for anything that needs to be displayed each goaround;
         /// </summary>
-        public Sprite sprites { get; private set; }
+        public SpriteList sprites { get; private set; }
 
         /// <summary>
         /// Graphics Manager for the Game object.
@@ -86,7 +86,7 @@ namespace SharpSlugsEngine
             Content = new ContentManager();
 
             //Create sprites
-            sprites = new Sprite(Graphics);
+            sprites = new SpriteList(Graphics);
         }
 
         /// <summary>
@@ -117,6 +117,7 @@ namespace SharpSlugsEngine
 
             Controllers.Update(updateTime);
             Update(updateTime);
+            sprites.Update();//Should I add updateTime to this? Not sure how it is worked in.
 
             //TODO: Sprint 1, user story 1, task 7 (Timothy)
 
@@ -131,7 +132,7 @@ namespace SharpSlugsEngine
                     drawTime.totalTime = globalClock.Elapsed;
 
                     Graphics.Begin();
-                    sprites.spriteDraw();
+                    sprites.Draw();
                     Draw(drawTime);
                     Graphics.End();
                 }
@@ -143,7 +144,7 @@ namespace SharpSlugsEngine
                 drawTime.totalTime = globalClock.Elapsed;
 
                 Graphics.Begin();
-                sprites.spriteDraw();
+                sprites.Draw();
                 Draw(drawTime);
                 Graphics.End();
             }

@@ -115,5 +115,10 @@ namespace SharpSlugsEngine
         {
             bitmapGraphics.DrawImage(bmp, x, y);
         }
+
+        //Doing this for scaling purposes, if above is changed, change this as well
+        public void DrawBMP(Bitmap bmp, int x, int y, int w, int h) {
+            bitmapGraphics.DrawImage(bmp, x, y, w, h);
+        }
     }
 }

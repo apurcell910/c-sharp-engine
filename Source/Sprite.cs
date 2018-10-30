@@ -9,73 +9,44 @@ using System.Threading.Tasks;
 namespace SharpSlugsEngine {
     public class Sprite
     {
-        internal Dictionary<String, SpriteObj> spr = new Dictionary<String, SpriteObj>();
-        private GraphicsManager Graphics;
+        public int x, y, w, h;
+        public float angle;
+        public double xAnchor, yAnchor;
+        public bool alive;
+        public bool disp;
+        public virtual void Draw(GraphicsManager graphics) { }
+        public virtual void Update() { }
 
-        public Sprite(GraphicsManager Graphics)
-        {
-            this.Graphics = Graphics;
+        /// <summary>
+        /// For any sprite that will never be used again, "kills" it.
+        /// </summary>
+        public void kill() {
+            alive = false;
+            disp = false;
         }
 
         /// <summary>
-        /// Add sprite to list of sprites
+        /// "Reincarnates" a dead sprite, must separately set display to true.
         /// </summary>
-        /// <param name="key">The key value of the sprite, unique</param>
-        /// <param name="rect"></param>
-        /// <param name="color"></param>
-        /// <param name="fill"></param>
-        public void add(String key, Rectangle rect, Color color, Shape type, bool fill = true) {
-            spr.Add(key, new SpriteObj(rect, color, Shape.RECTANGLE, fill));
+        public void reincarnate() {
+            alive = true;
         }
 
-        public void add(String key, int x, int y, int w, int h, Color color, Shape type, bool fill = true, float angle = 0) => spr.Add(key, new SpriteObj(x, y, w, h, color, type, fill, angle));
-        public void add(String key, Point p1, Point p2, Color color, Shape type, bool fill = true, float angle = 0) => spr.Add(key, new SpriteObj(p1.X, p1.Y, p2.X - p1.X, p2.Y - p1.Y, color, type, fill, angle));
-        public void add(String key, int x, int y, int scale, Bitmap bmp, Shape type) => spr.Add(key, new SpriteObj(x, y, scale, bmp, type));
-
-        public void spriteDraw() {
-            foreach (KeyValuePair<String, SpriteObj> obj in spr) {
-                if (obj.Value.disp) {
-                    if (obj.Value.type == Shape.RECTANGLE) {
-                        Graphics.DrawRectangle(obj.Value.x, obj.Value.y, obj.Value.w, obj.Value.h, obj.Value.color, obj.Value.fill, obj.Value.angle, obj.Value.xAnchor, obj.Value.yAnchor);
-                    } else if (obj.Value.type == Shape.ELLIPSE) {
-                        Graphics.DrawEllipse(obj.Value.x, obj.Value.y, obj.Value.w, obj.Value.h, obj.Value.color, obj.Value.fill, obj.Value.angle, obj.Value.xAnchor, obj.Value.yAnchor);
-                    } else if (obj.Value.type == Shape.LINE) {
-                        Graphics.DrawLine(obj.Value.x, obj.Value.y, obj.Value.x + obj.Value.w, obj.Value.y + obj.Value.h, obj.Value.color);
-                    } else if(obj.Value.type == Shape.BMP)
-                    {
-                        Graphics.DrawBMP(obj.Value.bmp, obj.Value.x, obj.Value.y);
-                        
-                    }
-                }
-            }
+        public void display(bool disp) {
+            this.disp = disp;
         }
 
-        /// <summary>
-        /// Change whether or not to display the sprite
-        /// </summary>
-        /// <param name="key">The name of the sprite to edit</param>
-        /// <param name="disp">true to display, false to not display.</param>
-        public void display(string key, bool disp) {
-            this.spr[key].disp = disp;
+        public void move(int x, int y) {
+            this.x += x;
+            this.y += y;
         }
 
-        /// <summary>
-        /// Move the sprite x and y pixels
-        /// </summary>
-        /// <param name="key">The name of the sprite to move</param>
-        /// <param name="x">How much to change the x value by. A negative value moves the sprite to the left.</param>
-        /// <param name="y">How much to change the y value by. A negative value moves the sprite up.</param>
-        public void move(string key, int x, int y) {
-            this.spr[key].x += x;
-            this.spr[key].y += y;
+        public void moveX(int x) {
+            this.x += x;
         }
 
-        public void moveX(string key, int x) {
-            this.spr[key].x += x;
-        }
-
-        public void moveY(string key, int y) {
-            this.spr[key].y += y;
+        public void moveY(int y) {
+            this.y += y;
         }
 
         /// <summary>
@@ -83,8 +54,8 @@ namespace SharpSlugsEngine {
         /// </summary>
         /// <param name="key">Sprite to edit</param>
         /// <param name="r">How many degrees to rotate the sprite by.</param>
-        public void rotate(string key, float r) {
-            this.spr[key].angle += r;
+        public void rotate(float r) {
+            this.angle += r;
         }
 
         /// <summary>
@@ -92,8 +63,8 @@ namespace SharpSlugsEngine {
         /// </summary>
         /// <param name="key">Sprite to edit</param>
         /// <param name="scale">How much to scale it by(decimal to make it smaller)</param>
-        public void scaleX(string key, double scale) {
-            spr[key].w = (int)Math.Round(spr[key].w * scale);
+        public void scaleX(double scale) {
+            w = (int)Math.Round(w * scale);
         }
 
         /// <summary>
@@ -101,8 +72,8 @@ namespace SharpSlugsEngine {
         /// </summary>
         /// <param name="key">Sprite to edit</param>
         /// <param name="scale">How much to scale it by(decimal to make it smaller)</param>
-        public void scaleY(string key, double scale) {
-            spr[key].h = (int)Math.Round(scale * spr[key].h);
+        public void scaleY(double scale) {
+            h = (int)Math.Round(scale * h);
         }
 
         /// <summary>
@@ -110,22 +81,22 @@ namespace SharpSlugsEngine {
         /// </summary>
         /// <param name="key">Sprite to edit</param>
         /// <param name="scale">How much to scale it by(decimal to make it smaller)</param>
-        public void scale(string key, double scale) {
-            spr[key].w = (int)Math.Round(spr[key].w * scale);
-            spr[key].h = (int)Math.Round(scale * spr[key].h);
+        public void scale(double scale) {
+            w = (int)Math.Round(w * scale);
+            h = (int)Math.Round(scale * h);
         }
 
-        public void setAnchor(string key, double anchor) {
-            spr[key].xAnchor = anchor;
-            spr[key].yAnchor = anchor;
+        public void setAnchor(double anchor) {
+            xAnchor = anchor;
+            yAnchor = anchor;
         }
 
-        public void setAnchorX(string key, double anchor) {
-            spr[key].xAnchor = anchor;
+        public void setAnchorX(double anchor) {
+            xAnchor = anchor;
         }
 
-        public void setAnchorY(string key, double anchor) {
-            spr[key].yAnchor = anchor;
+        public void setAnchorY(double anchor) {
+            yAnchor = anchor;
         }
     }
 }
