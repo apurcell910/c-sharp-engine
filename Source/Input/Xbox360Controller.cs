@@ -5,15 +5,27 @@ namespace SharpSlugsEngine.Input
     public class Xbox360Controller : GameController
     {
         private InputDevice _device;
-        private ButtonState _asyncState;
-        private ButtonState _oldState;
-        private ButtonState _currentState;
+
+        private ButtonState _asyncButtonState;
+        private ButtonState _oldButtonState;
+        private ButtonState _currentButtonState;
+
+        private ControlStick _asyncLStickState;
+        private ControlStick _oldLStickState;
+        private ControlStick _currentLStickState;
+
+        private ControlStick _asyncRStickState;
+        private ControlStick _oldRStickState;
+        private ControlStick _currentRStickState;
 
         internal override string Path => _device.DevicePath;
 
         public override ControllerType Type => ControllerType.Xbox360;
-        public ButtonState State { get; private set; }
         public bool IsConnected => _device._connected;
+
+        public ButtonState Buttons { get; private set; }
+        public ControlStick LeftStick { get; private set; }
+        public ControlStick RightStick { get; private set; }
 
         internal Xbox360Controller(InputDevice device)
         {
@@ -57,43 +69,75 @@ namespace SharpSlugsEngine.Input
             }
 
             //Update the current/old controller state from the asynchronous reading
-            _oldState = _currentState;
-            _currentState = _asyncState;
+            _oldButtonState = _currentButtonState;
+            _currentButtonState = _asyncButtonState;
+
+            _oldLStickState = _currentLStickState;
+            _currentLStickState = _asyncLStickState;
+
+            _oldRStickState = _currentRStickState;
+            _currentRStickState = _asyncRStickState;
 
             //Just a ton of boilerplate here
-            Button a = new Button(_currentState.A.IsPressed, _currentState.A.IsPressed && !_oldState.A.IsPressed);
-            Button b = new Button(_currentState.B.IsPressed, _currentState.B.IsPressed && !_oldState.B.IsPressed);
-            Button x = new Button(_currentState.X.IsPressed, _currentState.X.IsPressed && !_oldState.X.IsPressed);
-            Button y = new Button(_currentState.Y.IsPressed, _currentState.Y.IsPressed && !_oldState.Y.IsPressed);
-            Button lb = new Button(_currentState.LB.IsPressed, _currentState.LB.IsPressed && !_oldState.LB.IsPressed);
-            Button rb = new Button(_currentState.RB.IsPressed, _currentState.RB.IsPressed && !_oldState.RB.IsPressed);
-            Button back = new Button(_currentState.Back.IsPressed, _currentState.Back.IsPressed && !_oldState.Back.IsPressed);
-            Button start = new Button(_currentState.Start.IsPressed, _currentState.Start.IsPressed && !_oldState.Start.IsPressed);
-            Button dpadUp = new Button(_currentState.DPadUp.IsPressed, _currentState.DPadUp.IsPressed && !_oldState.DPadUp.IsPressed);
-            Button dpadDown = new Button(_currentState.DPadDown.IsPressed, _currentState.DPadDown.IsPressed && !_oldState.DPadDown.IsPressed);
-            Button dpadLeft = new Button(_currentState.DPadLeft.IsPressed, _currentState.DPadLeft.IsPressed && !_oldState.DPadLeft.IsPressed);
-            Button dpadRight = new Button(_currentState.DPadRight.IsPressed, _currentState.DPadRight.IsPressed && !_oldState.DPadRight.IsPressed);
+            Button a = new Button(_currentButtonState.A.IsPressed, _currentButtonState.A.IsPressed && !_oldButtonState.A.IsPressed);
+            Button b = new Button(_currentButtonState.B.IsPressed, _currentButtonState.B.IsPressed && !_oldButtonState.B.IsPressed);
+            Button x = new Button(_currentButtonState.X.IsPressed, _currentButtonState.X.IsPressed && !_oldButtonState.X.IsPressed);
+            Button y = new Button(_currentButtonState.Y.IsPressed, _currentButtonState.Y.IsPressed && !_oldButtonState.Y.IsPressed);
+            Button lb = new Button(_currentButtonState.LB.IsPressed, _currentButtonState.LB.IsPressed && !_oldButtonState.LB.IsPressed);
+            Button rb = new Button(_currentButtonState.RB.IsPressed, _currentButtonState.RB.IsPressed && !_oldButtonState.RB.IsPressed);
+            Button back = new Button(_currentButtonState.Back.IsPressed, _currentButtonState.Back.IsPressed && !_oldButtonState.Back.IsPressed);
+            Button start = new Button(_currentButtonState.Start.IsPressed, _currentButtonState.Start.IsPressed && !_oldButtonState.Start.IsPressed);
+            Button dpadUp = new Button(_currentButtonState.DPadUp.IsPressed, _currentButtonState.DPadUp.IsPressed && !_oldButtonState.DPadUp.IsPressed);
+            Button dpadDown = new Button(_currentButtonState.DPadDown.IsPressed, _currentButtonState.DPadDown.IsPressed && !_oldButtonState.DPadDown.IsPressed);
+            Button dpadLeft = new Button(_currentButtonState.DPadLeft.IsPressed, _currentButtonState.DPadLeft.IsPressed && !_oldButtonState.DPadLeft.IsPressed);
+            Button dpadRight = new Button(_currentButtonState.DPadRight.IsPressed, _currentButtonState.DPadRight.IsPressed && !_oldButtonState.DPadRight.IsPressed);
+            Button lStick = new Button(_currentLStickState.Button.IsPressed, _currentLStickState.Button.IsPressed && !_oldLStickState.Button.IsPressed);
+            Button rStick = new Button(_currentRStickState.Button.IsPressed, _currentRStickState.Button.IsPressed && !_oldRStickState.Button.IsPressed);
 
-            State = new ButtonState(a, b, x, y, lb, rb, back, start, dpadLeft, dpadRight, dpadUp, dpadDown);
+            Buttons = new ButtonState(a, b, x, y, lb, rb, back, start, dpadLeft, dpadRight, dpadUp, dpadDown);
+            LeftStick = new ControlStick(_currentLStickState.State, lStick);
+            RightStick = new ControlStick(_currentRStickState.State, rStick);
 
-            if (_aPressed != null && State.A.WasPressed) _aPressed();
-            if (_bPressed != null && State.B.WasPressed) _bPressed();
-            if (_xPressed != null && State.X.WasPressed) _xPressed();
-            if (_yPressed != null && State.Y.WasPressed) _yPressed();
-            if (_lbPressed != null && State.LB.WasPressed) _lbPressed();
-            if (_rbPressed != null && State.RB.WasPressed) _rbPressed();
-            if (_backPressed != null && State.Back.WasPressed) _backPressed();
-            if (_startPressed != null && State.Start.WasPressed) _startPressed();
-            if (_dpadUpPressed != null && State.DPadUp.WasPressed) _dpadUpPressed();
-            if (_dpadDownPressed != null && State.DPadDown.WasPressed) _dpadDownPressed();
-            if (_dpadLeftPressed != null && State.DPadLeft.WasPressed) _dpadLeftPressed();
-            if (_dpadRightPressed != null && State.DPadRight.WasPressed) _dpadRightPressed();
+            if (_aPressed != null && Buttons.A.WasPressed) _aPressed();
+            if (_bPressed != null && Buttons.B.WasPressed) _bPressed();
+            if (_xPressed != null && Buttons.X.WasPressed) _xPressed();
+            if (_yPressed != null && Buttons.Y.WasPressed) _yPressed();
+            if (_lbPressed != null && Buttons.LB.WasPressed) _lbPressed();
+            if (_rbPressed != null && Buttons.RB.WasPressed) _rbPressed();
+            if (_backPressed != null && Buttons.Back.WasPressed) _backPressed();
+            if (_startPressed != null && Buttons.Start.WasPressed) _startPressed();
+            if (_dpadUpPressed != null && Buttons.DPadUp.WasPressed) _dpadUpPressed();
+            if (_dpadDownPressed != null && Buttons.DPadDown.WasPressed) _dpadDownPressed();
+            if (_dpadLeftPressed != null && Buttons.DPadLeft.WasPressed) _dpadLeftPressed();
+            if (_dpadRightPressed != null && Buttons.DPadRight.WasPressed) _dpadRightPressed();
+            if (_leftStickPressed != null && LeftStick.Button.WasPressed) _leftStickPressed();
+            if (_rightStickPressed != null && RightStick.Button.WasPressed) _rightStickPressed();
         }
 
         private void ReadDeviceBytes(byte[] bytes)
         {
             if (_device == null) throw new NullReferenceException("_device cannot be null");
             if (!_device._connected) return;
+
+            //Sticks are contained in bytes 1-8
+            ushort leftStickX = BitConverter.ToUInt16(bytes, 1);
+            ushort leftStickY = BitConverter.ToUInt16(bytes, 3);
+            ushort rightStickX = BitConverter.ToUInt16(bytes, 5);
+            ushort rightStickY = BitConverter.ToUInt16(bytes, 7);
+
+            //These two bytes are definitely trigger info but I'm not sure how to get anything meaningful from them
+            ushort triggers = BitConverter.ToUInt16(bytes, 9);
+
+            //bytes[12] contains these in the first two bits
+            bool lStickButton = (bytes[12] & 1) != 0;
+            bool rStickButton = (bytes[12] & 2) != 0;
+
+            //Despite this, it's not fully a bitmask so we have to clear those bits to get dpad info
+            bytes[12] = (byte)(bytes[12] & ~3);
+
+            //Create control stick objects
+            _asyncLStickState = new ControlStick(leftStickX, leftStickY, new Button(lStickButton));
+            _asyncRStickState = new ControlStick(rightStickX, rightStickY, new Button(rStickButton));
 
             bool dpadUp = false;
             bool dpadDown = false;
@@ -143,7 +187,7 @@ namespace SharpSlugsEngine.Input
             bool back = (bytes[11] & 64) != 0;
             bool start = (bytes[11] & 128) != 0;
 
-            _asyncState = new ButtonState(a, b, x, y, lb, rb, back, start, dpadLeft, dpadRight, dpadUp, dpadDown);
+            _asyncButtonState = new ButtonState(a, b, x, y, lb, rb, back, start, dpadLeft, dpadRight, dpadUp, dpadDown);
 
             //Can't forget to begin the next read
             _device.ReadAsync(ReadDeviceBytes);
@@ -237,6 +281,20 @@ namespace SharpSlugsEngine.Input
             remove => _dpadRightPressed -= value;
         }
 
+        private event ButtonPressed _leftStickPressed;
+        public event ButtonPressed LeftStickPressed
+        {
+            add => _leftStickPressed += value;
+            remove => _leftStickPressed -= value;
+        }
+
+        private event ButtonPressed _rightStickPressed;
+        public event ButtonPressed RightStickPressed
+        {
+            add => _rightStickPressed += value;
+            remove => _rightStickPressed -= value;
+        }
+
         public delegate void ControllerConnection();
 
         private event ControllerConnection _disconnected;
@@ -319,5 +377,29 @@ namespace SharpSlugsEngine.Input
 
         public bool IsPressed { get; private set; }
         public bool WasPressed { get; private set; }
+    }
+
+    public struct ControlStick
+    {
+        internal ControlStick(ushort x, ushort y, Button buttonState)
+        {
+            //Convert left and right to floats in the range 0-1
+            float lFloat = x / (float)ushort.MaxValue;
+            float rFloat = y / (float)ushort.MaxValue;
+
+            //Scale these floats to -1 - 1
+            State = new Vector2(lFloat * 2 - 1, rFloat * 2 - 1);
+
+            Button = buttonState;
+        }
+
+        internal ControlStick(Vector2 pos, Button buttonState)
+        {
+            State = pos;
+            Button = buttonState;
+        }
+
+        public Vector2 State { get; private set; }
+        public Button Button { get; private set; }
     }
 }

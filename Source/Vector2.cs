@@ -19,6 +19,8 @@ namespace SharpSlugsEngine
             return X == other.X && Y == other.Y;
         }
 
+        public override string ToString() => $"(X: {X}, Y: {Y})";
+
         public static Vector2 Zero => new Vector2(0, 0);
 
         public static Vector2 One => new Vector2(1, 1);

@@ -45,6 +45,8 @@ namespace Test_Game
                     controller.DPadDownPressed += () => Console.WriteLine("DPadDown Pressed");
                     controller.DPadLeftPressed += () => Console.WriteLine("DPadLeft Pressed");
                     controller.DPadRightPressed += () => Console.WriteLine("DPadRight Pressed");
+                    controller.LeftStickPressed += () => Console.WriteLine("LeftStick pressed. Current position: " + controller.LeftStick.State);
+                    controller.RightStickPressed += () => Console.WriteLine("LeftStick pressed. Current position: " + controller.RightStick.State);
                 }
             };
         }
