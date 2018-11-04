@@ -45,6 +45,7 @@ namespace SharpSlugsEngine.Input
                 _oldKeys[key] = _currentKeys[key];
                 _currentKeys[key] = _asyncKeys[key];
             }
+            _singleKey();
         }
 
         private void UnhookForm()
@@ -80,9 +81,72 @@ namespace SharpSlugsEngine.Input
 
             return current && !old;
         }
+        
+        public bool AlphaIsPressed()
+        {
+            foreach(KeyValuePair<Keys, bool> entry in _currentKeys)
+            {
+                if (entry.Key <= Keys.Z && entry.Key >= Keys.A)
+                    if (entry.Value == true)
+                        return true;
+            }
+            return false;
+        }
+
+        public bool NumIsPressed()
+        {
+            foreach (KeyValuePair<Keys, bool> entry in _currentKeys)
+            {
+                if ((entry.Key <= Keys.NumPad9 && entry.Key >= Keys.NumPad0)
+                    || (entry.Key <= Keys.D9 && entry.Key >= Keys.D0))
+                    if (entry.Value == true)
+                        return true;
+            }
+            return false;
+        }
+
+        public bool ArrowIsPressed() //Todo Timothy
+        {
+            return false;
+        }
 
         //Alias for the IsPressed/WasPressed functions for if people prefer accessing as an array
         public KeyState this[Keys key] => new KeyState(IsPressed(key), WasPressed(key));
+
+        public delegate void KeyPress();
+
+        private event KeyPress _singleKey;
+        public event KeyPress SingleKey
+        {
+            add => _singleKey += value;
+            remove => _singleKey -= value;
+        }
+
+        public void AddKeybind(Keys key, Event e)
+        {
+            SingleKey += () => { if (IsPressed(key)) e.callEvent(); };
+        }
+
+        public void RemoveKeybind(Keys key, Event e)
+        {
+            SingleKey += () => { if (IsPressed(key)) e.callEvent(); };
+        }
+
+        public void AddAlphaBind(Event e)
+        {
+            SingleKey += () => { if (AlphaIsPressed()) e.callEvent(); };
+        }
+
+        public void AddNumBind(Event e)
+        {
+            SingleKey += () => { if (NumIsPressed()) e.callEvent(); };
+        }
+
+        public void AddAlphaNumBind(Event e)
+        {
+            SingleKey += () => { if (AlphaIsPressed()) e.callEvent(); };
+            SingleKey += () => { if (NumIsPressed()) e.callEvent(); };
+        }
 
         //Remove hooks so that the form doesn't keep the object alive
         void IDisposable.Dispose() => UnhookForm();

@@ -43,6 +43,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Event.cs" />
     <Compile Include="Input\DeviceManager.cs" />
     <Compile Include="Input\GameController.cs" />
     <Compile Include="Input\KeyboardManager.cs" />

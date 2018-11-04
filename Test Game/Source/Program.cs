@@ -50,6 +50,9 @@ namespace Test_Game
                     controller.RightStickPressed += () => Console.WriteLine("RightStick pressed. Current position: " + controller.RightStick.State);
                 }
             };
+            Event EventA = new Event();
+            EventA.Test += (blank) => Console.WriteLine("Letter Pressed");
+            Keyboard.AddAlphaBind(EventA);
         }
         
         protected override void LoadContent() {
