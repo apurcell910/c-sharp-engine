@@ -19,8 +19,8 @@ namespace SharpSlugsEngine {
             this.color = color;
             disp = false;
             alive = true;
-            angle = 0; //Unused, just here so it doesn't complain;
-            xAnchor = yAnchor = 0;
+            angle = 0; //Unused, just here so it doesn't complain
+            xAnchor = yAnchor = 0; //Again, unlikely to be used, but still in main, so here
         }
 
         public Line(int x1, int y1, int x2, int y2, Color color) {

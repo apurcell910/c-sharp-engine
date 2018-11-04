@@ -36,6 +36,10 @@ namespace SharpSlugsEngine {
             sprites.Add(key, sprite);
         }
 
+        //Each of these simply links to the corresponding function in the Sprite class, where they are located to
+        //allow a sprite to use the functions on itself, and for possible future use in a possible, but very
+        //unlikely implementation.
+
         /// <summary>
         /// Change whether or not to display the sprite
         /// </summary>

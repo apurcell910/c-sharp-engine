@@ -120,5 +120,9 @@ namespace SharpSlugsEngine
         public void DrawBMP(Bitmap bmp, int x, int y, int w, int h) {
             bitmapGraphics.DrawImage(bmp, x, y, w, h);
         }
+
+        public void DrawBMP(Bitmap bmp, int x, int y, int w, int h, int ix, int iy, int iw, int ih) {
+            bitmapGraphics.DrawImage(bmp, new Rectangle(x, y, w, h), ix, iy, iw, ih, GraphicsUnit.Pixel);
+        }
     }
 }
