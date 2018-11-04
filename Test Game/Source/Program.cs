@@ -3,6 +3,7 @@ using System.IO;
 using SharpSlugsEngine;
 using SharpSlugsEngine.Input;
 using System.Drawing;
+using System.Windows.Forms;
 
 namespace Test_Game
 {
@@ -46,7 +47,7 @@ namespace Test_Game
                     controller.DPadLeftPressed += () => Console.WriteLine("DPadLeft Pressed");
                     controller.DPadRightPressed += () => Console.WriteLine("DPadRight Pressed");
                     controller.LeftStickPressed += () => Console.WriteLine("LeftStick pressed. Current position: " + controller.LeftStick.State);
-                    controller.RightStickPressed += () => Console.WriteLine("LeftStick pressed. Current position: " + controller.RightStick.State);
+                    controller.RightStickPressed += () => Console.WriteLine("RightStick pressed. Current position: " + controller.RightStick.State);
                 }
             };
         }
@@ -75,6 +76,10 @@ namespace Test_Game
             Resolution = new Vector2(1280, 720);
             //Console.WriteLine("Update");
             
+            if (Keyboard[Keys.Left].WasPressed)
+            {
+                Console.WriteLine("Left");
+            }
         }
 
         protected override void Draw(GameTime gameTime)
