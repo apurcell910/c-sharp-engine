@@ -51,8 +51,8 @@ namespace Test_Game
                 }
             };
             Event EventA = new Event();
-            EventA.Test += (blank) => Console.WriteLine("Letter Pressed");
-            Keyboard.AddAlphaBind(EventA);
+            EventA.Test += (Keys key) => Console.WriteLine("{0} pressed", (char) key);
+            Keyboard.AddMassAlphaBind(EventA);
         }
         
         protected override void LoadContent() {

@@ -93,6 +93,18 @@ namespace SharpSlugsEngine.Input
             return false;
         }
 
+        public List<Keys> ListAlphaPressed()
+        {
+            List<Keys> o = new List<Keys>();
+            foreach (KeyValuePair<Keys, bool> entry in _currentKeys)
+            {
+                if (entry.Key <= Keys.Z && entry.Key >= Keys.A)
+                    if (entry.Value == true)
+                        o.Add(entry.Key);
+            }
+            return o;
+        }
+
         public bool NumIsPressed()
         {
             foreach (KeyValuePair<Keys, bool> entry in _currentKeys)
@@ -103,6 +115,19 @@ namespace SharpSlugsEngine.Input
                         return true;
             }
             return false;
+        }
+
+        public List<Keys> ListNumPressed()
+        {
+            List<Keys> o = new List<Keys>();
+            foreach (KeyValuePair<Keys, bool> entry in _currentKeys)
+            {
+                if ((entry.Key <= Keys.NumPad9 && entry.Key >= Keys.NumPad0)
+                    || (entry.Key <= Keys.D9 && entry.Key >= Keys.D0))
+                    if (entry.Value == true)
+                        o.Add(entry.Key);
+            }
+            return o;
         }
 
         public bool ArrowIsPressed() //Todo Timothy
@@ -137,16 +162,41 @@ namespace SharpSlugsEngine.Input
             SingleKey += () => { if (AlphaIsPressed()) e.callEvent(); };
         }
 
+        public void RemoveAlphaBind(Event e)
+        {
+            SingleKey -= () => { if (AlphaIsPressed()) e.callEvent(); };
+        }
+
+        public void AddMassAlphaBind(Event e)
+        {
+            SingleKey += () => { foreach (Keys key in ListAlphaPressed()) { e.callEvent(key); } };
+        }
+
+        public void RemoveMassAlphaBind(Event e)
+        {
+            SingleKey -= () => { foreach (Keys key in ListAlphaPressed()) { e.callEvent(key); } };
+        }
+
         public void AddNumBind(Event e)
         {
             SingleKey += () => { if (NumIsPressed()) e.callEvent(); };
         }
 
+        public void RemoveNumBind(Event e)
+        {
+            SingleKey -= () => { if (NumIsPressed()) e.callEvent(); };
+        }
+
         public void AddAlphaNumBind(Event e)
         {
-            SingleKey += () => { if (AlphaIsPressed()) e.callEvent(); };
-            SingleKey += () => { if (NumIsPressed()) e.callEvent(); };
+            SingleKey += () => { if (AlphaIsPressed() || NumIsPressed()) e.callEvent(); };
         }
+
+        public void RemoveAlphaNumBind(Event e)
+        {
+            SingleKey -= () => { if (AlphaIsPressed() || NumIsPressed()) e.callEvent(); };
+        }
+
 
         //Remove hooks so that the form doesn't keep the object alive
         void IDisposable.Dispose() => UnhookForm();
