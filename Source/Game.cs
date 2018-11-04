@@ -15,6 +15,8 @@ namespace SharpSlugsEngine
 
         public KeyboardManager Keyboard { get; private set; }
 
+        public MouseManager Mouse { get; private set; }
+
         /// <summary>
         /// Sprites manager for anything that needs to be displayed each goaround;
         /// </summary>
@@ -84,6 +86,7 @@ namespace SharpSlugsEngine
             //Create input managers
             Controllers = new DeviceManager(this);
             Keyboard = new KeyboardManager(this);
+            Mouse = new MouseManager(this);
             
             //Create Content Manager
             Content = new ContentManager();
@@ -120,6 +123,7 @@ namespace SharpSlugsEngine
 
             Controllers.Update(updateTime);
             Keyboard.Update();
+            Mouse.Update();
             Update(updateTime);
             sprites.Update();//Should I add updateTime to this? Not sure how it is worked in.
 

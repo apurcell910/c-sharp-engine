@@ -51,8 +51,8 @@ namespace Test_Game
                 }
             };
             Event EventA = new Event();
-            EventA.Test += (Keys key) => Console.WriteLine("{0} pressed", (char) key);
-            Keyboard.AddMassAlphaBind(EventA);
+            EventA.Test += (key, location) => Console.WriteLine("Mouse at {0}", location);
+            Mouse.AddLocationBind(EventA);
         }
         
         protected override void LoadContent() {

@@ -45,7 +45,7 @@ namespace SharpSlugsEngine.Input
                 _oldKeys[key] = _currentKeys[key];
                 _currentKeys[key] = _asyncKeys[key];
             }
-            _singleKey();
+            _singleKey?.Invoke();
         }
 
         private void UnhookForm()
