@@ -98,6 +98,7 @@ namespace SharpSlugsEngine.Input
         {
             _asyncMouseState.X = e.X;
             _asyncMouseState.Y = e.Y;
+            _asyncMouseState.Location = e.Location;
         }
 
         public delegate void broadcastLocation(Point Location);
