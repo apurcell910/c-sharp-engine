@@ -73,6 +73,12 @@ namespace Test_Game
             sprites.display("img2", true);
             sprites.add("test", new TestSprite(100, 100, 50, 75, Color.AliceBlue, true));
             sprites.display("test", true);
+
+            sprites.add("newrect", new Rect(500, 500, 10, 10, Color.Red));
+            sprites.display("newrect", true);
+            Event MoveRect = new Event();
+            MoveRect.Test += (key, location) => sprites.moveto("newrect", location.X, location.Y);
+            Mouse.AddLocationBind(MoveRect);
         }
         protected override void Update(GameTime gameTime)
         {

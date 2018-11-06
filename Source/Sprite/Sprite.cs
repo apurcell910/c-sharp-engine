@@ -41,6 +41,12 @@ namespace SharpSlugsEngine {
             this.y += y;
         }
 
+        public void moveto(int x, int y)
+        {
+            this.x = x;
+            this.y = y;
+        }
+
         public void moveX(int x) {
             this.x += x;
         }

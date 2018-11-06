@@ -154,7 +154,12 @@ namespace SharpSlugsEngine.Input
 
         public void RemoveKeybind(Keys key, Event e)
         {
-            SingleKey += () => { if (IsPressed(key)) e.callEvent(); };
+            SingleKey -= () => { if (IsPressed(key)) e.callEvent(); };
+        }
+
+        public void AddMultiBind(List<Keys> l, Event e)
+        {
+            SingleKey += () => {; };
         }
 
         public void AddAlphaBind(Event e)

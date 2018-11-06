@@ -59,6 +59,11 @@ namespace SharpSlugsEngine {
             this.sprites[key].move(x, y);
         }
 
+        public void moveto(string key, int x, int y)
+        {
+            this.sprites[key].moveto(x, y);
+        }
+
         public void moveX(string key, int x) {
             this.sprites[key].moveX(x);
         }
