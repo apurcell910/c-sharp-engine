@@ -4,6 +4,8 @@ namespace SharpSlugsEngine.Input
 {
     public class Xbox360Controller : GameController
     {
+        private static readonly ButtonType[] allButtons = (ButtonType[])Enum.GetValues(typeof(ButtonType));
+
         private InputDevice _device;
 
         private ButtonState _asyncButtonState;
@@ -43,6 +45,69 @@ namespace SharpSlugsEngine.Input
 
             //Begin reading data from the controller
             _device.ReadAsync(ReadDeviceBytes);
+        }
+        
+        public bool AnyIsPressed(ButtonType buttons)
+        {
+            foreach (ButtonType type in allButtons)
+            {
+                if ((buttons & type) == type)
+                {
+                    if (GetButtonState(type).IsPressed) return true;
+                }
+            }
+
+            return false;
+        }
+
+        public bool AnyWasPressed(ButtonType buttons)
+        {
+            foreach (ButtonType type in allButtons)
+            {
+                if ((buttons & type) == type)
+                {
+                    if (GetButtonState(type).WasPressed) return true;
+                }
+            }
+
+            return false;
+        }
+
+        public Button GetButtonState(ButtonType button)
+        {
+            switch (button)
+            {
+                case ButtonType.A:
+                    return Buttons.A;
+                case ButtonType.B:
+                    return Buttons.B;
+                case ButtonType.X:
+                    return Buttons.X;
+                case ButtonType.Y:
+                    return Buttons.Y;
+                case ButtonType.Back:
+                    return Buttons.Back;
+                case ButtonType.Start:
+                    return Buttons.Start;
+                case ButtonType.LB:
+                    return Buttons.LB;
+                case ButtonType.RB:
+                    return Buttons.RB;
+                case ButtonType.DPadLeft:
+                    return Buttons.DPadLeft;
+                case ButtonType.DPadRight:
+                    return Buttons.DPadRight;
+                case ButtonType.DPadUp:
+                    return Buttons.DPadUp;
+                case ButtonType.DPadDown:
+                    return Buttons.DPadDown;
+                case ButtonType.LStick:
+                    return LeftStick.Button;
+                case ButtonType.RStick:
+                    return RightStick.Button;
+                default:
+                    return default(Button);
+            }
         }
 
         private void OnDisconnect()
@@ -310,55 +375,73 @@ namespace SharpSlugsEngine.Input
             add => _connected += value;
             remove => _connected -= value;
         }
-    }
 
-    public struct ButtonState
-    {
-        internal ButtonState(bool A, bool B, bool X, bool Y, bool LB, bool RB, bool Back, bool Start, bool DPadLeft, bool DPadRight, bool DPadUp, bool DPadDown)
+        public struct ButtonState
         {
-            this.A = new Button(A);
-            this.B = new Button(B);
-            this.X = new Button(X);
-            this.Y = new Button(Y);
-            this.LB = new Button(LB);
-            this.RB = new Button(RB);
-            this.Back = new Button(Back);
-            this.Start = new Button(Start);
-            this.DPadLeft = new Button(DPadLeft);
-            this.DPadRight = new Button(DPadRight);
-            this.DPadUp = new Button(DPadUp);
-            this.DPadDown = new Button(DPadDown);
+            internal ButtonState(bool A, bool B, bool X, bool Y, bool LB, bool RB, bool Back, bool Start, bool DPadLeft, bool DPadRight, bool DPadUp, bool DPadDown)
+            {
+                this.A = new Button(A);
+                this.B = new Button(B);
+                this.X = new Button(X);
+                this.Y = new Button(Y);
+                this.LB = new Button(LB);
+                this.RB = new Button(RB);
+                this.Back = new Button(Back);
+                this.Start = new Button(Start);
+                this.DPadLeft = new Button(DPadLeft);
+                this.DPadRight = new Button(DPadRight);
+                this.DPadUp = new Button(DPadUp);
+                this.DPadDown = new Button(DPadDown);
+            }
+
+            internal ButtonState(Button A, Button B, Button X, Button Y, Button LB, Button RB, Button Back, Button Start, Button DPadLeft, Button DPadRight, Button DPadUp, Button DPadDown)
+            {
+                this.A = A;
+                this.B = B;
+                this.X = X;
+                this.Y = Y;
+                this.LB = LB;
+                this.RB = RB;
+                this.Back = Back;
+                this.Start = Start;
+                this.DPadLeft = DPadLeft;
+                this.DPadRight = DPadRight;
+                this.DPadUp = DPadUp;
+                this.DPadDown = DPadDown;
+            }
+
+            public Button A { get; private set; }
+            public Button B { get; private set; }
+            public Button X { get; private set; }
+            public Button Y { get; private set; }
+            public Button LB { get; private set; }
+            public Button RB { get; private set; }
+            public Button Back { get; private set; }
+            public Button Start { get; private set; }
+
+            public Button DPadLeft { get; private set; }
+            public Button DPadRight { get; private set; }
+            public Button DPadUp { get; private set; }
+            public Button DPadDown { get; private set; }
         }
 
-        internal ButtonState(Button A, Button B, Button X, Button Y, Button LB, Button RB, Button Back, Button Start, Button DPadLeft, Button DPadRight, Button DPadUp, Button DPadDown)
+        public enum ButtonType
         {
-            this.A = A;
-            this.B = B;
-            this.X = X;
-            this.Y = Y;
-            this.LB = LB;
-            this.RB = RB;
-            this.Back = Back;
-            this.Start = Start;
-            this.DPadLeft = DPadLeft;
-            this.DPadRight = DPadRight;
-            this.DPadUp = DPadUp;
-            this.DPadDown = DPadDown;
+            A = 1,
+            B = 2,
+            X = 4,
+            Y = 8,
+            LB = 16,
+            RB = 32,
+            Back = 64,
+            Start = 128,
+            DPadLeft = 256,
+            DPadRight = 512,
+            DPadUp = 1024,
+            DPadDown = 2048,
+            LStick = 4096,
+            RStick = 8192
         }
-
-        public Button A { get; private set; }
-        public Button B { get; private set; }
-        public Button X { get; private set; }
-        public Button Y { get; private set; }
-        public Button LB { get; private set; }
-        public Button RB { get; private set; }
-        public Button Back { get; private set; }
-        public Button Start { get; private set; }
-
-        public Button DPadLeft { get; private set; }
-        public Button DPadRight { get; private set; }
-        public Button DPadUp { get; private set; }
-        public Button DPadDown { get; private set; }
     }
 
     public struct Button

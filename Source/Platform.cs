@@ -60,7 +60,7 @@ namespace SharpSlugsEngine
 
         public void ResizeWindow(int x, int y)
         {
-            form.Size = new Size(x, y);
+            form.ClientSize = new Size(x, y);
             form.Center();
             game.Graphics.RecreateGraphics();
         }

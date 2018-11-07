@@ -1,5 +1,5 @@
 ﻿using System;
-using System.IO;
+using System.Collections.Generic;
 using SharpSlugsEngine;
 using SharpSlugsEngine.Input;
 using System.Drawing;
@@ -19,40 +19,42 @@ namespace Test_Game
 
     class TestGame : Game
     {
+        private readonly Dictionary<string, InputAction> inputActions = new Dictionary<string, InputAction>();
+
+        private Vector2 playerPos = new Vector2(640, 360);
+
         protected override void Initialize()
         {
             TargetFramerate = 1;
-            
+
+            inputActions.Add("Left", new InputAction(this));
+            inputActions.Add("Right", new InputAction(this));
+            inputActions.Add("Up", new InputAction(this));
+            inputActions.Add("Down", new InputAction(this));
+
+            inputActions["Left"].AddKey(Keys.Left);
+            inputActions["Right"].AddKey(Keys.Right);
+            inputActions["Up"].AddKey(Keys.Up);
+            inputActions["Down"].AddKey(Keys.Down);
+
+            inputActions["Left"].Add360Buttons(Xbox360Controller.ButtonType.DPadLeft);
+            inputActions["Right"].Add360Buttons(Xbox360Controller.ButtonType.DPadRight);
+            inputActions["Up"].Add360Buttons(Xbox360Controller.ButtonType.DPadUp);
+            inputActions["Down"].Add360Buttons(Xbox360Controller.ButtonType.DPadDown);
+
             Controllers.ControllerAdded += (newController) =>
             {
-                Console.WriteLine("New controller added: " + newController.Type);
-
-                if (newController.Type == ControllerType.Xbox360)
+                foreach (InputAction action in inputActions.Values)
                 {
-                    Xbox360Controller controller = (Xbox360Controller)newController;
-
-                    controller.Disconnected += () => Console.WriteLine("Controller Disconnected");
-                    controller.Connected += () => Console.WriteLine("Controller Connected");
-
-                    controller.APressed += () => Console.WriteLine("A Pressed");
-                    controller.BPressed += () => Console.WriteLine("B Pressed");
-                    controller.XPressed += () => Console.WriteLine("X Pressed");
-                    controller.YPressed += () => Console.WriteLine("Y Pressed");
-                    controller.LBPressed += () => Console.WriteLine("LB Pressed");
-                    controller.RBPressed += () => Console.WriteLine("RB Pressed");
-                    controller.BackPressed += () => Console.WriteLine("Back Pressed");
-                    controller.StartPressed += () => Console.WriteLine("Start Pressed");
-                    controller.DPadUpPressed += () => Console.WriteLine("DPadUp Pressed");
-                    controller.DPadDownPressed += () => Console.WriteLine("DPadDown Pressed");
-                    controller.DPadLeftPressed += () => Console.WriteLine("DPadLeft Pressed");
-                    controller.DPadRightPressed += () => Console.WriteLine("DPadRight Pressed");
-                    controller.LeftStickPressed += () => Console.WriteLine("LeftStick pressed. Current position: " + controller.LeftStick.State);
-                    controller.RightStickPressed += () => Console.WriteLine("RightStick pressed. Current position: " + controller.RightStick.State);
+                    action.AddDevice(newController);
                 }
             };
+
             Event EventA = new Event();
             EventA.Test += (key, location) => Console.WriteLine("Mouse at {0}", location);
             Mouse.AddLocationBind(EventA);
+
+            ShowCursor = false;
         }
         
         protected override void LoadContent() {
@@ -84,11 +86,38 @@ namespace Test_Game
         {
             Resolution = new Vector2(1280, 720);
             //Console.WriteLine("Update");
-            
-            if (Keyboard[Keys.Left].WasPressed)
+
+            //Search for a left stick outside of a modest deadzone
+            Vector2 moveVec = new Vector2(0, 0);
+            foreach (Xbox360Controller controller in Controllers.Xbox360Controllers)
             {
-                Console.WriteLine("Left");
+                if (controller.LeftStick.State.Length >= 0.25)
+                {
+                    moveVec = controller.LeftStick.State;
+                    break;
+                }
             }
+
+            //Apply InputAction bindings to this vector
+            if (inputActions["Left"].IsPressed) moveVec = new Vector2(-1, moveVec.Y);
+            if (inputActions["Right"].IsPressed) moveVec = new Vector2(1, moveVec.Y);
+            if (inputActions["Up"].IsPressed) moveVec = new Vector2(moveVec.X, -1);
+            if (inputActions["Down"].IsPressed) moveVec = new Vector2(moveVec.X, 1);
+            
+            //Make sure the vector isn't too long
+            if (moveVec.Length > 1f)
+            {
+                moveVec = moveVec.Normalize();
+            }
+
+            //Move the player
+            playerPos += moveVec * 250 * (float)gameTime.deltaTime.TotalSeconds;
+
+            //Keep the player on the screen
+            if (playerPos.X < 10) playerPos = new Vector2(10, playerPos.Y);
+            if (playerPos.X > Resolution.X - 10) playerPos = new Vector2(Resolution.X - 10, playerPos.Y);
+            if (playerPos.Y < 10) playerPos = new Vector2(playerPos.X, 10);
+            if (playerPos.Y > Resolution.Y - 10) playerPos = new Vector2(playerPos.X, Resolution.Y - 10);
         }
 
         protected override void Draw(GameTime gameTime)
@@ -97,6 +126,8 @@ namespace Test_Game
             Graphics.DrawRectangle(50, 50, 100, 100, Color.Blue);
             Graphics.DrawLine(100, 100, 400, 400, Color.BlanchedAlmond);
             Graphics.DrawCircle(250, 250, 50, Color.FromArgb(69, 69, 69));
+
+            Graphics.DrawCircle((Point)playerPos, 10, Color.Black);
         }
     }
 

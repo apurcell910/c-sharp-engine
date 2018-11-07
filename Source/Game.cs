@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Windows.Forms;
 using SharpSlugsEngine.Input;
 
 namespace SharpSlugsEngine
@@ -48,7 +49,7 @@ namespace SharpSlugsEngine
         public bool FixedTimestep { get; protected set; }
 
         //Backing field for the Resolution property
-        private Vector2 _resolution;
+        internal Vector2 _resolution;
 
         /// <summary>
         /// The resolution of the game window. <see cref="Vector2.X" /> controls width and <see cref="Vector2.Y"/> controls height.
@@ -63,6 +64,25 @@ namespace SharpSlugsEngine
                 platform.ResizeWindow((int)_resolution.X, (int)_resolution.Y);
                 //Update resolution of game window
                 //TODO: Sprint 1, user story 1, task 5 (Harpreet)
+            }
+        }
+
+        /// <summary>
+        /// Whether or not to show the cursor when hovering over the game window.
+        /// </summary>
+        public bool ShowCursor
+        {
+            get => Cursor.Current != null;
+            set
+            {
+                if (Cursor.Current == null)
+                {
+                    Cursor.Show();
+                }
+                else
+                {
+                    Cursor.Hide();
+                }
             }
         }
 

@@ -44,6 +44,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Event.cs" />
+    <Compile Include="Input\InputAction.cs" />
     <Compile Include="Input\MouseManager.cs" />
     <Compile Include="Input\DeviceManager.cs" />
     <Compile Include="Input\GameController.cs" />
