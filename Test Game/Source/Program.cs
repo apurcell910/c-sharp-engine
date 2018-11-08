@@ -19,7 +19,7 @@ namespace Test_Game
 
     class TestGame : Game
     {
-        private Bitmap gameOverBMP;
+        public ContentManager Manager = new ContentManager();
 
         public readonly Random rnd = new Random();
 
@@ -81,7 +81,8 @@ namespace Test_Game
         
         protected override void LoadContent()
         {
-            gameOverBMP = new Bitmap("../../Content/GameOver.png");
+            Manager.AddImage("../../Content/GameOver.png", "GameOver");
+            Manager.AddImage("../../Content/Asteroid.png", "Asteroid");
 
             sprites.add("cursor", new SImage(0, 0, "../../Content/Cursor.png"));
             sprites.scale("cursor", 0.5);
@@ -249,7 +250,7 @@ namespace Test_Game
 
             if (gameOver)
             {
-                Graphics.DrawBMP(gameOverBMP, 0, 0, (int)Resolution.X, (int)Resolution.Y);
+                Graphics.DrawBMP(Manager.GetImage("GameOver"), 0, 0, (int)Resolution.X, (int)Resolution.Y);
             }
         }
 
@@ -291,7 +292,7 @@ namespace Test_Game
 
         public class Asteroid
         {
-            public static Bitmap image = new Bitmap("../../Content/Asteroid.png");
+            private Bitmap image;
 
             private Game _game;
             private float rotSpeed;
@@ -307,6 +308,8 @@ namespace Test_Game
             public Asteroid(Game game, Vector2 pos, Vector2 velocity)
             {
                 _game = game;
+
+                image = (_game as TestGame).Manager.GetImage("Asteroid");
 
                 Random rnd = new Random();
                 rotSpeed = (float)rnd.NextDouble() * 50 - 25;
