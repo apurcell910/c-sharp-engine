@@ -18,7 +18,7 @@ namespace SharpSlugsEngine
         public void AddImage(string filePath, string fileName = "image", int scale = 1)
         {
             Bitmap bmp = new Bitmap(filePath);
-            bmp = new Bitmap(bmp, (int)bmp.VerticalResolution / scale, (int)bmp.HorizontalResolution / scale);
+            bmp = new Bitmap(bmp, bmp.Width / scale, bmp.Height / scale);
             images.Add(fileName, bmp);
             return;
         }
