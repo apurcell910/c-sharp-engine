@@ -56,6 +56,15 @@ namespace SharpSlugsEngine {
         }
 
         /// <summary>
+        /// Sets the sprite rotation to r
+        /// </summary>
+        /// <param name="key">Sprite to edit</param>
+        /// <param name="r">How many degrees to rotate the sprite by.</param>
+        public void setRotation(float r) {
+            this.angle = r;
+        }
+
+        /// <summary>
         /// Rotate the sprite by r (degrees or radians?)
         /// </summary>
         /// <param name="key">Sprite to edit</param>

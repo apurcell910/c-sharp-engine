@@ -15,6 +15,12 @@ namespace SharpSlugsEngine
         private readonly Game game;
         private readonly Platform platform;
 
+        public Color BackColor
+        {
+            get => platform.form.BackColor;
+            set => platform.form.BackColor = value;
+        }
+
         internal GraphicsManager(Game game, Platform platform)
         {
             this.game = game;
@@ -121,7 +127,19 @@ namespace SharpSlugsEngine
             bitmapGraphics.DrawImage(bmp, x, y, w, h);
         }
 
+        public void DrawBMP(Bitmap bmp, int x, int y, int w, int h, float r)
+        {
+            using (Matrix m = new Matrix())
+            {
+                m.RotateAt(r, new PointF(x + w / 2f, y + h / 2f));
+                bitmapGraphics.Transform = m;
+                bitmapGraphics.DrawImage(bmp, x, y, w, h);
+                bitmapGraphics.ResetTransform();
+            }
+        }
+
         public void DrawBMP(Bitmap bmp, int x, int y, int w, int h, int ix, int iy, int iw, int ih) {
+            
             bitmapGraphics.DrawImage(bmp, new Rectangle(x, y, w, h), ix, iy, iw, ih, GraphicsUnit.Pixel);
         }
     }

@@ -12,20 +12,41 @@ namespace Test_Game
         static void Main()
         {
             TestGame test =  new TestGame();
-            test.Resolution = new Vector2(1920, 1080);
+            test.Resolution = new Vector2(1280, 720);
             test.Run();
         }
     }
 
     class TestGame : Game
     {
+        private Bitmap gameOverBMP;
+
+        public readonly Random rnd = new Random();
+
         private readonly Dictionary<string, InputAction> inputActions = new Dictionary<string, InputAction>();
 
+        private List<Bullet> bullets = new List<Bullet>();
+        private float bulletCooldown;
+
+        private List<Asteroid> asteroids = new List<Asteroid>();
+        private float asteroidCooldown;
+
         private Vector2 playerPos = new Vector2(640, 360);
+        private Vector2 mousePos;
+
+        private bool usingMouse;
+
+        private Vector2 cursorSize;
+        private Vector2 shipSize;
+
+        private Vector2 shootDir;
+        private bool shooting;
+
+        private bool gameOver;
 
         protected override void Initialize()
         {
-            TargetFramerate = 1;
+            Graphics.BackColor = Color.Black;
 
             inputActions.Add("Left", new InputAction(this));
             inputActions.Add("Right", new InputAction(this));
@@ -36,6 +57,11 @@ namespace Test_Game
             inputActions["Right"].AddKey(Keys.Right);
             inputActions["Up"].AddKey(Keys.Up);
             inputActions["Down"].AddKey(Keys.Down);
+
+            inputActions["Left"].AddKey(Keys.A);
+            inputActions["Right"].AddKey(Keys.D);
+            inputActions["Up"].AddKey(Keys.W);
+            inputActions["Down"].AddKey(Keys.S);
 
             inputActions["Left"].Add360Buttons(Xbox360Controller.ButtonType.DPadLeft);
             inputActions["Right"].Add360Buttons(Xbox360Controller.ButtonType.DPadRight);
@@ -50,53 +76,57 @@ namespace Test_Game
                 }
             };
 
-            Event EventA = new Event();
-            EventA.Test += (key, location) => Console.WriteLine("Mouse at {0}", location);
-            Mouse.AddLocationBind(EventA);
-
             ShowCursor = false;
         }
         
-        protected override void LoadContent() {
-            ContentManager manager = new ContentManager();
-            Bitmap [] bmp = manager.SplitImage(@"..\..\Content\test.bmp", 4, "test_bmp");
-            Bitmap[] scaled = manager.ScaleImage(bmp, 4);
-            manager.printNames();
-            sprites.add("rect", new Rect(400, 400, 50, 50, Color.Aqua));
-            sprites.add("ellipse", new Ellipse(800, 600, 120, 50, Color.Black));
-            sprites.add("line", new Line(200, 200, 800, 500, Color.Green));
-            sprites.display("rect", true);
-            sprites.display("ellipse", true);
-            sprites.display("line", true);
-            sprites.add("img", new SImage(400, 500, scaled[1]));
-            sprites.display("img", true);
-            sprites.add("img2", new SImage(800, 100, "../../Content/test.bmp"));
-            sprites.scale("img2", 0.3333333);
-            sprites.display("img2", true);
-            sprites.add("test", new TestSprite(100, 100, 50, 75, Color.AliceBlue, true));
-            sprites.display("test", true);
+        protected override void LoadContent()
+        {
+            gameOverBMP = new Bitmap("../../Content/GameOver.png");
 
-            sprites.add("newrect", new Rect(500, 500, 10, 10, Color.Red));
-            sprites.display("newrect", true);
-            Event MoveRect = new Event();
-            MoveRect.Test += (key, location) => sprites.moveto("newrect", location.X, location.Y);
-            Mouse.AddLocationBind(MoveRect);
+            sprites.add("cursor", new SImage(0, 0, "../../Content/Cursor.png"));
+            sprites.scale("cursor", 0.5);
+            sprites.display("cursor", true);
+
+            sprites.add("ship", new SImage(640, 360, "../../Content/Ship.png"));
+            sprites.scale("ship", 0.5);
+            sprites.display("ship", true);
+
+            cursorSize = sprites.getSize("cursor");
+            shipSize = sprites.getSize("ship");
         }
+
         protected override void Update(GameTime gameTime)
         {
-            Resolution = new Vector2(1280, 720);
-            //Console.WriteLine("Update");
+            if (gameOver) return;
 
-            //Search for a left stick outside of a modest deadzone
+            if (mousePos != Mouse.State.Location)
+            {
+                usingMouse = true;
+                mousePos = Mouse.State.Location;
+            }
+
+            shooting = usingMouse && Mouse.State.Left.IsClicked;
+            
+            //Search for sticks outside of a modest deadzone
+            //Left stick for movement and right stick for shooting
             Vector2 moveVec = new Vector2(0, 0);
+            Vector2 shootVec = new Vector2(0, 0);
             foreach (Xbox360Controller controller in Controllers.Xbox360Controllers)
             {
                 if (controller.LeftStick.State.Length >= 0.25)
                 {
                     moveVec = controller.LeftStick.State;
-                    break;
+                }
+
+                if (controller.RightStick.State.Length >= 0.25)
+                {
+                    shootVec = controller.RightStick.State;
+                    shooting = true;
+                    usingMouse = false;
                 }
             }
+            
+            sprites.display("cursor", usingMouse);
 
             //Apply InputAction bindings to this vector
             if (inputActions["Left"].IsPressed) moveVec = new Vector2(-1, moveVec.Y);
@@ -114,48 +144,215 @@ namespace Test_Game
             playerPos += moveVec * 250 * (float)gameTime.deltaTime.TotalSeconds;
 
             //Keep the player on the screen
-            if (playerPos.X < 10) playerPos = new Vector2(10, playerPos.Y);
-            if (playerPos.X > Resolution.X - 10) playerPos = new Vector2(Resolution.X - 10, playerPos.Y);
-            if (playerPos.Y < 10) playerPos = new Vector2(playerPos.X, 10);
-            if (playerPos.Y > Resolution.Y - 10) playerPos = new Vector2(playerPos.X, Resolution.Y - 10);
+            if (playerPos.X < shipSize.X / 2f) playerPos = new Vector2(shipSize.X / 2f, playerPos.Y);
+            if (playerPos.X > Resolution.X - shipSize.X / 2f) playerPos = new Vector2(Resolution.X - shipSize.X / 2f, playerPos.Y);
+            if (playerPos.Y < shipSize.Y / 2f) playerPos = new Vector2(playerPos.X, shipSize.Y / 2f);
+            if (playerPos.Y > Resolution.Y - shipSize.Y / 2f) playerPos = new Vector2(playerPos.X, Resolution.Y - shipSize.Y / 2f);
+
+            sprites.moveto("cursor", (int)(mousePos.X - cursorSize.X / 2f), (int)(mousePos.Y - cursorSize.Y / 2f));
+            sprites.moveto("ship", (int)(playerPos.X - shipSize.X / 2f), (int)(playerPos.Y - shipSize.Y / 2f));
+            
+            if (usingMouse)
+            {
+                shootDir = (playerPos - mousePos).Normalize();
+            }
+            else if (shootVec != Vector2.Zero)
+            {
+                shootDir = -shootVec.Normalize();
+            }
+
+            float angleRadians = (float)Math.Atan2(shootDir.Y, shootDir.X);
+            float angleDegrees = angleRadians * (float)(180f / Math.PI) - 90;
+            
+            sprites.setRotation("ship", angleDegrees);
+
+            bullets.ForEach(bullet => bullet.Update(gameTime));
+            bullets.RemoveAll(bullet => bullet.Dead);
+
+            asteroids.ForEach(asteroid => asteroid.Update(gameTime));
+            asteroids.RemoveAll(asteroid => asteroid.Dead);
+
+            bulletCooldown -= (float)gameTime.deltaTime.TotalSeconds;
+            asteroidCooldown -= (float)gameTime.deltaTime.TotalSeconds;
+
+            if (shooting && bulletCooldown <= 0f)
+            {
+                bulletCooldown = 0.25f;
+                bullets.Add(new Bullet(this, playerPos - shootDir * shipSize.Y / 2f, shootDir * -500));
+            }
+
+            if (asteroidCooldown <= 0f)
+            {
+                asteroidCooldown = (float)(rnd.NextDouble() + 0.5f);
+
+                //0 - top
+                //1 - left
+                //2 - bottom
+                //3 - right
+                Vector2 pos = new Vector2(0, 0);
+                Vector2 vel = new Vector2(0, 0);
+                switch (rnd.Next(4))
+                {
+                    case 0:
+                        pos = new Vector2(rnd.Next(0, (int)Resolution.X), 0);
+                        vel = new Vector2(rnd.Next(100) - 50, rnd.Next(50));
+                        break;
+                    case 1:
+                        pos = new Vector2(0, rnd.Next(0, (int)Resolution.Y));
+                        vel = new Vector2(rnd.Next(50), rnd.Next(100) - 50);
+                        break;
+                    case 2:
+                        pos = new Vector2(rnd.Next(0, (int)Resolution.X), Resolution.Y);
+                        vel = new Vector2(rnd.Next(100) - 50, -rnd.Next(50));
+                        break;
+                    case 3:
+                        pos = new Vector2(Resolution.X, rnd.Next(0, (int)Resolution.Y));
+                        vel = new Vector2(-rnd.Next(50), rnd.Next(100) - 50);
+                        break;
+                }
+
+                asteroids.Add(new Asteroid(this, pos, vel.Normalize() * rnd.Next(100, 200)));
+            }
+
+            foreach (Asteroid asteroid in asteroids)
+            {
+                foreach (Bullet bullet in bullets)
+                {
+                    if (asteroid.CheckCollision(bullet.Position, 5))
+                    {
+                        bullet.Dead = true;
+                        asteroid.Damage();
+                    }
+                }
+            }
+
+            bullets.RemoveAll(bullet => bullet.Dead);
+            asteroids.RemoveAll(asteroid => asteroid.Dead);
+
+            foreach (Asteroid asteroid in asteroids)
+            {
+                if (asteroid.CheckCollision(playerPos, (int)(shipSize.X / 3f)))
+                {
+                    sprites.display("ship", false);
+                    sprites.display("cursor", false);
+                    ShowCursor = true;
+                    gameOver = true;
+                    break;
+                }
+            }
         }
 
         protected override void Draw(GameTime gameTime)
         {
-            //Console.WriteLine("Draw");
-            Graphics.DrawRectangle(50, 50, 100, 100, Color.Blue);
-            Graphics.DrawLine(100, 100, 400, 400, Color.BlanchedAlmond);
-            Graphics.DrawCircle(250, 250, 50, Color.FromArgb(69, 69, 69));
+            bullets.ForEach(bullet => bullet.Draw());
+            asteroids.ForEach(asteroid => asteroid.Draw());
 
-            Graphics.DrawCircle((Point)playerPos, 10, Color.Black);
-        }
-    }
-
-    //Test override of Sprite class based on Rectangle class
-    public class TestSprite : Sprite {
-        Color color;
-        bool fill;
-        public TestSprite(int x, int y, int w, int h, Color color, bool fill = true) {
-            this.x = x;
-            this.y = y;
-            this.w = w;
-            this.h = h;
-            this.color = color;
-            this.fill = fill;
-            disp = false;
-            alive = true;
-            angle = 0;
-            xAnchor = yAnchor = 0;
+            if (gameOver)
+            {
+                Graphics.DrawBMP(gameOverBMP, 0, 0, (int)Resolution.X, (int)Resolution.Y);
+            }
         }
 
-        public override void Draw(GraphicsManager graphics) {
-            graphics.DrawRectangle(x, y, w, h, color, fill);
+        public class Bullet
+        {
+            private Game _game;
+
+            public Vector2 Position { get; private set; }
+            public Vector2 Velocity { get; private set; }
+            public bool Dead;
+
+            public Bullet(Game game, Vector2 pos, Vector2 velocity)
+            {
+                _game = game;
+
+                Position = pos;
+                Velocity = velocity;
+            }
+
+            public void Update(GameTime gameTime)
+            {
+                if (Dead) return;
+
+                Position = Position + Velocity * (float)gameTime.deltaTime.TotalSeconds;
+
+                if (Position.X < 0 || Position.X > _game.Resolution.X || Position.Y < 0 || Position.Y > _game.Resolution.Y)
+                {
+                    Dead = true;
+                }
+            }
+
+            public void Draw()
+            {
+                if (Dead) return;
+
+                _game.Graphics.DrawCircle((Point)Position, 5, Color.White);
+            }
         }
 
-        public override void Update() {
-            move(5, 10);
-            if (x > 720 || y > 1280) {
-                kill();
+        public class Asteroid
+        {
+            public static Bitmap image = new Bitmap("../../Content/Asteroid.png");
+
+            private Game _game;
+            private float rotSpeed;
+            private float rotation;
+            private float size;
+
+            private int hp;
+
+            public Vector2 Position { get; private set; }
+            public Vector2 Velocity { get; private set; }
+            public bool Dead;
+
+            public Asteroid(Game game, Vector2 pos, Vector2 velocity)
+            {
+                _game = game;
+
+                Random rnd = new Random();
+                rotSpeed = (float)rnd.NextDouble() * 50 - 25;
+                size = (float)rnd.NextDouble() + 0.5f;
+
+                hp = (int)(size * 5);
+
+                Position = pos;
+                Velocity = velocity;
+            }
+
+            public void Update(GameTime gameTime)
+            {
+                if (Dead) return;
+
+                Position = Position + Velocity * (float)gameTime.deltaTime.TotalSeconds;
+
+                if (Position.X < -(image.Width * size) / 2f || Position.X > _game.Resolution.X + (image.Width * size) / 2f
+                    || Position.Y < -(image.Height * size) / 2f || Position.Y > _game.Resolution.Y + (image.Height * size) / 2f)
+                {
+                    Dead = true;
+                }
+
+                rotation += rotSpeed * (float)gameTime.deltaTime.TotalSeconds * 5;
+                if (rotation > 360) rotation -= 360;
+            }
+
+            public bool CheckCollision(Vector2 loc, int radius)
+            {
+                Vector2 dist = Position - loc;
+                dist = new Vector2(Math.Abs(dist.X), Math.Abs(dist.Y));
+
+                return dist.Length <= radius + (image.Width / 2f) * size;
+            }
+
+            public void Damage()
+            {
+                if (--hp <= 0)
+                {
+                    Dead = true;
+                }
+            }
+
+            public void Draw()
+            {
+                _game.Graphics.DrawBMP(image, (int)(Position.X - (image.Width * size) / 2f), (int)(Position.Y - (image.Height * size) / 2f), (int)(image.Width * size), (int)(image.Height * size), rotation);
             }
         }
     }

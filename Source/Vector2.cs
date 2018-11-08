@@ -58,6 +58,7 @@ namespace SharpSlugsEngine
         public static bool operator !=(Vector2 l, Vector2 r) => !(l == r);
 
         public static Vector2 operator -(Vector2 l, Vector2 r) => new Vector2(l.X - r.X, l.Y - r.Y);
+        public static Vector2 operator -(Vector2 self) => Zero - self;
         public static Vector2 operator +(Vector2 l, Vector2 r) => new Vector2(l.X + r.X, l.Y + r.Y);
         public static Vector2 operator /(Vector2 l, Vector2 r) => new Vector2(l.X / r.X, l.Y / r.Y);
         public static Vector2 operator *(Vector2 l, Vector2 r) => new Vector2(l.X * r.X, l.Y * r.Y);

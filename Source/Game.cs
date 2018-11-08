@@ -75,7 +75,7 @@ namespace SharpSlugsEngine
             get => Cursor.Current != null;
             set
             {
-                if (Cursor.Current == null)
+                if (value)
                 {
                     Cursor.Show();
                 }

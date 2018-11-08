@@ -74,7 +74,7 @@ namespace SharpSlugsEngine {
 
         public override void Draw(GraphicsManager graphics) {
             if (ix == 0 && iy == 0 && iw == 0 && ih == 0) {
-                graphics.DrawBMP(image, x, y, w, h);
+                graphics.DrawBMP(image, x, y, w, h, angle);
             } else {
                 //Not implemented
             }

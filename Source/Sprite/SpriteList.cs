@@ -73,6 +73,15 @@ namespace SharpSlugsEngine {
         }
 
         /// <summary>
+        /// Sets the sprite rotation to r
+        /// </summary>
+        /// <param name="key">Sprite to edit</param>
+        /// <param name="r">How many degrees to rotate the sprite by.</param>
+        public void setRotation(string key, float r) {
+            this.sprites[key].setRotation(r);
+        }
+
+        /// <summary>
         /// Rotate the sprite by r (degrees or radians?)
         /// </summary>
         /// <param name="key">Sprite to edit</param>
@@ -97,6 +106,10 @@ namespace SharpSlugsEngine {
         /// <param name="scale">How much to scale it by(decimal to make it smaller)</param>
         public void scaleY(string key, double scale) {
             sprites[key].scaleY(scale);
+        }
+
+        public Vector2 getSize(string key) {
+            return new Vector2(sprites[key].w, sprites[key].h);
         }
 
         /// <summary>

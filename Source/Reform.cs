@@ -20,7 +20,7 @@ namespace SharpSlugsEngine
 
         private void RecreateGraphics(object sender, System.EventArgs e)
         {
-            game._resolution = new Vector2(Width, Height);
+            game._resolution = new Vector2(ClientSize.Width, ClientSize.Height);
         }
 
         public void Center()

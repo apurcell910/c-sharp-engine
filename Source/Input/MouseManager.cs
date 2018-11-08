@@ -16,6 +16,8 @@ namespace SharpSlugsEngine.Input
         private MouseState _oldMouseState;
         private MouseState _currentMouseState;
 
+        public MouseState State { get; private set; }
+
         internal void Update()
         {
             _oldMouseState = _currentMouseState;
@@ -29,6 +31,7 @@ namespace SharpSlugsEngine.Input
             Click C = new Click(_currentMouseState.Center.IsClicked, !_oldMouseState.Center.IsClicked && _currentMouseState.Center.IsClicked);
 
             MouseState now = new MouseState(x, y, L, R, C);
+            State = now;
             Broadcast?.Invoke(_currentMouseState.Location);
 
             if (_leftClick != null && now.Left.WasClicked) _leftClick();
