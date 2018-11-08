@@ -45,6 +45,12 @@ namespace SharpSlugsEngine
             return ret;
         }
 
+        public Bitmap GetImage(string name)
+        {
+            images.TryGetValue(name, out Bitmap value);
+            return value;
+        }
+
         public bool InManager(string name)
         {
             return images.TryGetValue(name, out Bitmap value);
