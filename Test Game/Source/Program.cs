@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using SharpSlugsEngine;
 using SharpSlugsEngine.Input;
+using SharpSlugsEngine.Physics;
 using System.Drawing;
 using System.Windows.Forms;
 
@@ -41,6 +42,9 @@ namespace Test_Game
         private bool shooting;
 
         private bool gameOver;
+
+        private PolygonCollider polygonTest;
+        private PolygonCollider polygonTest2;
 
         protected override void Initialize()
         {
@@ -93,6 +97,41 @@ namespace Test_Game
 
             cursorSize = sprites.getSize("cursor");
             shipSize = sprites.getSize("ship");
+
+            Vector2[] ccw = new Vector2[]
+            {
+                new Vector2(200, 0),
+                new Vector2(100, 70),
+                new Vector2(150, 60),
+                new Vector2(100, 110),
+                new Vector2(120, 150),
+                new Vector2(160, 70),
+                new Vector2(200, 170),
+                new Vector2(120, 180),
+                new Vector2(170, 230),
+                new Vector2(240, 150),
+                new Vector2(180, 70),
+                new Vector2(260, 90),
+                new Vector2(250, 110),
+                new Vector2(230, 90),
+                new Vector2(230, 110),
+                new Vector2(270, 130),
+                new Vector2(270, 50),
+                new Vector2(200, 50)
+            };
+
+            Vector2[] cw = new Vector2[ccw.Length];
+            ccw.CopyTo(cw, 0);
+            Array.Reverse(cw);
+
+            for (int i = 0; i < cw.Length; i++)
+            {
+                Console.WriteLine(cw[i]);
+                cw[i] = cw[i] + new Vector2(200, 0);
+            }
+
+            polygonTest = new PolygonCollider(ccw);
+            polygonTest2 = new PolygonCollider(cw);
         }
 
         protected override void Update(GameTime gameTime)
@@ -246,8 +285,21 @@ namespace Test_Game
         {
             bullets.ForEach(bullet => bullet.Draw());
             asteroids.ForEach(asteroid => asteroid.Draw());
-            //Graphics.DrawRectangle(new Vector2(100, 100), 20, 20, Color.Red);
-            //Graphics.DrawRectangle(500, 500, 500, 500, Color.Red);
+            
+            foreach (Triangle tri in polygonTest.Triangles)
+            {
+                Graphics.DrawLine((Point)tri.VertexOne, (Point)tri.VertexTwo, Color.White);
+                Graphics.DrawLine((Point)tri.VertexTwo, (Point)tri.VertexThree, Color.White);
+                Graphics.DrawLine((Point)tri.VertexThree, (Point)tri.VertexOne, Color.White);
+            }
+
+            foreach (Triangle tri in polygonTest2.Triangles)
+            {
+                Graphics.DrawLine((Point)tri.VertexOne, (Point)tri.VertexTwo, Color.Red);
+                Graphics.DrawLine((Point)tri.VertexTwo, (Point)tri.VertexThree, Color.Red);
+                Graphics.DrawLine((Point)tri.VertexThree, (Point)tri.VertexOne, Color.Red);
+            }
+            
             if (gameOver)
             {
                 Graphics.DrawBMP(Content.GetImage("GameOver"), 0, 0, (int)Resolution.X, (int)Resolution.Y);

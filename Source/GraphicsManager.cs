@@ -104,6 +104,8 @@ namespace SharpSlugsEngine
         public void DrawLine(int a, int b, int x, int y, Color color)
         {
             brush.Color = color;
+            pen?.Dispose();
+            pen = new Pen(brush);
             bitmapGraphics.DrawLine(pen, a, b, x, y);
         }
 
