@@ -1,10 +1,13 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 using System.Drawing.Drawing2D;
 
 namespace SharpSlugsEngine
 {
     public class GraphicsManager
     {
+        internal const int defaultScale = 100;
+
         private SolidBrush brush;
         private Pen pen;
         private Graphics formGraphics;
@@ -14,6 +17,7 @@ namespace SharpSlugsEngine
 
         private readonly Game game;
         private readonly Platform platform;
+        private float scaleFactor = defaultScale;
 
         public Color BackColor
         {
@@ -36,6 +40,16 @@ namespace SharpSlugsEngine
         {
             formGraphics.Dispose();
             formGraphics = platform.form.CreateGraphics();
+        }
+
+        private Vector2 ToWorldScale(Vector2 unscaledVector)
+        {
+            return (unscaledVector * scaleFactor) / game.Resolution;
+        }
+
+        private Vector2 ToResolutionScale(Vector2 scaledVector)
+        {
+            return (scaledVector / scaleFactor) * game.Resolution;
         }
 
         internal void Begin()
@@ -78,6 +92,15 @@ namespace SharpSlugsEngine
         public void DrawRectangle(int x, int y, int w, int h, Color color, bool fill = true, float angle = 0, double xAnchor = 0, double yAnchor = 0)
             => DrawRectangle(new Rectangle(x, y, w, h), color, fill, angle, xAnchor, yAnchor);
 
+        public void DrawRectangle(Vector2 worldScaledCenter, int w, int h, Color color, bool fill = true, float angle = 0, double xAnchor = 0, double yAnchor = 0)
+        {
+            Vector2 toResolution = ToResolutionScale(worldScaledCenter);
+
+            Console.WriteLine(toResolution);
+
+            DrawRectangle((int)toResolution.X, (int)toResolution.Y, w, h, color, fill, angle, xAnchor, yAnchor);
+        }
+
         public void DrawLine(int a, int b, int x, int y, Color color)
         {
             brush.Color = color;
@@ -86,6 +109,14 @@ namespace SharpSlugsEngine
 
         public void DrawLine(Point p1, Point p2, Color color)
             => DrawLine(p1.X, p1.Y, p2.X, p2.Y, color);
+
+        public void DrawLine(Vector2 worldScaledA, Vector2 worldScaledB, Color color)
+        {
+            Vector2 toResoultionA = ToResolutionScale(worldScaledA);
+            Vector2 toResoultionB = ToResolutionScale(worldScaledB);
+
+            DrawLine((int)toResoultionA.X, (int)toResoultionA.Y, (int)toResoultionB.X, (int)toResoultionB.Y, color);
+        }
 
         public void DrawCircle(int x, int y, int r, Color color, bool fill = true)
         {
@@ -96,6 +127,15 @@ namespace SharpSlugsEngine
             else
                 bitmapGraphics.DrawEllipse(pen, x - r, y - r, 2 * r, 2 * r);
         }
+
+        public void DrawCircle(Vector2 worldScaledCenter, int r, Color color, bool fill = true)
+        {
+            Vector2 resolutionCenter = ToResolutionScale(worldScaledCenter);
+            DrawCircle((int)resolutionCenter.X, (int)resolutionCenter.Y, r, color, fill);
+        }
+
+        public void DrawCircle(Point p, int r, Color color, bool fill = true)
+            => DrawCircle(p.X, p.Y, r, color, fill);
 
         //Other way to draw an ellipse by defining bounds with rectangle
         public void DrawEllipse(int x, int y, int w, int h, Color color, bool fill = true, float angle = 0, double xAnchor = 0, double yAnchor = 0)
@@ -113,10 +153,12 @@ namespace SharpSlugsEngine
             }
         }
 
-        public void DrawCircle(Point p, int r, Color color, bool fill = true)
-            => DrawCircle(p.X, p.Y, r, color, fill);
+        public void DrawEllipse(Vector2 worldScaledCenter, int w, int h, Color color, bool fill = true, float angle = 0, double xAnchor = 0, double yAnchor = 0)
+        {
+            Vector2 resolutionCenter = ToResolutionScale(worldScaledCenter);
+            DrawEllipse((int)resolutionCenter.X, (int)resolutionCenter.Y, w, h, color, fill, angle, xAnchor, yAnchor);
+        }
 
-        //TODO THIS MIGHT NEED TO CHANGE -> HARPREET
         public void DrawBMP(Bitmap bmp, int x, int y)
         {
             bitmapGraphics.DrawImage(bmp, x, y);
@@ -141,6 +183,22 @@ namespace SharpSlugsEngine
         public void DrawBMP(Bitmap bmp, int x, int y, int w, int h, int ix, int iy, int iw, int ih) {
             
             bitmapGraphics.DrawImage(bmp, new Rectangle(x, y, w, h), ix, iy, iw, ih, GraphicsUnit.Pixel);
+        }
+
+        public void DrawBMP(Bitmap bmp, Vector2 worldScaled, int w, int h, int ix, int iy, int iw, int ih)
+        {
+            Vector2 resolutionScaled = ToResolutionScale(worldScaled);
+            DrawBMP(bmp, (int)resolutionScaled.X, (int)resolutionScaled.Y, w, h, ix, iy, iw, ih);
+        }
+        
+        public void SetWorldScale(float scaleFactor)
+        {
+            this.scaleFactor = scaleFactor;
+        }
+
+        public void printWorldToResolution(Vector2 worldPoint)
+        {
+            Console.WriteLine(ToResolutionScale(worldPoint));
         }
     }
 }

@@ -45,6 +45,7 @@ namespace Test_Game
         protected override void Initialize()
         {
             Graphics.BackColor = Color.Black;
+            Graphics.SetWorldScale(200);
 
             inputActions.Add("Left", new InputAction(this));
             inputActions.Add("Right", new InputAction(this));
@@ -73,7 +74,7 @@ namespace Test_Game
                     action.AddDevice(newController);
                 }
             };
-
+            
             ShowCursor = false;
         }
         
@@ -245,7 +246,8 @@ namespace Test_Game
         {
             bullets.ForEach(bullet => bullet.Draw());
             asteroids.ForEach(asteroid => asteroid.Draw());
-
+            //Graphics.DrawRectangle(new Vector2(100, 100), 20, 20, Color.Red);
+            //Graphics.DrawRectangle(500, 500, 500, 500, Color.Red);
             if (gameOver)
             {
                 Graphics.DrawBMP(Content.GetImage("GameOver"), 0, 0, (int)Resolution.X, (int)Resolution.Y);
