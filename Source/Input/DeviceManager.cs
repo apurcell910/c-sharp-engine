@@ -57,6 +57,12 @@ namespace SharpSlugsEngine.Input
                     //Create an InputDevice in order to get the vendor and product ID
                     InputDevice device = new InputDevice(desc, this);
 
+                    if (device.ReadSize == 0)
+                    {
+                        device.Dispose();
+                        continue;
+                    }
+
                     //Attempt to match the device to a known controller type
                     GameController newController = null;
                     if (!gameControllers.Any(controller => controller.Path == device.DevicePath))
@@ -81,6 +87,12 @@ namespace SharpSlugsEngine.Input
                                         break;
                                     case PID_PLAYSTATION_4:
                                         break;
+                                }
+                                break;
+                            default:
+                                if (device.VendorID == 0xC12 && device.ProductID == 0xEF6)
+                                {
+                                    newController = new HitboxArcadeStick(device);
                                 }
                                 break;
                         }

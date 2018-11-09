@@ -22,6 +22,8 @@ namespace SharpSlugsEngine.Input
         public int VendorID => _descriptor.vid;
         public int ProductID => _descriptor.pid;
 
+        public ushort ReadSize => _capabilities.InputReportByteLength;
+
         private delegate byte[] ReadDelegate();
         public delegate void ReadCallback(byte[] bytes);
 
