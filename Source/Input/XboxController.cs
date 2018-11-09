@@ -5,9 +5,7 @@ namespace SharpSlugsEngine.Input
     public class XboxController : GameController
     {
         private static readonly ButtonType[] allButtons = (ButtonType[])Enum.GetValues(typeof(ButtonType));
-
-        private InputDevice _device;
-
+        
         private ButtonState _asyncButtonState;
         private ButtonState _oldButtonState;
         private ButtonState _currentButtonState;
@@ -20,46 +18,17 @@ namespace SharpSlugsEngine.Input
         private ControlStick _oldRStickState;
         private ControlStick _currentRStickState;
 
-        internal override string Path => _device.DevicePath;
-
-        private ControllerType _type;
-        public override ControllerType Type => _type;
-        public bool IsConnected => _device._connected;
-
         public ButtonState Buttons { get; private set; }
         public ControlStick LeftStick { get; private set; }
         public ControlStick RightStick { get; private set; }
 
-        internal XboxController(InputDevice device)
+        internal XboxController(InputDevice device) : base(device)
         {
-            //Everything is gonna break anyway if device is null, might as well throw an obvious exception
-            _device = device ?? throw new ArgumentNullException();
-
-            //Make sure this is actually an xbox controller and figure out which kind it is
-            if (device.VendorID != DeviceManager.VID_MICROSOFT) throw new ArgumentException("Device is not an Xbox controller");
-            switch (device.ProductID)
+            //Make sure this is actually an xbox controller
+            if (Type != ControllerType.Xbox && Type != ControllerType.Xbox360 && Type != ControllerType.XboxOne && Type != ControllerType.XboxOneS)
             {
-                case DeviceManager.PID_XBOX:
-                    _type = ControllerType.Xbox;
-                    break;
-                case DeviceManager.PID_XBOX_360:
-                    _type = ControllerType.Xbox360;
-                    break;
-                case DeviceManager.PID_XBOX_ONE:
-                    _type = ControllerType.XboxOne;
-                    break;
-                case DeviceManager.PID_XBOX_ONE_S:
-                    _type = ControllerType.XboxOneS;
-                    break;
-                default:
-                    throw new ArgumentException("Device is not an Xbox controller");
+                throw new ArgumentException("Device is not an Xbox controller");
             }
-
-            //Just hooking this to be able to pass the event up further. Could implement better
-            _device.OnDisconnect += OnDisconnect;
-
-            //Begin reading data from the controller
-            _device.ReadAsync(ReadDeviceBytes);
         }
         
         public bool AnyIsPressed(ButtonType buttons)
@@ -125,29 +94,19 @@ namespace SharpSlugsEngine.Input
             }
         }
 
-        private void OnDisconnect()
+        protected override void OnDisconnect()
         {
             _disconnected?.Invoke();
         }
 
-        private void OnConnect()
+        protected override void OnConnect()
         {
-            //Pass the event upward and restart reading data
+            //Pass the event upward
             _connected?.Invoke();
-            _device.ReadAsync(ReadDeviceBytes);
         }
 
-        internal override void Update()
+        protected override void UpdateController()
         {
-            if (_device == null) throw new NullReferenceException("_device cannot be null");
-
-            //Try to reconnect if applicable
-            if (!_device._connected)
-            {
-                if (_device.TryReconnect()) OnConnect();
-                return;
-            }
-
             //Update the current/old controller state from the asynchronous reading
             _oldButtonState = _currentButtonState;
             _currentButtonState = _asyncButtonState;
@@ -194,11 +153,8 @@ namespace SharpSlugsEngine.Input
             if (_rightStickPressed != null && RightStick.Button.WasPressed) _rightStickPressed();
         }
 
-        private void ReadDeviceBytes(byte[] bytes)
+        protected override void ProcessDeviceBytes(byte[] bytes)
         {
-            if (_device == null) throw new NullReferenceException("_device cannot be null");
-            if (!_device._connected) return;
-
             //Sticks are contained in bytes 1-8
             ushort leftStickX = BitConverter.ToUInt16(bytes, 1);
             ushort leftStickY = BitConverter.ToUInt16(bytes, 3);
@@ -268,9 +224,6 @@ namespace SharpSlugsEngine.Input
             bool start = (bytes[11] & 128) != 0;
 
             _asyncButtonState = new ButtonState(a, b, x, y, lb, rb, back, start, dpadLeft, dpadRight, dpadUp, dpadDown);
-
-            //Can't forget to begin the next read
-            _device.ReadAsync(ReadDeviceBytes);
         }
 
         //More boilerplate
