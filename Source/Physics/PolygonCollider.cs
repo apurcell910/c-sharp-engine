@@ -61,8 +61,16 @@ namespace SharpSlugsEngine.Physics
                 }
             }
 
-            //Add remaining ear
+            //Add remaining triangle
             triangles.Add(new Triangle(vertexList[0], vertexList[1], vertexList[2]));
+
+            //Remove redundant triangles
+            triangles.RemoveAll(tri => tri.Area == 0f);
+
+            if (triangles.Count == 0)
+            {
+                throw new ArgumentException("Given polygon has no area");
+            }
 
             //Make triangles publicly viewable
             Triangles = triangles.ToArray();
