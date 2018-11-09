@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace SharpSlugsEngine.Input
@@ -11,70 +8,44 @@ namespace SharpSlugsEngine.Input
     {
         private Game _game;
 
-        private List<Xbox360Controller> controllers360;
+        private List<XboxController> xboxControllers;
 
         private readonly List<Keys> keys;
-        private Xbox360Controller.ButtonType buttons360;
+        private XboxController.ButtonType xboxButtons;
 
         public InputAction(Game game)
         {
             _game = game;
 
             keys = new List<Keys>();
-            controllers360 = new List<Xbox360Controller>();
-            buttons360 = 0;
+            xboxControllers = new List<XboxController>();
+            xboxButtons = 0;
         }
 
         public void AddDevice(GameController controller)
         {
-            switch (controller.Type)
+            if (controller is XboxController xboxController && !xboxControllers.Contains(controller))
             {
-                case ControllerType.Xbox:
-                    break;
-                case ControllerType.Xbox360:
-                    if (!controllers360.Contains(controller))
-                    {
-                        controllers360.Add((Xbox360Controller)controller);
-                    }
-                    break;
-                case ControllerType.XboxOne:
-                    break;
-                case ControllerType.Playstation3:
-                    break;
-                case ControllerType.Playstation4:
-                    break;
+                xboxControllers.Add(xboxController);
             }
         }
 
         public void RemoveDevice(GameController controller)
         {
-            switch (controller.Type)
+            if (controller is XboxController xboxController)
             {
-                case ControllerType.Xbox:
-                    break;
-                case ControllerType.Xbox360:
-                    if (controllers360.Contains(controller))
-                    {
-                        controllers360.Remove((Xbox360Controller)controller);
-                    }
-                    break;
-                case ControllerType.XboxOne:
-                    break;
-                case ControllerType.Playstation3:
-                    break;
-                case ControllerType.Playstation4:
-                    break;
+                xboxControllers.RemoveAll(c => c == xboxController);
             }
         }
 
-        public void Add360Buttons(Xbox360Controller.ButtonType buttons)
+        public void AddXboxButtons(XboxController.ButtonType buttons)
         {
-            buttons360 |= buttons;
+            xboxButtons |= buttons;
         }
 
-        public void Remove360Buttons(Xbox360Controller.ButtonType buttons)
+        public void RemoveXboxButtons(XboxController.ButtonType buttons)
         {
-            buttons360 &= ~buttons;
+            xboxButtons &= ~buttons;
         }
 
         public void AddKey(Keys key)
@@ -102,9 +73,9 @@ namespace SharpSlugsEngine.Input
                     if (_game.Keyboard.IsPressed(key)) return true;
                 }
 
-                foreach (Xbox360Controller controller in controllers360)
+                foreach (XboxController controller in xboxControllers)
                 {
-                    if (controller.AnyIsPressed(buttons360)) return true;
+                    if (controller.AnyIsPressed(xboxButtons)) return true;
                 }
 
                 return false;
@@ -120,9 +91,9 @@ namespace SharpSlugsEngine.Input
                     if (_game.Keyboard.WasPressed(key)) return true;
                 }
 
-                foreach (Xbox360Controller controller in controllers360)
+                foreach (XboxController controller in xboxControllers)
                 {
-                    if (controller.AnyWasPressed(buttons360)) return true;
+                    if (controller.AnyWasPressed(xboxButtons)) return true;
                 }
 
                 return false;

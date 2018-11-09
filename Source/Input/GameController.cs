@@ -17,6 +17,7 @@
         Xbox,
         Xbox360,
         XboxOne,
+        XboxOneS,
         Playstation3,
         Playstation4
     }

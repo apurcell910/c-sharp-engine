@@ -2,7 +2,7 @@
 
 namespace SharpSlugsEngine.Input
 {
-    public class Xbox360Controller : GameController
+    public class XboxController : GameController
     {
         private static readonly ButtonType[] allButtons = (ButtonType[])Enum.GetValues(typeof(ButtonType));
 
@@ -22,22 +22,37 @@ namespace SharpSlugsEngine.Input
 
         internal override string Path => _device.DevicePath;
 
-        public override ControllerType Type => ControllerType.Xbox360;
+        private ControllerType _type;
+        public override ControllerType Type => _type;
         public bool IsConnected => _device._connected;
 
         public ButtonState Buttons { get; private set; }
         public ControlStick LeftStick { get; private set; }
         public ControlStick RightStick { get; private set; }
 
-        internal Xbox360Controller(InputDevice device)
+        internal XboxController(InputDevice device)
         {
             //Everything is gonna break anyway if device is null, might as well throw an obvious exception
             _device = device ?? throw new ArgumentNullException();
 
-            //Make sure this is actually a 360 controller
-            if (device.VendorID != DeviceManager.VID_MICROSOFT || device.ProductID != DeviceManager.PID_XBOX_360)
+            //Make sure this is actually an xbox controller and figure out which kind it is
+            if (device.VendorID != DeviceManager.VID_MICROSOFT) throw new ArgumentException("Device is not an Xbox controller");
+            switch (device.ProductID)
             {
-                throw new ArgumentException("Device is not an Xbox 360 controller");
+                case DeviceManager.PID_XBOX:
+                    _type = ControllerType.Xbox;
+                    break;
+                case DeviceManager.PID_XBOX_360:
+                    _type = ControllerType.Xbox360;
+                    break;
+                case DeviceManager.PID_XBOX_ONE:
+                    _type = ControllerType.XboxOne;
+                    break;
+                case DeviceManager.PID_XBOX_ONE_S:
+                    _type = ControllerType.XboxOneS;
+                    break;
+                default:
+                    throw new ArgumentException("Device is not an Xbox controller");
             }
 
             //Just hooking this to be able to pass the event up further. Could implement better

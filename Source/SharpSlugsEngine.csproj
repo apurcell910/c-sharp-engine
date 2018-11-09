@@ -49,7 +49,7 @@
     <Compile Include="Input\DeviceManager.cs" />
     <Compile Include="Input\GameController.cs" />
     <Compile Include="Input\KeyboardManager.cs" />
-    <Compile Include="Input\Xbox360Controller.cs" />
+    <Compile Include="Input\XboxController.cs" />
     <Compile Include="Input\InputDevice.cs" />
     <Compile Include="Sprite\Ellipse.cs" />
     <Compile Include="Sprite\SImage.cs" />

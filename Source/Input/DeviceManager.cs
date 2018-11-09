@@ -15,6 +15,7 @@ namespace SharpSlugsEngine.Input
         internal const int PID_XBOX = 0x202;
         internal const int PID_XBOX_360 = 0x28E;
         internal const int PID_XBOX_ONE = 0x2D1;
+        internal const int PID_XBOX_ONE_S = 0x2EA;
 
         internal const int PID_PLAYSTATION_3 = 0x268;
         internal const int PID_PLAYSTATION_4 = 0x5C4;
@@ -25,7 +26,7 @@ namespace SharpSlugsEngine.Input
         internal List<DeviceDescriptor> Devices { get; private set; }
 
         public GameController[] Controllers { get; private set; }
-        public Xbox360Controller[] Xbox360Controllers { get; private set; }
+        public XboxController[] XboxControllers { get; private set; }
 
         public delegate void NewController(GameController controller);
         private event NewController _controllerAdded;
@@ -38,7 +39,7 @@ namespace SharpSlugsEngine.Input
         internal DeviceManager(Game game)
         {
             _game = game;
-            Xbox360Controllers = new Xbox360Controller[0];
+            XboxControllers = new XboxController[0];
             Controllers = new GameController[0];
         }
 
@@ -66,11 +67,10 @@ namespace SharpSlugsEngine.Input
                                 switch (device.ProductID)
                                 {
                                     case PID_XBOX:
-                                        break;
                                     case PID_XBOX_360:
-                                        newController = new Xbox360Controller(device);
-                                        break;
                                     case PID_XBOX_ONE:
+                                    case PID_XBOX_ONE_S:
+                                        newController = new XboxController(device);
                                         break;
                                 }
                                 break;
@@ -101,7 +101,7 @@ namespace SharpSlugsEngine.Input
                 }
 
                 Controllers = gameControllers.ToArray();
-                Xbox360Controllers = Controllers.Where(controller => controller is Xbox360Controller).Select(controller => controller as Xbox360Controller).ToArray();
+                XboxControllers = Controllers.Where(controller => controller is XboxController).Select(controller => controller as XboxController).ToArray();
                 _lastCheck = time.totalTime;
             }
 

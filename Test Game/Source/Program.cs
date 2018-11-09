@@ -19,8 +19,6 @@ namespace Test_Game
 
     class TestGame : Game
     {
-        public ContentManager Manager = new ContentManager();
-
         public readonly Random rnd = new Random();
 
         private readonly Dictionary<string, InputAction> inputActions = new Dictionary<string, InputAction>();
@@ -63,10 +61,10 @@ namespace Test_Game
             inputActions["Up"].AddKey(Keys.W);
             inputActions["Down"].AddKey(Keys.S);
 
-            inputActions["Left"].Add360Buttons(Xbox360Controller.ButtonType.DPadLeft);
-            inputActions["Right"].Add360Buttons(Xbox360Controller.ButtonType.DPadRight);
-            inputActions["Up"].Add360Buttons(Xbox360Controller.ButtonType.DPadUp);
-            inputActions["Down"].Add360Buttons(Xbox360Controller.ButtonType.DPadDown);
+            inputActions["Left"].AddXboxButtons(XboxController.ButtonType.DPadLeft);
+            inputActions["Right"].AddXboxButtons(XboxController.ButtonType.DPadRight);
+            inputActions["Up"].AddXboxButtons(XboxController.ButtonType.DPadUp);
+            inputActions["Down"].AddXboxButtons(XboxController.ButtonType.DPadDown);
 
             Controllers.ControllerAdded += (newController) =>
             {
@@ -81,8 +79,8 @@ namespace Test_Game
         
         protected override void LoadContent()
         {
-            Manager.AddImage("../../Content/GameOver.png", "GameOver");
-            Manager.AddImage("../../Content/Asteroid.png", "Asteroid");
+            Content.AddImage("../../Content/GameOver.png", "GameOver");
+            Content.AddImage("../../Content/Asteroid.png", "Asteroid");
 
             sprites.add("cursor", new SImage(0, 0, "../../Content/Cursor.png"));
             sprites.scale("cursor", 0.5);
@@ -112,7 +110,7 @@ namespace Test_Game
             //Left stick for movement and right stick for shooting
             Vector2 moveVec = new Vector2(0, 0);
             Vector2 shootVec = new Vector2(0, 0);
-            foreach (Xbox360Controller controller in Controllers.Xbox360Controllers)
+            foreach (XboxController controller in Controllers.XboxControllers)
             {
                 if (controller.LeftStick.State.Length >= 0.25)
                 {
@@ -250,7 +248,7 @@ namespace Test_Game
 
             if (gameOver)
             {
-                Graphics.DrawBMP(Manager.GetImage("GameOver"), 0, 0, (int)Resolution.X, (int)Resolution.Y);
+                Graphics.DrawBMP(Content.GetImage("GameOver"), 0, 0, (int)Resolution.X, (int)Resolution.Y);
             }
         }
 
@@ -309,7 +307,7 @@ namespace Test_Game
             {
                 _game = game;
 
-                image = (_game as TestGame).Manager.GetImage("Asteroid");
+                image = _game.Content.GetImage("Asteroid");
 
                 Random rnd = new Random();
                 rotSpeed = (float)rnd.NextDouble() * 50 - 25;
