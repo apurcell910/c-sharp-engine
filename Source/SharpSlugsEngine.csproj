@@ -52,6 +52,7 @@
     <Compile Include="Input\KeyboardManager.cs" />
     <Compile Include="Input\XboxController.cs" />
     <Compile Include="Input\InputDevice.cs" />
+    <Compile Include="Physics\Collider.cs" />
     <Compile Include="Sprite\Ellipse.cs" />
     <Compile Include="Sprite\SImage.cs" />
     <Compile Include="Sprite\Line.cs" />
