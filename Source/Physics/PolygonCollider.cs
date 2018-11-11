@@ -25,7 +25,7 @@ namespace SharpSlugsEngine.Physics
             //Trim redundant vertices
             for (int i = 0; i < vertexList.Count; i++)
             {
-                if (CrossProduct(vertexList[GetPrevIndex(i)], vertexList[i], vertexList[GetNextIndex(i)]) == 0)
+                if (Vector2.CrossProduct(vertexList[GetPrevIndex(i)], vertexList[i], vertexList[GetNextIndex(i)]) == 0)
                 {
                     vertexList.RemoveAt(i);
                     i--;
@@ -89,19 +89,20 @@ namespace SharpSlugsEngine.Physics
             int vert3 = GetNextIndex(vert);
 
             //Determine if the angle at vert is reflex
-            float crossProd = CrossProduct(vertexList[vert1], vertexList[vert2], vertexList[vert3]);
+            float crossProd = Vector2.CrossProduct(vertexList[vert1], vertexList[vert2], vertexList[vert3]);
             if ((crossProd > 0 && clockwise) || (crossProd < 0 && !clockwise))
             {
                 return false;
             }
-            
+
             //Check if any point is inside the triangle formed from this vertex
+            Triangle tri = new Triangle(vertexList[vert1], vertexList[vert2], vertexList[vert3]);
             for (int i = 0; i < vertexList.Count; i++)
             {
                 //No point checking the vertices of the current triangle
                 if (i != vert1 && i != vert2 && i != vert3)
                 {
-                    if (PointInTriangle(vertexList[i], vertexList[vert1], vertexList[vert2], vertexList[vert3]))
+                    if (tri.ContainsPoint(vertexList[i]))
                     {
                         return false;
                     }
@@ -109,20 +110,6 @@ namespace SharpSlugsEngine.Physics
             }
 
             return true;
-        }
-
-        private bool PointInTriangle(Vector2 point, Vector2 tri1, Vector2 tri2, Vector2 tri3)
-        {
-            float crossProd1 = CrossProduct(tri1, point, tri2);
-            float crossProd2 = CrossProduct(tri2, point, tri3);
-            float crossProd3 = CrossProduct(tri3, point, tri1);
-
-            if (clockwise)
-            {
-                return crossProd1 > 0 && crossProd2 > 0 && crossProd3 > 0;
-            }
-
-            return crossProd1 < 0 && crossProd2 < 0 && crossProd3 < 0;
         }
 
         private int GetPrevIndex(int i)
@@ -143,11 +130,6 @@ namespace SharpSlugsEngine.Physics
             }
 
             return i == vertexList.Count - 1 ? 0 : i + 1;
-        }
-
-        private float CrossProduct(Vector2 p1, Vector2 p2, Vector2 p3)
-        {
-            return (p2.X - p1.X) * (p3.Y - p1.Y) - (p3.X - p1.X) * (p2.Y - p1.Y);
         }
 
         public override bool IsTouching(Collider other)

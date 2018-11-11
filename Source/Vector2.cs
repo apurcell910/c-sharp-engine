@@ -66,18 +66,34 @@ namespace SharpSlugsEngine
         public static Vector2 operator /(Vector2 l, float r) => new Vector2(l.X / r, l.Y / r);
         public static Vector2 operator *(Vector2 l, float r) => new Vector2(l.X * r, l.Y * r);
 
+        //Static math functions
+        /// <summary>
+        /// Computes the Z component of the cross product of <paramref name="v1"/> and <paramref name="v2"/>
+        /// </summary>
+        /// <param name="v1"></param>
+        /// <param name="v2"></param>
+        /// <returns></returns>
+        public static float CrossProduct(Vector2 v1, Vector2 v2)
+        {
+            return v1.X * v2.Y - v2.X * v1.Y;
+        }
+        
+        /// <summary>
+        /// Computes the Z component of the cross product of <paramref name="v2"/> - <paramref name="v1"/> and <paramref name="v3"/> - <paramref name="v1"/>
+        /// </summary>
+        /// <returns></returns>
+        public static float CrossProduct(Vector2 v1, Vector2 v2, Vector2 v3)
+        {
+            return CrossProduct(v2 - v1, v3 - v1);
+        }
+
+        //Vector2 macros
         public static Vector2 Zero => new Vector2(0, 0);
-
         public static Vector2 One => new Vector2(1, 1);
-
         public static Vector2 Half => new Vector2(0.5f, 0.5f);
-
         public static Vector2 Left => new Vector2(-1, 0);
-
         public static Vector2 Right => new Vector2(1, 0);
-
         public static Vector2 Up => new Vector2(0, -1);
-
         public static Vector2 Down => new Vector2(0, 1);
     }
 }
