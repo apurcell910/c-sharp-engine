@@ -133,37 +133,37 @@ namespace SharpSlugsEngine.Input
 
         public void AddLeftClick(Event e)
         {
-            LeftClick += () => e.callEvent(); ;
+            LeftClick += e.callEvent;
         }
 
         public void RemoveLeftClick(Event e)
         {
-            LeftClick -= () => e.callEvent(); ;
+            LeftClick -= e.callEvent;
         }
 
         public void AddRightClick(Event e)
         {
-            RightClick += () => e.callEvent(); ;
+            RightClick += e.callEvent;
         }
 
         public void RemoveRightClick(Event e)
         {
-            RightClick -= () => e.callEvent(); ;
+            RightClick -= e.callEvent;
         }
 
         public void AddMiddleClick(Event e)
         {
-            MiddleClick += () => e.callEvent(); ;
+            MiddleClick += e.callEvent;
         }
 
         public void RemoveMiddleClick(Event e)
         {
-            MiddleClick -= () => e.callEvent(); ;
+            MiddleClick -= e.callEvent;
         }
 
         public void AddLocationBind(Event e)
         {
-            Broadcast += (Location) => e.callEvent(Location); ;
+            Broadcast += e.callEvent;
 
         }
 
