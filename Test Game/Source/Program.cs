@@ -13,7 +13,7 @@ namespace Test_Game
         static void Main()
         {
             TestGame test =  new TestGame();
-            test.Resolution = new Vector2(1280, 720);
+            test.Resolution = new Vector2(1280 * 0.75f, 720 * 0.75f);
             test.Run();
         }
     }
@@ -50,11 +50,12 @@ namespace Test_Game
         private TriangleCollider triangleTest2;
 
         private pEllipse ellipseTest;
-        private SharpSlugsEngine.Physics.pRectangle rectTest;
+        private pRectangle rectTest;
+
         protected override void Initialize()
         {
             Graphics.BackColor = Color.Black;
-            Graphics.SetWorldScale(200);
+            Graphics.SetWorldScale(new Vector2(1280, 720));
 
             inputActions.Add("Left", new InputAction(this));
             inputActions.Add("Right", new InputAction(this));
@@ -99,10 +100,10 @@ namespace Test_Game
             sprites.add("ship", new SImage(640, 360, "../../Content/Ship.png"));
             sprites.scale("ship", 0.5);
             sprites.display("ship", true);
-
+            
             cursorSize = sprites.getSize("cursor");
             shipSize = sprites.getSize("ship");
-
+            
             Vector2[] ccw = new Vector2[]
             {
                 new Vector2(200, 0),
@@ -129,12 +130,6 @@ namespace Test_Game
             ccw.CopyTo(cw, 0);
             Array.Reverse(cw);
 
-            for (int i = 0; i < cw.Length; i++)
-            {
-                Console.WriteLine(cw[i]);
-                cw[i] = cw[i] + new Vector2(200, 0);
-            }
-
             polygonTest = new PolygonCollider(ccw);
             polygonTest2 = new PolygonCollider(cw);
 
@@ -154,10 +149,10 @@ namespace Test_Game
         {
             if (gameOver) return;
 
-            if (mousePos != Mouse.State.Location)
+            if (mousePos != Graphics.ToWorldScale(Mouse.State.Location))
             {
                 usingMouse = true;
-                mousePos = Mouse.State.Location;
+                mousePos = Graphics.ToWorldScale(Mouse.State.Location);
             }
 
             shooting = usingMouse && Mouse.State.Left.IsClicked;
@@ -200,10 +195,10 @@ namespace Test_Game
 
             //Keep the player on the screen
             if (playerPos.X < shipSize.X / 2f) playerPos = new Vector2(shipSize.X / 2f, playerPos.Y);
-            if (playerPos.X > Resolution.X - shipSize.X / 2f) playerPos = new Vector2(Resolution.X - shipSize.X / 2f, playerPos.Y);
+            if (playerPos.X > Graphics.WorldScale.X - shipSize.X / 2f) playerPos = new Vector2(Graphics.WorldScale.X - shipSize.X / 2f, playerPos.Y);
             if (playerPos.Y < shipSize.Y / 2f) playerPos = new Vector2(playerPos.X, shipSize.Y / 2f);
-            if (playerPos.Y > Resolution.Y - shipSize.Y / 2f) playerPos = new Vector2(playerPos.X, Resolution.Y - shipSize.Y / 2f);
-
+            if (playerPos.Y > Graphics.WorldScale.Y - shipSize.Y / 2f) playerPos = new Vector2(playerPos.X, Graphics.WorldScale.Y - shipSize.Y / 2f);
+            
             sprites.moveto("cursor", (int)(mousePos.X - cursorSize.X / 2f), (int)(mousePos.Y - cursorSize.Y / 2f));
             sprites.moveto("ship", (int)(playerPos.X - shipSize.X / 2f), (int)(playerPos.Y - shipSize.Y / 2f));
             
@@ -249,19 +244,19 @@ namespace Test_Game
                 switch (rnd.Next(4))
                 {
                     case 0:
-                        pos = new Vector2(rnd.Next(0, (int)Resolution.X), 0);
+                        pos = new Vector2(rnd.Next(0, (int)Graphics.WorldScale.X), 0);
                         vel = new Vector2(rnd.Next(100) - 50, rnd.Next(50));
                         break;
                     case 1:
-                        pos = new Vector2(0, rnd.Next(0, (int)Resolution.Y));
+                        pos = new Vector2(0, rnd.Next(0, (int)Graphics.WorldScale.Y));
                         vel = new Vector2(rnd.Next(50), rnd.Next(100) - 50);
                         break;
                     case 2:
-                        pos = new Vector2(rnd.Next(0, (int)Resolution.X), Resolution.Y);
+                        pos = new Vector2(rnd.Next(0, (int)Graphics.WorldScale.X), Graphics.WorldScale.Y);
                         vel = new Vector2(rnd.Next(100) - 50, -rnd.Next(50));
                         break;
                     case 3:
-                        pos = new Vector2(Resolution.X, rnd.Next(0, (int)Resolution.Y));
+                        pos = new Vector2(Graphics.WorldScale.X, rnd.Next(0, (int)Graphics.WorldScale.Y));
                         vel = new Vector2(-rnd.Next(50), rnd.Next(100) - 50);
                         break;
                 }
@@ -302,7 +297,7 @@ namespace Test_Game
             bullets.ForEach(bullet => bullet.Draw());
             asteroids.ForEach(asteroid => asteroid.Draw());
             
-            foreach (Triangle tri in polygonTest.Triangles)
+            /*foreach (Triangle tri in polygonTest.Triangles)
             {
                 Graphics.DrawTri(tri, Color.NavajoWhite);
             }
@@ -316,23 +311,16 @@ namespace Test_Game
             {
                 Graphics.DrawTri(tri, Color.Azure);
             }
-            /*Graphics.DrawLine((Point)triangleTest1.triangle.VertexOne, (Point)triangleTest1.triangle.VertexTwo, Color.Red);
-            Graphics.DrawLine((Point)triangleTest1.triangle.VertexTwo, (Point)triangleTest1.triangle.VertexThree, Color.Red);
-            Graphics.DrawLine((Point)triangleTest1.triangle.VertexThree, (Point)triangleTest1.triangle.VertexOne, Color.Red);
-
-            Graphics.DrawLine((Point)triangleTest2.triangle.VertexOne, (Point)triangleTest2.triangle.VertexTwo, Color.Blue);
-            Graphics.DrawLine((Point)triangleTest2.triangle.VertexTwo, (Point)triangleTest2.triangle.VertexThree, Color.Blue);
-            Graphics.DrawLine((Point)triangleTest2.triangle.VertexThree, (Point)triangleTest2.triangle.VertexOne, Color.Blue);*/
-
+            
             Graphics.DrawTri(triangleTest1.triangle, Color.MediumAquamarine);
             Graphics.DrawTri(triangleTest2.triangle, Color.MediumAquamarine);
 
             Graphics.DrawTri(rectTest.TriOne, Color.Maroon);
-            Graphics.DrawTri(rectTest.TriTwo, Color.Orange);
+            Graphics.DrawTri(rectTest.TriTwo, Color.Orange);*/
             
             if (gameOver)
             {
-                Graphics.DrawBMP(Content.GetImage("GameOver"), 0, 0, (int)Resolution.X, (int)Resolution.Y);
+                Graphics.DrawBMP(Content.GetImage("GameOver"), 0, 0, (int)Graphics.WorldScale.X, (int)Graphics.WorldScale.Y);
             }
         }
 
@@ -358,7 +346,7 @@ namespace Test_Game
 
                 Position = Position + Velocity * (float)gameTime.deltaTime.TotalSeconds;
 
-                if (Position.X < 0 || Position.X > _game.Resolution.X || Position.Y < 0 || Position.Y > _game.Resolution.Y)
+                if (Position.X < 0 || Position.X > _game.Graphics.WorldScale.X || Position.Y < 0 || Position.Y > _game.Graphics.WorldScale.Y)
                 {
                     Dead = true;
                 }
@@ -409,8 +397,8 @@ namespace Test_Game
 
                 Position = Position + Velocity * (float)gameTime.deltaTime.TotalSeconds;
 
-                if (Position.X < -(image.Width * size) / 2f || Position.X > _game.Resolution.X + (image.Width * size) / 2f
-                    || Position.Y < -(image.Height * size) / 2f || Position.Y > _game.Resolution.Y + (image.Height * size) / 2f)
+                if (Position.X < -(image.Width * size) / 2f || Position.X > _game.Graphics.WorldScale.X + (image.Width * size) / 2f
+                    || Position.Y < -(image.Height * size) / 2f || Position.Y > _game.Graphics.WorldScale.Y + (image.Height * size) / 2f)
                 {
                     Dead = true;
                 }
@@ -424,7 +412,9 @@ namespace Test_Game
                 Vector2 dist = Position - loc;
                 dist = new Vector2(Math.Abs(dist.X), Math.Abs(dist.Y));
 
-                return dist.Length <= radius + (image.Width / 2f) * size;
+                float selfRadius = image.Width / 2f;
+
+                return dist.Length <= radius + selfRadius * size;
             }
 
             public void Damage()

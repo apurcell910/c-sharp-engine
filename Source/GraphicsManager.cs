@@ -2,11 +2,12 @@
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using SharpSlugsEngine.Physics;
+
 namespace SharpSlugsEngine
 {
     public class GraphicsManager
     {
-        internal const int defaultScale = 100;
+        internal static readonly Vector2 defaultScale = new Vector2(100, 56.25f);
 
         private SolidBrush brush;
         private Pen pen;
@@ -17,7 +18,8 @@ namespace SharpSlugsEngine
 
         private readonly Game game;
         private readonly Platform platform;
-        private float scaleFactor = defaultScale;
+
+        public Vector2 WorldScale { get; private set; } = defaultScale;
 
         public Color BackColor
         {
@@ -42,14 +44,14 @@ namespace SharpSlugsEngine
             formGraphics = platform.form.CreateGraphics();
         }
 
-        private Vector2 ToWorldScale(Vector2 unscaledVector)
+        public Vector2 ToWorldScale(Vector2 unscaledVector)
         {
-            return (unscaledVector * scaleFactor) / game.Resolution;
+            return (unscaledVector * WorldScale) / game.Resolution;
         }
 
-        private Vector2 ToResolutionScale(Vector2 scaledVector)
+        public Vector2 ToResolutionScale(Vector2 scaledVector)
         {
-            return (scaledVector / scaleFactor) * game.Resolution;
+            return (scaledVector / WorldScale) * game.Resolution;
         }
 
         internal void Begin()
@@ -57,7 +59,7 @@ namespace SharpSlugsEngine
             buffer = new Bitmap(platform.form.Width, platform.form.Height, formGraphics);
             bitmapGraphics = Graphics.FromImage(buffer);
 
-            brush.Color = platform.form.BackColor;
+            SetColor(BackColor);
             bitmapGraphics.FillRectangle(brush, new Rectangle(0, 0, buffer.Width, buffer.Height));
         }
 
@@ -68,7 +70,27 @@ namespace SharpSlugsEngine
             bitmapGraphics.Dispose();
         }
 
+        internal void SetColor(Color color)
+        {
+            brush.Color = color;
+            pen?.Dispose();
+            pen = new Pen(brush);
+        }
 
+        internal void Rotate(PointF center, float angle)
+        {
+            Matrix m = new Matrix();
+            m.RotateAt(angle, center);
+            bitmapGraphics.Transform = m;
+            m.Dispose();
+        }
+
+        internal void ResetRotation()
+        {
+            bitmapGraphics.ResetTransform();
+        }
+
+        //TODO: DrawType overloads for DrawRectangle
         //Feel like I should just make these take a SpriteObj as well. Maybe for later, shouldn't be too
         //difficult to do.
 
@@ -76,7 +98,7 @@ namespace SharpSlugsEngine
         //https://stackoverflow.com/questions/10210134/using-a-matrix-to-rotate-rectangles-individually
         public void DrawRectangle(Rectangle rect, Color color, bool fill = true, float angle = 0, double xAnchor = 0, double yAnchor = 0)
         {
-            brush.Color = color;
+            SetColor(color);
 
             using (Matrix m = new Matrix()) {
                 m.RotateAt(angle, new PointF((float)(rect.X + (rect.Width * xAnchor)), (float)(rect.Y + (rect.Height * yAnchor))));
@@ -103,9 +125,7 @@ namespace SharpSlugsEngine
 
         public void DrawLine(int a, int b, int x, int y, Color color)
         {
-            brush.Color = color;
-            pen?.Dispose();
-            pen = new Pen(brush);
+            SetColor(color);
             bitmapGraphics.DrawLine(pen, a, b, x, y);
         }
 
@@ -119,95 +139,126 @@ namespace SharpSlugsEngine
 
             DrawLine((int)toResoultionA.X, (int)toResoultionA.Y, (int)toResoultionB.X, (int)toResoultionB.Y, color);
         }
-
-        public void DrawCircle(int x, int y, int r, Color color, bool fill = true)
+        /// <summary>
+        /// The actual DrawEllipse function. All overloads should use this to draw
+        /// </summary>
+        internal void DrawEllipse(int x, int y, int w, int h, Color color, bool fill = true, float r = 0, double xAnchor = 0.5f, double yAnchor = 0.5f)
         {
-            brush.Color = color;
+            SetColor(color);
+            Rotate(new PointF((float)(x + w * xAnchor), (float)(y + h * yAnchor)), r);
 
             if (fill)
-                bitmapGraphics.FillEllipse(brush, x - r, y - r, 2 * r, 2 * r);
-            else
-                bitmapGraphics.DrawEllipse(pen, x - r, y - r, 2 * r, 2 * r);
-        }
-
-        public void DrawCircle(Vector2 worldScaledCenter, int r, Color color, bool fill = true)
-        {
-            Vector2 resolutionCenter = ToResolutionScale(worldScaledCenter);
-            DrawCircle((int)resolutionCenter.X, (int)resolutionCenter.Y, r, color, fill);
-        }
-
-        public void DrawCircle(Point p, int r, Color color, bool fill = true)
-            => DrawCircle(p.X, p.Y, r, color, fill);
-
-        //Other way to draw an ellipse by defining bounds with rectangle
-        public void DrawEllipse(int x, int y, int w, int h, Color color, bool fill = true, float angle = 0, double xAnchor = 0, double yAnchor = 0)
-        {
-            brush.Color = color;
-
-            using (Matrix m = new Matrix()) {
-                m.RotateAt(angle, new PointF((float)(x + (w * xAnchor)), (float)(y + (h * yAnchor))));
-                bitmapGraphics.Transform = m;
-                if (fill)
-                    bitmapGraphics.FillEllipse(brush, x, y, w, h);
-                else
-                    bitmapGraphics.DrawEllipse(pen, x, y, w, h);
-                bitmapGraphics.ResetTransform();
-            }
-        }
-
-        public void DrawEllipse(Vector2 worldScaledCenter, int w, int h, Color color, bool fill = true, float angle = 0, double xAnchor = 0, double yAnchor = 0)
-        {
-            Vector2 resolutionCenter = ToResolutionScale(worldScaledCenter);
-            DrawEllipse((int)resolutionCenter.X, (int)resolutionCenter.Y, w, h, color, fill, angle, xAnchor, yAnchor);
-        }
-
-        public void DrawBMP(Bitmap bmp, int x, int y)
-        {
-            bitmapGraphics.DrawImage(bmp, x, y);
-        }
-
-        //Doing this for scaling purposes, if above is changed, change this as well
-        public void DrawBMP(Bitmap bmp, int x, int y, int w, int h) {
-            bitmapGraphics.DrawImage(bmp, x, y, w, h);
-        }
-
-        public void DrawBMP(Bitmap bmp, int x, int y, int w, int h, float r)
-        {
-            using (Matrix m = new Matrix())
             {
-                m.RotateAt(r, new PointF(x + w / 2f, y + h / 2f));
-                bitmapGraphics.Transform = m;
-                bitmapGraphics.DrawImage(bmp, x, y, w, h);
-                bitmapGraphics.ResetTransform();
+                bitmapGraphics.FillEllipse(brush, x, y, w, h);
+            }
+            else
+            {
+                bitmapGraphics.DrawEllipse(pen, x, y, w, h);
+            }
+
+            ResetRotation();
+        }
+
+        public void DrawEllipse(Vector2 pos, Vector2 size, Color color, bool fill = true, float r = 0, double xAnchor = 0f, double yAnchor = 0f, DrawType type = DrawType.World)
+        {
+            if (type == DrawType.World)
+            {
+                pos = ToResolutionScale(pos);
+                size = ToResolutionScale(size);
+            }
+
+            DrawEllipse((int)pos.X, (int)pos.Y, (int)size.X, (int)size.Y, color, fill, r, xAnchor, yAnchor);
+        }
+
+        public void DrawEllipse(float x, float y, float w, float h, Color color, bool fill = true, float r = 0, float xAnchor = 0f, float yAnchor = 0f, DrawType type = DrawType.World)
+            => DrawEllipse(new Vector2(x, y), new Vector2(w, h), color, fill, r, xAnchor, yAnchor, type);
+
+        public void DrawCircle(Vector2 pos, float r, Color color, bool fill = true, DrawType type = DrawType.World)
+        {
+            Vector2 size = new Vector2(r * 2, r * 2);
+            pos = new Vector2(pos.X - r, pos.Y - r);
+
+            DrawEllipse(pos, size, color, fill, r, 0.5f, 0.5f, type);
+        }
+
+        public void DrawCircle(float x, float y, float r, Color color, bool fill = true, DrawType type = DrawType.World)
+            => DrawCircle(new Vector2(x, y), r, color, fill, type);
+
+        /// <summary>
+        /// The actual DrawBMP function. All overloads should use this to draw
+        /// </summary>
+        internal void DrawBMP(Bitmap bmp, int x, int y, int w, int h, float r, int ix, int iy, int iw, int ih)
+        {
+            Rotate(new PointF(x + w / 2f, y + h / 2f), r);
+            bitmapGraphics.DrawImage(bmp, new Rectangle(x, y, w, h), new Rectangle(ix, iy, iw, ih), GraphicsUnit.Pixel);
+            ResetRotation();
+        }
+
+        public void DrawBMP(Bitmap bmp, float x, float y, float w, float h, float r = 0, DrawType type = DrawType.World)
+        {
+            if (type == DrawType.World)
+            {
+                Vector2 position = ToResolutionScale(new Vector2(x, y));
+                Vector2 size = ToResolutionScale(new Vector2(w, h));
+
+                x = position.X;
+                y = position.Y;
+                w = size.X;
+                h = size.Y;
+            }
+
+            DrawBMP(bmp, (int)x, (int)y, (int)w, (int)h, r, 0, 0, bmp.Width, bmp.Height);
+        }
+
+        public void DrawBMP(Bitmap bmp, Vector2 position, Vector2 size, float r = 0, DrawType type = DrawType.World)
+            => DrawBMP(bmp, position.X, position.Y, size.X, size.Y, r, type);
+
+        public void DrawBMP(Bitmap bmp, RectangleF drawRect, float r = 0, DrawType type = DrawType.World)
+            => DrawBMP(bmp, drawRect.X, drawRect.Y, drawRect.Width, drawRect.Height, r, type);
+
+        //TODO: Find center point of triangle to support rotation
+        /// <summary>
+        /// The actual DrawTri function. All overloads should use this to draw
+        /// </summary>
+        internal void DrawTri(int x1, int y1, int x2, int y2, int x3, int y3, Color color, bool fill = true, float r = 0)
+        {
+            if (!fill)
+            {
+                DrawLine(x1, y1, x2, y2, color);
+                DrawLine(x2, y2, x3, y3, color);
+                DrawLine(x3, y3, x1, y1, color);
+            }
+            else
+            {
+                SetColor(color);
+                bitmapGraphics.FillPolygon(brush, new Point[] { new Point(x1, y1), new Point(x2, y2), new Point(x3, y3) });
             }
         }
 
-        public void DrawBMP(Bitmap bmp, int x, int y, int w, int h, int ix, int iy, int iw, int ih) {
-            
-            bitmapGraphics.DrawImage(bmp, new Rectangle(x, y, w, h), ix, iy, iw, ih, GraphicsUnit.Pixel);
+        public void DrawTri(Vector2 v1, Vector2 v2, Vector2 v3, Color color, bool fill = true, float r = 0, DrawType type = DrawType.World)
+        {
+            if (type == DrawType.World)
+            {
+                v1 = ToResolutionScale(v1);
+                v2 = ToResolutionScale(v2);
+                v3 = ToResolutionScale(v3);
+            }
+
+            DrawTri((int)v1.X, (int)v1.Y, (int)v2.X, (int)v2.Y, (int)v3.X, (int)v3.Y, color, fill, r);
         }
 
-        public void DrawBMP(Bitmap bmp, Vector2 worldScaled, int w, int h, int ix, int iy, int iw, int ih)
-        {
-            Vector2 resolutionScaled = ToResolutionScale(worldScaled);
-            DrawBMP(bmp, (int)resolutionScaled.X, (int)resolutionScaled.Y, w, h, ix, iy, iw, ih);
-        }
+        public void DrawTri(Triangle tri, Color color, bool fill = true, float r = 0, DrawType type = DrawType.World)
+            => DrawTri(tri.VertexOne, tri.VertexTwo, tri.VertexThree, color, fill, r, type);
 
-        public void DrawTri(Triangle tri, Color color)
+        public void SetWorldScale(Vector2 scaleFactor)
         {
-            DrawLine((Point)tri.VertexOne, (Point)tri.VertexTwo, color);
-            DrawLine((Point)tri.VertexTwo, (Point)tri.VertexThree, color);
-            DrawLine((Point)tri.VertexThree, (Point)tri.VertexOne, color);
+            WorldScale = scaleFactor;
         }
+    }
 
-        public void SetWorldScale(float scaleFactor)
-        {
-            this.scaleFactor = scaleFactor;
-        }
-
-        public void printWorldToResolution(Vector2 worldPoint)
-        {
-            Console.WriteLine(ToResolutionScale(worldPoint));
-        }
+    public enum DrawType
+    {
+        Screen,
+        World
     }
 }
