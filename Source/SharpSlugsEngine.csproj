@@ -52,9 +52,11 @@
     <Compile Include="Input\KeyboardManager.cs" />
     <Compile Include="Input\XboxController.cs" />
     <Compile Include="Input\InputDevice.cs" />
+    <Compile Include="Physics\pEllipse.cs" />
     <Compile Include="Physics\EllipseCollider.cs" />
     <Compile Include="Physics\Collider.cs" />
     <Compile Include="Physics\PolygonCollider.cs" />
+    <Compile Include="Physics\pRectangle.cs" />
     <Compile Include="Physics\RectangleCollider.cs" />
     <Compile Include="Physics\Triangle.cs" />
     <Compile Include="Physics\TriangleCollider.cs" />

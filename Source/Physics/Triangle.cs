@@ -1,5 +1,5 @@
 ﻿using System;
-
+using System.Drawing;
 namespace SharpSlugsEngine.Physics
 {
     public struct Triangle
@@ -40,5 +40,6 @@ namespace SharpSlugsEngine.Physics
             return (crossProd1 > 0 && crossProd2 > 0 && crossProd3 > 0)
                 || (crossProd1 < 0 && crossProd2 < 0 && crossProd3 < 0);
         }
+
     }
 }

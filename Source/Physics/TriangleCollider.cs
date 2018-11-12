@@ -21,6 +21,7 @@ namespace SharpSlugsEngine.Physics
         /// <param name="other"></param>
         /// <returns></returns>
         /// https://stackoverflow.com/questions/2778240/detection-of-triangle-collision-in-2d-space
+        /// 
         private bool checkTriangleConditions(TriangleCollider other)
         {
             bool inPointOne = triangle.ContainsPoint(other.triangle.VertexOne);

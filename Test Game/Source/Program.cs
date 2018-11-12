@@ -49,6 +49,8 @@ namespace Test_Game
         private TriangleCollider triangleTest1;
         private TriangleCollider triangleTest2;
 
+        private pEllipse ellipseTest;
+        private SharpSlugsEngine.Physics.pRectangle rectTest;
         protected override void Initialize()
         {
             Graphics.BackColor = Color.Black;
@@ -139,6 +141,9 @@ namespace Test_Game
             triangleTest2 = new TriangleCollider(new Vector2(100.0f, 5.0f), new Vector2(50.0f, 50.0f), new Vector2(800.0f, 400.0f));
             triangleTest1 = new TriangleCollider(new Vector2(110.0f, 10.0f), new Vector2(55.0f, 45.0f), new Vector2(100.0f, 20.0f));
 
+            rectTest = new pRectangle(new Vector2(400.0f, 400.0f), new Vector2(600.0f, 600.0f));
+
+            ellipseTest = new pEllipse(new Vector2(400.0f, 400.0f), 300f, 350f);
             if(triangleTest1.IsTouching(triangleTest2))
             {
                 Console.WriteLine("Triangles are touching!");
@@ -299,27 +304,32 @@ namespace Test_Game
             
             foreach (Triangle tri in polygonTest.Triangles)
             {
-                Graphics.DrawLine((Point)tri.VertexOne, (Point)tri.VertexTwo, Color.White);
-                Graphics.DrawLine((Point)tri.VertexTwo, (Point)tri.VertexThree, Color.White);
-                Graphics.DrawLine((Point)tri.VertexThree, (Point)tri.VertexOne, Color.White);
+                Graphics.DrawTri(tri, Color.NavajoWhite);
             }
 
             foreach (Triangle tri in polygonTest2.Triangles)
             {
-                Graphics.DrawLine((Point)tri.VertexOne, (Point)tri.VertexTwo, Color.Red);
-                Graphics.DrawLine((Point)tri.VertexTwo, (Point)tri.VertexThree, Color.Red);
-                Graphics.DrawLine((Point)tri.VertexThree, (Point)tri.VertexOne, Color.Red);
+                Graphics.DrawTri(tri, Color.PaleVioletRed);
             }
 
-            Graphics.DrawLine((Point)triangleTest1.triangle.VertexOne, (Point)triangleTest1.triangle.VertexTwo, Color.Red);
+            foreach(Triangle tri in ellipseTest.Triangles)
+            {
+                Graphics.DrawTri(tri, Color.Azure);
+            }
+            /*Graphics.DrawLine((Point)triangleTest1.triangle.VertexOne, (Point)triangleTest1.triangle.VertexTwo, Color.Red);
             Graphics.DrawLine((Point)triangleTest1.triangle.VertexTwo, (Point)triangleTest1.triangle.VertexThree, Color.Red);
             Graphics.DrawLine((Point)triangleTest1.triangle.VertexThree, (Point)triangleTest1.triangle.VertexOne, Color.Red);
 
             Graphics.DrawLine((Point)triangleTest2.triangle.VertexOne, (Point)triangleTest2.triangle.VertexTwo, Color.Blue);
             Graphics.DrawLine((Point)triangleTest2.triangle.VertexTwo, (Point)triangleTest2.triangle.VertexThree, Color.Blue);
-            Graphics.DrawLine((Point)triangleTest2.triangle.VertexThree, (Point)triangleTest2.triangle.VertexOne, Color.Blue);
+            Graphics.DrawLine((Point)triangleTest2.triangle.VertexThree, (Point)triangleTest2.triangle.VertexOne, Color.Blue);*/
 
+            Graphics.DrawTri(triangleTest1.triangle, Color.MediumAquamarine);
+            Graphics.DrawTri(triangleTest2.triangle, Color.MediumAquamarine);
 
+            Graphics.DrawTri(rectTest.TriOne, Color.Maroon);
+            Graphics.DrawTri(rectTest.TriTwo, Color.Orange);
+            
             if (gameOver)
             {
                 Graphics.DrawBMP(Content.GetImage("GameOver"), 0, 0, (int)Resolution.X, (int)Resolution.Y);

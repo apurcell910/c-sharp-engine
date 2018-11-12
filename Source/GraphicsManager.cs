@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
-
+using SharpSlugsEngine.Physics;
 namespace SharpSlugsEngine
 {
     public class GraphicsManager
@@ -192,7 +192,14 @@ namespace SharpSlugsEngine
             Vector2 resolutionScaled = ToResolutionScale(worldScaled);
             DrawBMP(bmp, (int)resolutionScaled.X, (int)resolutionScaled.Y, w, h, ix, iy, iw, ih);
         }
-        
+
+        public void DrawTri(Triangle tri, Color color)
+        {
+            DrawLine((Point)tri.VertexOne, (Point)tri.VertexTwo, color);
+            DrawLine((Point)tri.VertexTwo, (Point)tri.VertexThree, color);
+            DrawLine((Point)tri.VertexThree, (Point)tri.VertexOne, color);
+        }
+
         public void SetWorldScale(float scaleFactor)
         {
             this.scaleFactor = scaleFactor;
