@@ -46,6 +46,9 @@ namespace Test_Game
         private PolygonCollider polygonTest;
         private PolygonCollider polygonTest2;
 
+        private TriangleCollider triangleTest1;
+        private TriangleCollider triangleTest2;
+
         protected override void Initialize()
         {
             Graphics.BackColor = Color.Black;
@@ -132,6 +135,14 @@ namespace Test_Game
 
             polygonTest = new PolygonCollider(ccw);
             polygonTest2 = new PolygonCollider(cw);
+
+            triangleTest2 = new TriangleCollider(new Vector2(100.0f, 5.0f), new Vector2(50.0f, 50.0f), new Vector2(800.0f, 400.0f));
+            triangleTest1 = new TriangleCollider(new Vector2(110.0f, 10.0f), new Vector2(55.0f, 45.0f), new Vector2(100.0f, 20.0f));
+
+            if(triangleTest1.IsTouching(triangleTest2))
+            {
+                Console.WriteLine("Triangles are touching!");
+            }
         }
 
         protected override void Update(GameTime gameTime)
@@ -299,7 +310,16 @@ namespace Test_Game
                 Graphics.DrawLine((Point)tri.VertexTwo, (Point)tri.VertexThree, Color.Red);
                 Graphics.DrawLine((Point)tri.VertexThree, (Point)tri.VertexOne, Color.Red);
             }
-            
+
+            Graphics.DrawLine((Point)triangleTest1.triangle.VertexOne, (Point)triangleTest1.triangle.VertexTwo, Color.Red);
+            Graphics.DrawLine((Point)triangleTest1.triangle.VertexTwo, (Point)triangleTest1.triangle.VertexThree, Color.Red);
+            Graphics.DrawLine((Point)triangleTest1.triangle.VertexThree, (Point)triangleTest1.triangle.VertexOne, Color.Red);
+
+            Graphics.DrawLine((Point)triangleTest2.triangle.VertexOne, (Point)triangleTest2.triangle.VertexTwo, Color.Blue);
+            Graphics.DrawLine((Point)triangleTest2.triangle.VertexTwo, (Point)triangleTest2.triangle.VertexThree, Color.Blue);
+            Graphics.DrawLine((Point)triangleTest2.triangle.VertexThree, (Point)triangleTest2.triangle.VertexOne, Color.Blue);
+
+
             if (gameOver)
             {
                 Graphics.DrawBMP(Content.GetImage("GameOver"), 0, 0, (int)Resolution.X, (int)Resolution.Y);

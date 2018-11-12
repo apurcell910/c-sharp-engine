@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace SharpSlugsEngine.Physics
 {
-    class TriangleCollider : Collider
+    public class TriangleCollider : Collider
     {
-        Triangle triangle;
+        public Triangle triangle;
         public TriangleCollider(Vector2 v1, Vector2 v2, Vector2 v3) : this(new Triangle(v1, v2, v3)) { }
 
         public TriangleCollider(Triangle tri)
@@ -27,7 +27,16 @@ namespace SharpSlugsEngine.Physics
             bool inPointTwo = triangle.ContainsPoint(other.triangle.VertexTwo);
             bool inPointThree = triangle.ContainsPoint(other.triangle.VertexThree);
 
+            bool inPointFour = other.triangle.ContainsPoint(this.triangle.VertexOne);
+            bool inPointFive = other.triangle.ContainsPoint(this.triangle.VertexTwo);
+            bool inPointSix = other.triangle.ContainsPoint(this.triangle.VertexThree);
+
             if (inPointOne || inPointTwo || inPointThree)
+            {
+                return true;
+            }
+
+            if (inPointFour || inPointFive || inPointSix)
             {
                 return true;
             }
