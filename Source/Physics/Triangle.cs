@@ -40,5 +40,33 @@ namespace SharpSlugsEngine.Physics
             return (crossProd1 > 0 && crossProd2 > 0 && crossProd3 > 0)
                 || (crossProd1 < 0 && crossProd2 < 0 && crossProd3 < 0);
         }
+
+        /// <summary>
+        /// This function will check if any vertex of a triangle is touching this triangle
+        /// </summary>
+        /// <param name="other"></param>
+        /// <returns></returns>
+        /// https://stackoverflow.com/questions/2778240/detection-of-triangle-collision-in-2d-space
+        public bool IsTouching(Triangle other)
+        {
+            bool inPointOne = ContainsPoint(other.VertexOne);
+            bool inPointTwo = ContainsPoint(other.VertexTwo);
+            bool inPointThree = ContainsPoint(other.VertexThree);
+
+            bool inPointFour = other.ContainsPoint(this.VertexOne);
+            bool inPointFive = other.ContainsPoint(this.VertexTwo);
+            bool inPointSix = other.ContainsPoint(this.VertexThree);
+
+            if (inPointOne || inPointTwo || inPointThree)
+            {
+                return true;
+            }
+
+            if (inPointFour || inPointFive || inPointSix)
+            {
+                return true;
+            }
+            return false;
+        }
     }
 }

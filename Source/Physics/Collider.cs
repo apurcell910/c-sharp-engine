@@ -3,9 +3,32 @@
     public abstract class Collider
     {
         /// <summary>
+        /// The triangles that make up this collider
+        /// </summary>
+        public Triangle[] Triangles { get; protected set; }
+
+        /// <summary>
         /// Whether or not the collider should act as a trigger (ie non-solid)
         /// </summary>
         public bool IsTrigger { get; set; }
+
+        private bool _isPhysicsObject;
+        /// <summary>
+        /// Whether or not the collider should receive physics updates (Gravity, velocity, etc)
+        /// </summary>
+        public bool IsPhysicsObject
+        {
+            get => _isPhysicsObject;
+            set
+            {
+                _isPhysicsObject = value;
+
+                if (!_isPhysicsObject)
+                {
+                    _velocity = Vector2.Zero;
+                }
+            }
+        }
 
         private Vector2 _position;
         /// <summary>
@@ -19,6 +42,22 @@
                 if (!float.IsNaN(value.X) && !float.IsNaN(value.Y) && !float.IsInfinity(value.X) && !float.IsInfinity(value.Y))
                 {
                     _position = value;
+                }
+            }
+        }
+
+        private Vector2 _velocity;
+        /// <summary>
+        /// The current velocity of this collider
+        /// </summary>
+        public Vector2 Velocity
+        {
+            get => _velocity;
+            set
+            {
+                if (!_isPhysicsObject && !float.IsNaN(value.X) && !float.IsNaN(value.Y) && !float.IsInfinity(value.X) && !float.IsInfinity(value.Y))
+                {
+                    _velocity = value;
                 }
             }
         }
@@ -58,7 +97,26 @@
             }
         }
 
-        public abstract bool IsTouching(Collider other);
+        public bool IsTouching(Collider other)
+        {
+            if (Triangles == null || Triangles.Length == 0 || other.Triangles == null || other.Triangles.Length == 0)
+            {
+                return false;
+            }
+
+            foreach (Triangle selfTri in Triangles)
+            {
+                foreach (Triangle otherTri in other.Triangles)
+                {
+                    if (selfTri.IsTouching(otherTri))
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
 
         public delegate void ColliderEvent(Collider other);
 
