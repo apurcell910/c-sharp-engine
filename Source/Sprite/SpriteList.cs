@@ -9,15 +9,17 @@ using System.Threading.Tasks;
 namespace SharpSlugsEngine {
     public class SpriteList {
         //Leaving dictionary public so stuff can be done direclty in the code itself;
-        public Dictionary<String, Sprite> sprites = new Dictionary<String, Sprite>();
+        public Dictionary<string, Sprite> sprites = new Dictionary<string, Sprite>();
         private GraphicsManager Graphics;
+        private Physics.MovementManager movement = new Physics.MovementManager();
 
         public SpriteList(GraphicsManager Graphics) {
             this.Graphics = Graphics;
         }
 
         public void Update() {
-            foreach (KeyValuePair<String, Sprite> obj in sprites) {
+            movement.updateSprites(ref sprites);
+            foreach (KeyValuePair<string, Sprite> obj in sprites) {
                 if (obj.Value.alive) {
                     obj.Value.Update();
                 }
@@ -25,7 +27,7 @@ namespace SharpSlugsEngine {
         }
 
         public void Draw() {
-            foreach (KeyValuePair<String, Sprite> obj in sprites) {
+            foreach (KeyValuePair<string, Sprite> obj in sprites) {
                 if (obj.Value.disp && obj.Value.alive) {
                     obj.Value.Draw(Graphics);
                 }
@@ -139,6 +141,15 @@ namespace SharpSlugsEngine {
 
         public void reincarnate(string key) {
             sprites[key].reincarnate();
+        }
+
+        public void setVelocityX(string key, int x) {
+            sprites[key].velocityX = x;
+            Console.Write("velocityX is now" + sprites[key].velocityX + "\n");
+        }
+        
+        public void setVelocityY(string key, int y) {
+            sprites[key].velocityY = y;
         }
     }
 }

@@ -10,6 +10,10 @@ namespace SharpSlugsEngine {
     public class Sprite
     {
         public int x, y, w, h;
+        public int velocityX = 0;
+        public int velocityY = 0;
+        public int gravityX = 0;
+        public int gravityY = 0;
         public float angle;
         public double xAnchor, yAnchor;
         public bool alive;
