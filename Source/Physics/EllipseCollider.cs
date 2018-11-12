@@ -8,9 +8,5 @@ namespace SharpSlugsEngine.Physics
 {
     class EllipseCollider : Collider
     {
-        public override bool IsTouching(Collider other)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

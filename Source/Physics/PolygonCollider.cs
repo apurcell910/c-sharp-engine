@@ -6,11 +6,6 @@ namespace SharpSlugsEngine.Physics
 {
     public class PolygonCollider : Collider
     {
-        private List<Vector2> vertexList;
-        private bool clockwise;
-
-        public Triangle[] Triangles { get; private set; }
-
         //TODO: Check that vertices array contains a simple polygon
         public PolygonCollider(Vector2[] vertices)
         {
@@ -20,12 +15,12 @@ namespace SharpSlugsEngine.Physics
             }
             
             //Create vertex list
-            vertexList = vertices.ToList();
+            List<Vector2> vertexList = vertices.ToList();
 
             //Trim redundant vertices
             for (int i = 0; i < vertexList.Count; i++)
             {
-                if (Vector2.CrossProduct(vertexList[GetPrevIndex(i)], vertexList[i], vertexList[GetNextIndex(i)]) == 0)
+                if (Vector2.CrossProduct(vertexList.GetPrevItem<Vector2>(i), vertexList[i], vertexList.GetNextItem<Vector2>(i)) == 0)
                 {
                     vertexList.RemoveAt(i);
                     i--;
@@ -41,10 +36,10 @@ namespace SharpSlugsEngine.Physics
             float area = 0;
             for (int i = 0; i < vertexList.Count; i++)
             {
-                area += (vertexList[GetNextIndex(i)].X - vertexList[i].X) * (vertexList[GetNextIndex(i)].Y + vertexList[i].Y);
+                area += (vertexList.GetNextItem<Vector2>(i).X - vertexList[i].X) * (vertexList.GetNextItem<Vector2>(i).Y + vertexList[i].Y);
             }
 
-            clockwise = area > 0;
+            bool clockwise = area > 0;
             
             //Trim ears until all that's left is a triangle
             List<Triangle> triangles = new List<Triangle>();
@@ -52,9 +47,9 @@ namespace SharpSlugsEngine.Physics
             {
                 for (int i = 0; i < vertexList.Count; i++)
                 {
-                    if (VertexIsEar(i))
+                    if (VertexIsEar(vertexList, i, clockwise))
                     {
-                        triangles.Add(new Triangle(vertexList[GetPrevIndex(i)], vertexList[i], vertexList[GetNextIndex(i)]));
+                        triangles.Add(new Triangle(vertexList.GetPrevItem<Vector2>(i), vertexList[i], vertexList.GetNextItem<Vector2>(i)));
                         vertexList.RemoveAt(i);
                         break;
                     }
@@ -76,33 +71,33 @@ namespace SharpSlugsEngine.Physics
             Triangles = triangles.ToArray();
         }
 
-        private bool VertexIsEar(int vert)
+        private bool VertexIsEar(List<Vector2> vertices, int vert, bool clockwise)
         {
-            if (vert < 0 || vert >= vertexList.Count)
+            if (vert < 0 || vert >= vertices.Count)
             {
                 throw new ArgumentOutOfRangeException("Argument vert out of range");
             }
 
             //Get vertices for the relevant triangle
-            int vert1 = GetPrevIndex(vert);
+            int vert1 = vertices.GetPrevIndex(vert);
             int vert2 = vert;
-            int vert3 = GetNextIndex(vert);
+            int vert3 = vertices.GetNextIndex(vert);
 
             //Determine if the angle at vert is reflex
-            float crossProd = Vector2.CrossProduct(vertexList[vert1], vertexList[vert2], vertexList[vert3]);
+            float crossProd = Vector2.CrossProduct(vertices[vert1], vertices[vert2], vertices[vert3]);
             if ((crossProd > 0 && clockwise) || (crossProd < 0 && !clockwise))
             {
                 return false;
             }
 
             //Check if any point is inside the triangle formed from this vertex
-            Triangle tri = new Triangle(vertexList[vert1], vertexList[vert2], vertexList[vert3]);
-            for (int i = 0; i < vertexList.Count; i++)
+            Triangle tri = new Triangle(vertices[vert1], vertices[vert2], vertices[vert3]);
+            for (int i = 0; i < vertices.Count; i++)
             {
                 //No point checking the vertices of the current triangle
                 if (i != vert1 && i != vert2 && i != vert3)
                 {
-                    if (tri.ContainsPoint(vertexList[i]))
+                    if (tri.ContainsPoint(vertices[i]))
                     {
                         return false;
                     }
@@ -110,31 +105,6 @@ namespace SharpSlugsEngine.Physics
             }
 
             return true;
-        }
-
-        private int GetPrevIndex(int i)
-        {
-            if (i < 0 || i >= vertexList.Count)
-            {
-                throw new ArgumentOutOfRangeException("Argument i out of range");
-            }
-
-            return i == 0 ? vertexList.Count - 1 : i - 1;
-        }
-
-        private int GetNextIndex(int i)
-        {
-            if (i < 0 || i >= vertexList.Count)
-            {
-                throw new ArgumentOutOfRangeException("Argument i out of range");
-            }
-
-            return i == vertexList.Count - 1 ? 0 : i + 1;
-        }
-
-        public override bool IsTouching(Collider other)
-        {
-            throw new NotImplementedException();
         }
     }
 }
