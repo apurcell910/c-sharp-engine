@@ -225,7 +225,7 @@ namespace Test_Game
                         bullet.Dead = true;
                         asteroid.Damage();
 
-                        if (asteroid.Dead && asteroid.Size > 1.25)
+                        if (asteroid.Dead && asteroid.Vertices.Length >= 6 && asteroid.Size > 1.25)
                         {
                             Vector2 pos = asteroid.Position;
                             asteroid.Position = Vector2.Zero;

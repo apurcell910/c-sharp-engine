@@ -18,6 +18,8 @@ namespace SharpSlugsEngine
 
         public MouseManager Mouse { get; private set; }
 
+        public CameraManager Cameras { get; private set; }
+
         /// <summary>
         /// Sprites manager for anything that needs to be displayed each goaround;
         /// </summary>
@@ -113,6 +115,9 @@ namespace SharpSlugsEngine
 
             //Create sprites
             sprites = new SpriteList(Graphics);
+
+            //Create camera manager
+            Cameras = new CameraManager(this);
         }
 
         /// <summary>
