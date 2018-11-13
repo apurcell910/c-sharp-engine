@@ -105,6 +105,18 @@ namespace SharpSlugsEngine
             set => DrawSize = new Vector2(_size.X, value);
         }
 
+        public Vector2 CameraToWorld(Vector2 cameraCoord)
+        {
+            Vector2 WorldCoord = new Vector2(cameraCoord.X * DrawWidth / _game.Resolution.X + DrawX, cameraCoord.Y * DrawHeight / _game.Resolution.X + DrawY);
+            return WorldCoord;
+        }
+
+        public Vector2 WorldToCamera(Vector2 worldCoord)
+        {
+            Vector2 CameraCoord = new Vector2((worldCoord.X - DrawX) * _game.Resolution.X /DrawWidth, (worldCoord.Y - DrawY) * _game.Resolution.Y / DrawHeight);
+            return CameraCoord;
+        }
+
         private Game _game;
         private CameraManager _manager;
 
