@@ -145,11 +145,18 @@ namespace SharpSlugsEngine {
 
         public void setVelocityX(string key, int x) {
             sprites[key].velocityX = x;
-            Console.Write("velocityX is now" + sprites[key].velocityX + "\n");
         }
         
         public void setVelocityY(string key, int y) {
             sprites[key].velocityY = y;
+        }
+
+        public void setGravityX(string key, int x) {
+            sprites[key].gravityX = x;
+        }
+
+        public void setGravityY(string key, int y) {
+            sprites[key].gravityY = y;
         }
     }
 }
