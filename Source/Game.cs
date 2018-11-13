@@ -127,6 +127,7 @@ namespace SharpSlugsEngine
         {
             //Call setup functions
             Initialize();
+            Cameras.Main = Cameras.Create(0, 0, Graphics.WorldScale.X, Graphics.WorldScale.Y);
             LoadContent();
             
             CheckValues();
