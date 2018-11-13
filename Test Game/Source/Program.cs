@@ -215,6 +215,7 @@ namespace Test_Game
                 asteroids.Add(new Asteroid(this, pos, vel.Normalize() * rnd.Next(100, 200)));
             }
 
+            List<Asteroid> newAsteroids = new List<Asteroid>();
             foreach (Asteroid asteroid in asteroids)
             {
                 foreach (Bullet bullet in bullets)
@@ -223,9 +224,38 @@ namespace Test_Game
                     {
                         bullet.Dead = true;
                         asteroid.Damage();
+
+                        if (asteroid.Dead && asteroid.Size > 1.25)
+                        {
+                            Vector2 pos = asteroid.Position;
+                            asteroid.Position = Vector2.Zero;
+
+                            int mid = asteroid.Vertices.Length / 2;
+
+                            Vector2[] first = new Vector2[mid];
+                            Vector2[] second = new Vector2[asteroid.Vertices.Length - mid];
+
+                            for (int i = 0; i < asteroid.Vertices.Length; i++)
+                            {
+                                if (i < mid)
+                                {
+                                    first[i] = asteroid.Vertices[i];
+                                }
+                                else
+                                {
+                                    second[i - mid] = asteroid.Vertices[i];
+                                }
+                            }
+
+                            Vector2 vel = new Vector2(rnd.Next(100) - 50, rnd.Next(100) - 50).Normalize() * rnd.Next(100, 200);
+                            newAsteroids.Add(new Asteroid(this, first, pos, vel));
+                            newAsteroids.Add(new Asteroid(this, second, pos, -vel));
+                        }
                     }
                 }
             }
+
+            asteroids.AddRange(newAsteroids);
 
             bullets.RemoveAll(bullet => bullet.Dead);
             asteroids.RemoveAll(asteroid => asteroid.Dead);
@@ -293,10 +323,24 @@ namespace Test_Game
         public class Asteroid
         {
             private PolygonCollider poly;
+            public Vector2[] Vertices => poly.Vertices;
+
+            public Vector2 Position
+            {
+                get => poly.Position;
+                set => poly.Position = value;
+            }
+
+            public Vector2 Velocity
+            {
+                get => poly.Velocity;
+                set => poly.Velocity = value;
+            }
 
             private Game _game;
             private float rotSpeed;
-            private float size;
+
+            public float Size { get; private set; }
 
             private int hp;
             private int maxHp;
@@ -308,12 +352,28 @@ namespace Test_Game
                 _game = game;
 
                 Random rnd = new Random();
-                size = (float)rnd.NextDouble() + 0.5f;
-                poly = PolygonCollider.GenerateRandom(size * 66.66f);
+                Size = (float)rnd.NextDouble() + 0.5f;
+                poly = PolygonCollider.GenerateRandom(Size * 66.66f);
 
                 rotSpeed = (float)rnd.NextDouble() * 50 - 25;
 
-                hp = (int)(size * 5);
+                hp = (int)(Size * 5);
+                maxHp = hp;
+
+                poly.Position = pos;
+                poly.Velocity = velocity;
+            }
+
+            public Asteroid(Game game, Vector2[] verts, Vector2 pos, Vector2 velocity)
+            {
+                _game = game;
+
+                Size = 1f;
+                poly = new PolygonCollider(verts);
+
+                rotSpeed = (float)new Random().NextDouble() * 50 - 25;
+
+                hp = (int)(Size * 5);
                 maxHp = hp;
 
                 poly.Position = pos;
@@ -347,12 +407,12 @@ namespace Test_Game
 
             public void Draw()
             {
-                Vector2 topLeft = poly.Position - new Vector2(66.66f * size, 66.66f * size);
+                Vector2 topLeft = poly.Position - new Vector2(66.66f * Size, 66.66f * Size);
 
                 _game.Graphics.DrawPolygon(poly.Vertices, Color.White, false);
 
-                _game.Graphics.DrawRectangle(topLeft + Vector2.Up * 10, new Vector2(133.33f * size, 10), Color.Red);
-                _game.Graphics.DrawRectangle(topLeft + Vector2.Up * 10, new Vector2(133.33f * size * (hp / (float)maxHp), 10), Color.Green);
+                _game.Graphics.DrawRectangle(topLeft + Vector2.Up * 10, new Vector2(133.33f * Size, 10), Color.Red);
+                _game.Graphics.DrawRectangle(topLeft + Vector2.Up * 10, new Vector2(133.33f * Size * (hp / (float)maxHp), 10), Color.Green);
             }
         }
     }
