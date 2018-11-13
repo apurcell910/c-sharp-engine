@@ -20,6 +20,18 @@ namespace SharpSlugsEngine
             return X == other.X && Y == other.Y;
         }
         
+        /// <summary>
+        /// Rotates the current vector by <paramref name="r"/> degrees about the point <paramref name="origin"/>
+        /// </summary>
+        /// <returns>A new Vector2 containing the rotated point</returns>
+        public Vector2 Rotate(Vector2 origin, float r)
+        {
+            r *= (float)Math.PI / 180;
+
+            return new Vector2((float)(Math.Cos(r) * (X - origin.X) - Math.Sin(r) * (Y - origin.Y) + origin.X),
+                (float)(Math.Sin(r) * (X - origin.X) + Math.Cos(r) * (Y - origin.Y) + origin.Y));
+        }
+
         public Vector2 Normalize()
         {
             float len = Length;

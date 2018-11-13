@@ -88,11 +88,37 @@
             {
                 if (!float.IsNaN(value) && !float.IsInfinity(value))
                 {
+                    while (value < 0) value += 360;
+                    while (value >= 360) value -= 360;
+
+                    if (Vertices != null && Triangles != null && Vertices.Length > 0 && Triangles.Length > 0)
+                    {
+                        //Find center point of collider
+                        Vector2 centerPoint = Vector2.Zero;
+                        foreach (Vector2 vert in Vertices)
+                        {
+                            centerPoint += vert;
+                        }
+
+                        centerPoint /= Vertices.Length;
+
+                        //Difference in current and new rotation
+                        float rot = value - _rotation;
+
+                        for (int i = 0; i < Vertices.Length; i++)
+                        {
+                            Vertices[i] = Vertices[i].Rotate(centerPoint, rot);
+                        }
+
+                        for (int i = 0; i < Triangles.Length; i++)
+                        {
+                            Triangles[i] = new Triangle(Triangles[i].VertexOne.Rotate(centerPoint, rot), Triangles[i].VertexTwo.Rotate(centerPoint, rot),
+                                Triangles[i].VertexThree.Rotate(centerPoint, rot));
+                        }
+                    }
+
                     _rotation = value;
                 }
-
-                while (_rotation < 0) _rotation += 360;
-                while (_rotation >= 360) _rotation -= 360;
             }
         }
 
