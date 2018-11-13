@@ -130,6 +130,11 @@ namespace Test_Game
             ccw.CopyTo(cw, 0);
             Array.Reverse(cw);
 
+            for (int i = 0; i < cw.Length; i++)
+            {
+                cw[i] += new Vector2(300, 0);
+            }
+
             polygonTest = new PolygonCollider(ccw);
             polygonTest2 = new PolygonCollider(cw);
 
@@ -299,12 +304,12 @@ namespace Test_Game
             
             /*foreach (Triangle tri in polygonTest.Triangles)
             {
-                Graphics.DrawTri(tri, Color.NavajoWhite);
+                Graphics.DrawTri(tri, Color.NavajoWhite, false);
             }
 
             foreach (Triangle tri in polygonTest2.Triangles)
             {
-                Graphics.DrawTri(tri, Color.PaleVioletRed);
+                Graphics.DrawTri(tri, Color.PaleVioletRed, false);
             }
 
             foreach(Triangle tri in ellipseTest.Triangles)
@@ -320,7 +325,7 @@ namespace Test_Game
             
             if (gameOver)
             {
-                Graphics.DrawBMP(Content.GetImage("GameOver"), 0, 0, (int)Graphics.WorldScale.X, (int)Graphics.WorldScale.Y);
+                Graphics.DrawBMP(Content.GetImage("GameOver"), 0, 0, (int)Resolution.X, (int)Resolution.Y, 0, DrawType.Screen);
             }
         }
 
@@ -370,6 +375,7 @@ namespace Test_Game
             private float size;
 
             private int hp;
+            private int maxHp;
 
             public Vector2 Position { get; private set; }
             public Vector2 Velocity { get; private set; }
@@ -386,6 +392,7 @@ namespace Test_Game
                 size = (float)rnd.NextDouble() + 0.5f;
 
                 hp = (int)(size * 5);
+                maxHp = hp;
 
                 Position = pos;
                 Velocity = velocity;
@@ -427,7 +434,11 @@ namespace Test_Game
 
             public void Draw()
             {
-                _game.Graphics.DrawBMP(image, (int)(Position.X - (image.Width * size) / 2f), (int)(Position.Y - (image.Height * size) / 2f), (int)(image.Width * size), (int)(image.Height * size), rotation);
+                Vector2 topLeft = Position - ((Vector2)image.Size * size) / 2f;
+                _game.Graphics.DrawBMP(image, topLeft.X, topLeft.Y, image.Width * size, image.Height * size, rotation);
+
+                _game.Graphics.DrawRectangle(topLeft + Vector2.Up * 10, new Vector2(image.Size.Width * size, 10), Color.Red);
+                _game.Graphics.DrawRectangle(topLeft + Vector2.Up * 10, new Vector2(image.Size.Width * size * (hp / (float)maxHp), 10), Color.Green);
             }
         }
     }

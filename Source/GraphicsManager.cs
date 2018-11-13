@@ -90,55 +90,71 @@ namespace SharpSlugsEngine
             bitmapGraphics.ResetTransform();
         }
 
-        //TODO: DrawType overloads for DrawRectangle
         //Feel like I should just make these take a SpriteObj as well. Maybe for later, shouldn't be too
         //difficult to do.
 
         //To draw rectangle at angle:
         //https://stackoverflow.com/questions/10210134/using-a-matrix-to-rotate-rectangles-individually
-        public void DrawRectangle(Rectangle rect, Color color, bool fill = true, float angle = 0, double xAnchor = 0, double yAnchor = 0)
+        /// <summary>
+        /// The actual DrawRectangle function. All overloads should use this to draw
+        /// </summary>
+        internal void DrawRectangle(int x, int y, int w, int h, Color color, bool fill = true, float angle = 0, double xAnchor = 0, double yAnchor = 0)
         {
             SetColor(color);
+            Rotate(new PointF((float)(x + (w * xAnchor)), (float)(y + (h * yAnchor))), angle);
 
-            using (Matrix m = new Matrix()) {
-                m.RotateAt(angle, new PointF((float)(rect.X + (rect.Width * xAnchor)), (float)(rect.Y + (rect.Height * yAnchor))));
-                bitmapGraphics.Transform = m;
-                if (fill)
-                    bitmapGraphics.FillRectangle(brush, rect);
-                else
-                    bitmapGraphics.DrawRectangle(pen, rect);
-                bitmapGraphics.ResetTransform();
+            if (fill)
+            {
+                bitmapGraphics.FillRectangle(brush, new Rectangle(x, y, w, h));
             }
+            else
+            {
+                bitmapGraphics.DrawRectangle(pen, new Rectangle(x, y, w, h));
+            }
+
+            ResetRotation();
         }
 
-        public void DrawRectangle(int x, int y, int w, int h, Color color, bool fill = true, float angle = 0, double xAnchor = 0, double yAnchor = 0)
-            => DrawRectangle(new Rectangle(x, y, w, h), color, fill, angle, xAnchor, yAnchor);
-
-        public void DrawRectangle(Vector2 worldScaledCenter, int w, int h, Color color, bool fill = true, float angle = 0, double xAnchor = 0, double yAnchor = 0)
+        public void DrawRectangle(Vector2 pos, Vector2 size, Color color, bool fill = true, float angle = 0, double xAnchor = 0, double yAnchor = 0, DrawType type = DrawType.World)
         {
-            Vector2 toResolution = ToResolutionScale(worldScaledCenter);
+            if (type == DrawType.World)
+            {
+                pos = ToResolutionScale(pos);
+                size = ToResolutionScale(size);
+            }
 
-            Console.WriteLine(toResolution);
-
-            DrawRectangle((int)toResolution.X, (int)toResolution.Y, w, h, color, fill, angle, xAnchor, yAnchor);
+            DrawRectangle((int)pos.X, (int)pos.Y, (int)size.X, (int)size.Y, color, fill, angle, xAnchor, yAnchor);
         }
 
-        public void DrawLine(int a, int b, int x, int y, Color color)
+        public void DrawRectangle(float x, float y, float w, float h, Color color, bool fill = true, float angle = 0, double xAnchor = 0, double yAnchor = 0, DrawType type = DrawType.World)
+            => DrawRectangle(new Vector2(x, y), new Vector2(w, h), color, fill, angle, xAnchor, yAnchor, type);
+
+        public void DrawRectangle(RectangleF rect, Color color, bool fill = true, float angle = 0, double xAnchor = 0, double yAnchor = 0, DrawType type = DrawType.World)
+            => DrawRectangle(rect.X, rect.Y, rect.Width, rect.Height, color, fill, angle, xAnchor, yAnchor, type);
+
+        /// <summary>
+        /// The actual DrawLine function. All overloads should use this to draw
+        /// </summary>
+        internal void DrawLine(int x1, int y1, int x2, int y2, Color color)
         {
             SetColor(color);
-            bitmapGraphics.DrawLine(pen, a, b, x, y);
+            bitmapGraphics.DrawLine(pen, x1, y1, x2, y2);
         }
 
-        public void DrawLine(Point p1, Point p2, Color color)
-            => DrawLine(p1.X, p1.Y, p2.X, p2.Y, color);
-
-        public void DrawLine(Vector2 worldScaledA, Vector2 worldScaledB, Color color)
+        public void DrawLine(Vector2 v1, Vector2 v2, Color color, DrawType type = DrawType.World)
         {
-            Vector2 toResoultionA = ToResolutionScale(worldScaledA);
-            Vector2 toResoultionB = ToResolutionScale(worldScaledB);
+            if (type == DrawType.World)
+            {
+                v1 = ToResolutionScale(v1);
+                v2 = ToResolutionScale(v2);
+            }
 
-            DrawLine((int)toResoultionA.X, (int)toResoultionA.Y, (int)toResoultionB.X, (int)toResoultionB.Y, color);
+            DrawLine((int)v1.X, (int)v1.Y, (int)v2.X, (int)v2.Y, color);
         }
+
+        public void DrawLine(float x1, float y1, float x2, float y2, Color color, DrawType type = DrawType.World)
+            => DrawLine(new Vector2(x1, y1), new Vector2(x2, y2), color, type);
+
         /// <summary>
         /// The actual DrawEllipse function. All overloads should use this to draw
         /// </summary>
