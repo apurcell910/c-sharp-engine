@@ -43,15 +43,6 @@ namespace Test_Game
 
         private bool gameOver;
 
-        private PolygonCollider polygonTest;
-        private PolygonCollider polygonTest2;
-
-        private TriangleCollider triangleTest1;
-        private TriangleCollider triangleTest2;
-
-        private pEllipse ellipseTest;
-        private pRectangle rectTest;
-
         protected override void Initialize()
         {
             Graphics.BackColor = Color.Black;
@@ -103,51 +94,6 @@ namespace Test_Game
             
             cursorSize = sprites.getSize("cursor");
             shipSize = sprites.getSize("ship");
-            
-            Vector2[] ccw = new Vector2[]
-            {
-                new Vector2(200, 0),
-                new Vector2(100, 70),
-                new Vector2(150, 60),
-                new Vector2(100, 110),
-                new Vector2(120, 150),
-                new Vector2(160, 70),
-                new Vector2(200, 170),
-                new Vector2(120, 180),
-                new Vector2(170, 230),
-                new Vector2(240, 150),
-                new Vector2(180, 70),
-                new Vector2(260, 90),
-                new Vector2(250, 110),
-                new Vector2(230, 90),
-                new Vector2(230, 110),
-                new Vector2(270, 130),
-                new Vector2(270, 50),
-                new Vector2(200, 50)
-            };
-
-            Vector2[] cw = new Vector2[ccw.Length];
-            ccw.CopyTo(cw, 0);
-            Array.Reverse(cw);
-
-            for (int i = 0; i < cw.Length; i++)
-            {
-                cw[i] += new Vector2(300, 0);
-            }
-
-            polygonTest = new PolygonCollider(ccw);
-            polygonTest2 = new PolygonCollider(cw);
-
-            triangleTest2 = new TriangleCollider(new Vector2(100.0f, 5.0f), new Vector2(50.0f, 50.0f), new Vector2(800.0f, 400.0f));
-            triangleTest1 = new TriangleCollider(new Vector2(110.0f, 10.0f), new Vector2(55.0f, 45.0f), new Vector2(100.0f, 20.0f));
-
-            rectTest = new pRectangle(new Vector2(400.0f, 400.0f), new Vector2(600.0f, 600.0f));
-
-            ellipseTest = new pEllipse(new Vector2(400.0f, 400.0f), 300f, 350f);
-            if(triangleTest1.IsTouching(triangleTest2))
-            {
-                Console.WriteLine("Triangles are touching!");
-            }
         }
 
         protected override void Update(GameTime gameTime)
@@ -273,7 +219,7 @@ namespace Test_Game
             {
                 foreach (Bullet bullet in bullets)
                 {
-                    if (asteroid.CheckCollision(bullet.Position, 5))
+                    if (asteroid.CheckCollision(bullet.Position))
                     {
                         bullet.Dead = true;
                         asteroid.Damage();
@@ -286,7 +232,7 @@ namespace Test_Game
 
             foreach (Asteroid asteroid in asteroids)
             {
-                if (asteroid.CheckCollision(playerPos, (int)(shipSize.X / 3f)))
+                if (asteroid.CheckCollision(playerPos))
                 {
                     sprites.display("ship", false);
                     sprites.display("cursor", false);
@@ -301,27 +247,6 @@ namespace Test_Game
         {
             bullets.ForEach(bullet => bullet.Draw());
             asteroids.ForEach(asteroid => asteroid.Draw());
-            
-            /*foreach (Triangle tri in polygonTest.Triangles)
-            {
-                Graphics.DrawTri(tri, Color.NavajoWhite, false);
-            }
-
-            foreach (Triangle tri in polygonTest2.Triangles)
-            {
-                Graphics.DrawTri(tri, Color.PaleVioletRed, false);
-            }
-
-            foreach(Triangle tri in ellipseTest.Triangles)
-            {
-                Graphics.DrawTri(tri, Color.Azure);
-            }
-            
-            Graphics.DrawTri(triangleTest1.triangle, Color.MediumAquamarine);
-            Graphics.DrawTri(triangleTest2.triangle, Color.MediumAquamarine);
-
-            Graphics.DrawTri(rectTest.TriOne, Color.Maroon);
-            Graphics.DrawTri(rectTest.TriTwo, Color.Orange);*/
             
             if (gameOver)
             {
@@ -367,62 +292,50 @@ namespace Test_Game
 
         public class Asteroid
         {
-            private Bitmap image;
+            private PolygonCollider poly;
 
             private Game _game;
             private float rotSpeed;
-            private float rotation;
             private float size;
 
             private int hp;
             private int maxHp;
-
-            public Vector2 Position { get; private set; }
-            public Vector2 Velocity { get; private set; }
+            
             public bool Dead;
 
             public Asteroid(Game game, Vector2 pos, Vector2 velocity)
             {
                 _game = game;
 
-                image = _game.Content.GetImage("Asteroid");
-
                 Random rnd = new Random();
-                rotSpeed = (float)rnd.NextDouble() * 50 - 25;
                 size = (float)rnd.NextDouble() + 0.5f;
+                poly = PolygonCollider.GenerateRandom(size * 66.66f);
+
+                rotSpeed = (float)rnd.NextDouble() * 50 - 25;
 
                 hp = (int)(size * 5);
                 maxHp = hp;
 
-                Position = pos;
-                Velocity = velocity;
+                poly.Position = pos;
+                poly.Velocity = velocity;
             }
 
             public void Update(GameTime gameTime)
             {
                 if (Dead) return;
 
-                Position = Position + Velocity * (float)gameTime.deltaTime.TotalSeconds;
+                poly.Position = poly.Position + poly.Velocity * (float)gameTime.deltaTime.TotalSeconds;
 
-                if (Position.X < -(image.Width * size) / 2f || Position.X > _game.Graphics.WorldScale.X + (image.Width * size) / 2f
-                    || Position.Y < -(image.Height * size) / 2f || Position.Y > _game.Graphics.WorldScale.Y + (image.Height * size) / 2f)
+                if (poly.Position.X < -100 || poly.Position.X > _game.Graphics.WorldScale.X + 100 || poly.Position.Y < -100 || poly.Position.Y > _game.Graphics.WorldScale.Y + 100)
                 {
                     Dead = true;
                 }
 
-                rotation += rotSpeed * (float)gameTime.deltaTime.TotalSeconds * 5;
-                if (rotation > 360) rotation -= 360;
+                poly.Rotation += rotSpeed * (float)gameTime.deltaTime.TotalSeconds * 5;
             }
 
-            public bool CheckCollision(Vector2 loc, int radius)
-            {
-                Vector2 dist = Position - loc;
-                dist = new Vector2(Math.Abs(dist.X), Math.Abs(dist.Y));
-
-                float selfRadius = image.Width / 2f;
-
-                return dist.Length <= radius + selfRadius * size;
-            }
+            public bool CheckCollision(Vector2 loc)
+                => poly.IsTouching(loc);
 
             public void Damage()
             {
@@ -434,11 +347,12 @@ namespace Test_Game
 
             public void Draw()
             {
-                Vector2 topLeft = Position - ((Vector2)image.Size * size) / 2f;
-                _game.Graphics.DrawBMP(image, topLeft.X, topLeft.Y, image.Width * size, image.Height * size, rotation);
+                Vector2 topLeft = poly.Position - new Vector2(66.66f * size, 66.66f * size);
 
-                _game.Graphics.DrawRectangle(topLeft + Vector2.Up * 10, new Vector2(image.Size.Width * size, 10), Color.Red);
-                _game.Graphics.DrawRectangle(topLeft + Vector2.Up * 10, new Vector2(image.Size.Width * size * (hp / (float)maxHp), 10), Color.Green);
+                _game.Graphics.DrawPolygon(poly.Vertices, Color.White, false);
+
+                _game.Graphics.DrawRectangle(topLeft + Vector2.Up * 10, new Vector2(133.33f * size, 10), Color.Red);
+                _game.Graphics.DrawRectangle(topLeft + Vector2.Up * 10, new Vector2(133.33f * size * (hp / (float)maxHp), 10), Color.Green);
             }
         }
     }

@@ -7,6 +7,8 @@
         /// </summary>
         public Triangle[] Triangles { get; protected set; }
 
+        public Vector2[] Vertices { get; protected set; }
+
         /// <summary>
         /// Whether or not the collider should act as a trigger (ie non-solid)
         /// </summary>
@@ -41,6 +43,19 @@
             {
                 if (!float.IsNaN(value.X) && !float.IsNaN(value.Y) && !float.IsInfinity(value.X) && !float.IsInfinity(value.Y))
                 {
+                    if (Triangles != null)
+                    {
+                        for (int i = 0; i < Triangles.Length; i++)
+                        {
+                            Triangles[i] = new Triangle(Triangles[i].VertexOne + value - _position, Triangles[i].VertexTwo + value - _position, Triangles[i].VertexThree + value - _position);
+                        }
+
+                        for (int i = 0; i < Vertices.Length; i++)
+                        {
+                            Vertices[i] += value - _position;
+                        }
+                    }
+
                     _position = value;
                 }
             }
@@ -112,6 +127,24 @@
                     {
                         return true;
                     }
+                }
+            }
+
+            return false;
+        }
+
+        public bool IsTouching(Vector2 point)
+        {
+            if (Triangles == null || Triangles.Length == 0)
+            {
+                return false;
+            }
+
+            foreach (Triangle tri in Triangles)
+            {
+                if (tri.ContainsPoint(point))
+                {
+                    return true;
                 }
             }
 

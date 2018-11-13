@@ -266,6 +266,42 @@ namespace SharpSlugsEngine
         public void DrawTri(Triangle tri, Color color, bool fill = true, float r = 0, DrawType type = DrawType.World)
             => DrawTri(tri.VertexOne, tri.VertexTwo, tri.VertexThree, color, fill, r, type);
 
+        //TODO: Find center point of polygon to support rotation
+        /// <summary>
+        /// The actual DrawPolygon function. All overloads should use this to draw
+        /// </summary>
+        internal void DrawPolygon(Point[] points, Color color, bool fill = true, float r = 0)
+        {
+            SetColor(color);
+
+            if (fill)
+            {
+                bitmapGraphics.FillPolygon(brush, points);
+            }
+            else
+            {
+                bitmapGraphics.DrawPolygon(pen, points);
+            }
+        }
+
+        public void DrawPolygon(Vector2[] vertices, Color color, bool fill = true, float r = 0, DrawType type = DrawType.World)
+        {
+            Point[] points = new Point[vertices.Length];
+            for (int i = 0; i < points.Length; i++)
+            {
+                if (type == DrawType.World)
+                {
+                    points[i] = (Point)ToResolutionScale(vertices[i]);
+                }
+                else
+                {
+                    points[i] = (Point)vertices[i];
+                }
+            }
+
+            DrawPolygon(points, color, fill, r);
+        }
+
         public void SetWorldScale(Vector2 scaleFactor)
         {
             WorldScale = scaleFactor;

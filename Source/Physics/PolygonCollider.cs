@@ -32,6 +32,8 @@ namespace SharpSlugsEngine.Physics
                 throw new ArgumentException("Less than 3 vertices after trimming redundancies");
             }
 
+            Vertices = vertexList.ToArray();
+
             //Determine which direction this vertex list goes around the polygon
             float area = 0;
             for (int i = 0; i < vertexList.Count; i++)
@@ -105,6 +107,36 @@ namespace SharpSlugsEngine.Physics
             }
 
             return true;
+        }
+
+        /// <summary>
+        /// Generates a random polygon collider with a roughly circular shape
+        /// </summary>
+        public static PolygonCollider GenerateRandom(float radius)
+        {
+            try
+            {
+                Random rnd = new Random();
+
+                pEllipse circle = new pEllipse(Vector2.Zero, radius, radius);
+
+                List<Vector2> verts = new List<Vector2>();
+
+                float multiplier = -1;
+                for (int i = 0; i < circle.Triangles.Count; i++)
+                {
+                    if (multiplier == -1 || rnd.NextDouble() <= 0.33f) multiplier = rnd.Next(8, 12) / 10f;
+                    else continue;
+                    verts.Add(circle.Triangles[i].VertexTwo * multiplier);
+                }
+
+                return new PolygonCollider(verts.ToArray());
+            }
+            catch (Exception)
+            {
+                //It's possible for this to generate invalid polygons, but it should be very rare
+                return GenerateRandom(radius);
+            }
         }
     }
 }
