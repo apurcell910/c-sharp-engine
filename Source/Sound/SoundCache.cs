@@ -4,20 +4,26 @@ namespace SharpSlugsEngine.Sound
 {
     internal class SoundCache
     {
+        private Game _game;
+
         public string Path { get; private set; }
         public int CacheSize { get; private set; }
 
         private List<Sound> cache;
         private List<Sound> unavailable;
 
-        public SoundCache(string path, int cacheSize)
+        private int waiting;
+
+        public SoundCache(Game game, string path, int cacheSize)
         {
+            _game = game;
+
             Path = path;
             CacheSize = cacheSize;
             cache = new List<Sound>();
             unavailable = new List<Sound>();
 
-            for (int i = 0; i < CacheSize; i++)
+            for (int i = 0; i < (CacheSize > 5 ? 5 : CacheSize); i++)
             {
                 CreateSound();
             }
@@ -55,8 +61,12 @@ namespace SharpSlugsEngine.Sound
 
         private void CreateSound()
         {
+            waiting++;
+
             Sound sound = new Sound(this);
             sound.SoundLoaded += SoundLoaded;
+
+            _game.AddUpdatable(sound);
         }
 
         internal void SoundLoaded(Sound sound)
@@ -66,11 +76,25 @@ namespace SharpSlugsEngine.Sound
             if (sound.LoadState == SoundState.Loaded)
             {
                 cache.Add(sound);
+                waiting--;
             }
             else
             {
                 sound.ResetEvents();
                 CreateSound();
+            }
+
+            if (waiting <= 0)
+            {
+                int totalNeeded = CacheSize - (cache.Count + unavailable.Count);
+
+                if (totalNeeded > 0)
+                {
+                    for (int i = 0; i < (totalNeeded > 5 ? 5 : totalNeeded); i++)
+                    {
+                        CreateSound();
+                    }
+                }
             }
         }
     }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows.Forms;
 using SharpSlugsEngine.Input;
@@ -11,6 +12,9 @@ namespace SharpSlugsEngine
         private TimeSpan deltaUpdate = new TimeSpan(0);
         private TimeSpan deltaDraw = new TimeSpan(0);
         private TimeSpan targetSpf = new TimeSpan(0);    //targetted seconds per frame
+
+        private List<IUpdatable> updateReceivers;
+        private List<IDrawable> drawReceivers;
 
         public DeviceManager Controllers { get; private set; }
 
@@ -99,6 +103,10 @@ namespace SharpSlugsEngine
             FixedTimestep = false;
             _resolution = new Vector2(1280, 720);
 
+            //Instantiate lists
+            updateReceivers = new List<IUpdatable>();
+            drawReceivers = new List<IDrawable>();
+
             //Create platform
             platform = new Platform(this);
 
@@ -111,7 +119,7 @@ namespace SharpSlugsEngine
             Mouse = new MouseManager(this);
             
             //Create Content Manager
-            Content = new ContentManager();
+            Content = new ContentManager(this);
 
             //Create sprites
             sprites = new SpriteList(Graphics);
@@ -150,6 +158,17 @@ namespace SharpSlugsEngine
             Controllers.Update(updateTime);
             Keyboard.Update();
             Mouse.Update();
+
+            //Handle IUpdatables
+            updateReceivers.AddRange(newUpdatables);
+            newUpdatables.Clear();
+
+            updateReceivers.RemoveAll(item => removedUpdatables.Contains(item));
+            removedUpdatables.Clear();
+
+            updateReceivers.RemoveAll(updatable => !updatable.Alive);
+            updateReceivers.ForEach(updatable => updatable.Update(updateTime));
+
             Update(updateTime);
             sprites.Update();//Should I add updateTime to this? Not sure how it is worked in.
 
@@ -167,6 +186,17 @@ namespace SharpSlugsEngine
 
                     Graphics.Begin();
                     sprites.Draw();
+
+                    //Handle IDrawables
+                    drawReceivers.AddRange(newDrawables);
+                    newDrawables.Clear();
+
+                    drawReceivers.RemoveAll(item => removedDrawables.Contains(item));
+                    removedDrawables.Clear();
+
+                    drawReceivers.RemoveAll(drawable => !drawable.Alive);
+                    drawReceivers.ForEach(drawable => drawable.Draw(updateTime));
+
                     Draw(drawTime);
                     Graphics.End();
                 }
@@ -179,8 +209,60 @@ namespace SharpSlugsEngine
 
                 Graphics.Begin();
                 sprites.Draw();
+
+                drawReceivers.RemoveAll(drawable => !drawable.Alive);
+                drawReceivers.ForEach(drawable => drawable.Draw(drawTime));
+
                 Draw(drawTime);
                 Graphics.End();
+            }
+        }
+
+        private List<IUpdatable> newUpdatables = new List<IUpdatable>();
+        /// <summary>
+        /// Register component "<paramref name="updatable"/>" to receive updates before the main <see cref="Update"/> call
+        /// </summary>
+        public void AddUpdatable(IUpdatable updatable)
+        {
+            if (!newUpdatables.Contains(updatable))
+            {
+                newUpdatables.Add(updatable);
+            }
+        }
+
+        private List<IUpdatable> removedUpdatables = new List<IUpdatable>();
+        /// <summary>
+        /// Remove component "<paramref name="updatable"/>" from update list
+        /// </summary>
+        public void RemoveUpdatable(IUpdatable updatable)
+        {
+            if (!removedUpdatables.Contains(updatable))
+            {
+                removedUpdatables.Add(updatable);
+            }
+        }
+
+        private List<IDrawable> newDrawables = new List<IDrawable>();
+        /// <summary>
+        /// Register component "<paramref name="drawable"/>" to receive updates before the main <see cref="Draw"/> call
+        /// </summary>
+        public void AddDrawable(IDrawable drawable)
+        {
+            if (!newDrawables.Contains(drawable))
+            {
+                newDrawables.Add(drawable);
+            }
+        }
+
+        private List<IDrawable> removedDrawables = new List<IDrawable>();
+        /// <summary>
+        /// Remove component "<paramref name="drawable"/>" from draw list
+        /// </summary>
+        public void RemoveDrawable(IDrawable drawable)
+        {
+            if (!removedDrawables.Contains(drawable))
+            {
+                removedDrawables.Add(drawable);
             }
         }
 

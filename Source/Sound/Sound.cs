@@ -1,15 +1,12 @@
 ﻿using System;
-using System.Threading;
 using System.Windows.Media;
 
 namespace SharpSlugsEngine.Sound
 {
-    public class Sound : IDisposable
+    public class Sound : IUpdatable, IDisposable
     {
         private MediaPlayer player;
         private SoundCache cache;
-
-        private Thread timeoutThread;
 
         /// <summary>
         /// Whether or not to loop the Sound after completion
@@ -85,6 +82,10 @@ namespace SharpSlugsEngine.Sound
         /// </summary>
         public SoundState LoadState { get; private set; } = SoundState.Loading;
 
+        private float aliveTime;
+        private bool _alive = true;
+        bool IUpdatable.Alive => _alive;
+
         internal Sound(SoundCache parent)
         {
             cache = parent;
@@ -94,33 +95,19 @@ namespace SharpSlugsEngine.Sound
             player.MediaFailed += MediaFailed;
             player.MediaEnded += MediaEnded;
             player.Open(new Uri(cache.Path));
-            
-            timeoutThread = new Thread(new ThreadStart(Timeout));
-            timeoutThread.Start();
-        }
-
-        private void Timeout()
-        {
-            Thread.Sleep(2000);
-            if (LoadState == SoundState.Loading)
-            {
-                player = null;
-                LoadState = SoundState.LoadFailed;
-                _soundLoaded?.Invoke(this);
-            }
         }
 
         private void MediaOpened(object sender, EventArgs e)
         {
-            timeoutThread.Abort();
-            
+            _alive = false;
+
             LoadState = SoundState.Loaded;
             _soundLoaded?.Invoke(this);
         }
 
         private void MediaFailed(object sender, EventArgs e)
         {
-            timeoutThread.Abort();
+            _alive = false;
 
             LoadState = SoundState.LoadFailed;
             _soundLoaded?.Invoke(this);
@@ -180,6 +167,23 @@ namespace SharpSlugsEngine.Sound
         void IDisposable.Dispose()
         {
             cache.Reclaim(this);
+        }
+
+        void IUpdatable.Update(GameTime gameTime)
+        {
+            aliveTime += (float)gameTime.deltaTime.TotalSeconds;
+
+            if (aliveTime >= 2)
+            {
+                _alive = false;
+
+                if (LoadState == SoundState.Loading)
+                {
+                    player = null;
+                    LoadState = SoundState.LoadFailed;
+                    _soundLoaded?.Invoke(this);
+                }
+            }
         }
 
         public delegate void SoundEvent(Sound sound);

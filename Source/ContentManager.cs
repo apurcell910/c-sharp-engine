@@ -8,13 +8,17 @@ namespace SharpSlugsEngine
 {
     public class ContentManager
     {
+        private Game _game;
+
         private List<string> paths;
         private Dictionary<string, Bitmap> images;
 
         private Dictionary<string, SoundCache> sounds;
 
-        public ContentManager()
+        internal ContentManager(Game game)
         {
+            _game = game;
+
             paths = new List<string>();
             images = new Dictionary<string, Bitmap>();
             sounds = new Dictionary<string, SoundCache>();
@@ -63,7 +67,7 @@ namespace SharpSlugsEngine
                     return;
                 }
 
-                sounds.Add(fileName, new SoundCache(path, cacheSize));
+                sounds.Add(fileName, new SoundCache(_game, path, cacheSize));
             }
             catch (Exception) { }
         }
