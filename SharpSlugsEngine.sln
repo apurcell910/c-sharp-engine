@@ -6,6 +6,9 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpSlugsEngine", "Source\SharpSlugsEngine.csproj", "{B19A6796-8ECD-4CAA-8782-8DD1ABD7C2C1}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test Game", "Test Game\Source\Test Game.csproj", "{5D55A6D0-1709-409D-A214-8B956E5E2169}"
+	ProjectSection(ProjectDependencies) = postProject
+		{B19A6796-8ECD-4CAA-8782-8DD1ABD7C2C1} = {B19A6796-8ECD-4CAA-8782-8DD1ABD7C2C1}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
