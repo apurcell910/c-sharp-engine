@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace SharpSlugsEngine.Physics
 {
-    public struct pEllipse
+    public struct PEllipse
     {
         public Vector2 center;
         public List<PTriangle> Triangles;
@@ -38,7 +38,7 @@ namespace SharpSlugsEngine.Physics
             }
         }
 
-        public pEllipse(Vector2 v1, float height, float width)
+        public PEllipse(Vector2 v1, float height, float width)
         {
             center = v1;
             Triangles = new List<PTriangle>();

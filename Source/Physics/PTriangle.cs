@@ -2,14 +2,14 @@
 using System.Drawing;
 namespace SharpSlugsEngine.Physics
 {
-    public struct Triangle
+    public struct PTriangle
     {
         public Vector2 VertexOne { get; private set; }
         public Vector2 VertexTwo { get; private set; }
         public Vector2 VertexThree { get; private set; }
         public float Area { get; private set; }
         
-        public Triangle(Vector2 vert1, Vector2 vert2, Vector2 vert3)
+        public PTriangle(Vector2 vert1, Vector2 vert2, Vector2 vert3)
         {
             VertexOne = vert1;
             VertexTwo = vert2;
@@ -47,7 +47,7 @@ namespace SharpSlugsEngine.Physics
         /// <param name="other"></param>
         /// <returns></returns>
         /// https://stackoverflow.com/questions/2778240/detection-of-triangle-collision-in-2d-space
-        public bool IsTouching(Triangle other)
+        public bool IsTouching(PTriangle other)
         {
             bool inPointOne = ContainsPoint(other.VertexOne);
             bool inPointTwo = ContainsPoint(other.VertexTwo);
