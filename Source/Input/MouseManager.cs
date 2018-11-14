@@ -25,7 +25,7 @@ namespace SharpSlugsEngine.Input
 
             int x = _currentMouseState.X;
             int y = _currentMouseState.Y;
-            Point Loc = _currentMouseState.Location;
+            Vector2 Loc = _currentMouseState.Location;
             Click L = new Click(_currentMouseState.Left.IsClicked, !_oldMouseState.Left.IsClicked && _currentMouseState.Left.IsClicked);
             Click R = new Click(_currentMouseState.Right.IsClicked, !_oldMouseState.Right.IsClicked && _currentMouseState.Right.IsClicked);
             Click C = new Click(_currentMouseState.Center.IsClicked, !_oldMouseState.Center.IsClicked && _currentMouseState.Center.IsClicked);
@@ -104,7 +104,7 @@ namespace SharpSlugsEngine.Input
             _asyncMouseState.Location = e.Location;
         }
 
-        public delegate void broadcastLocation(Point Location);
+        public delegate void broadcastLocation(Vector2 Location);
 
         public event broadcastLocation Broadcast;
 
@@ -176,14 +176,14 @@ namespace SharpSlugsEngine.Input
                 Left = L;
                 Right = R;
                 Center = C;
-                Location = new Point(x, y);
+                Location = new Vector2(x, y);
             }
             public int X;
             public int Y;
             public Click Left;
             public Click Right;
             public Click Center;
-            public Point Location;
+            public Vector2 Location;
         }
         public struct Click
         {
@@ -200,6 +200,11 @@ namespace SharpSlugsEngine.Input
 
             public bool IsClicked { get; private set; }
             public bool WasClicked { get; private set; }
+        }
+
+        public Vector2 WorldLoc(Camera camera)
+        {
+            return camera.CameraToWorld(State.Location);
         }
 
         void IDisposable.Dispose() => UnhookForm();
