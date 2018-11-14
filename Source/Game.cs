@@ -195,7 +195,7 @@ namespace SharpSlugsEngine
                     removedDrawables.Clear();
 
                     drawReceivers.RemoveAll(drawable => !drawable.Alive);
-                    drawReceivers.ForEach(drawable => drawable.Draw(updateTime));
+                    drawReceivers.ForEach(drawable => drawable.Draw(drawTime));
 
                     Draw(drawTime);
                     Graphics.End();
@@ -209,6 +209,13 @@ namespace SharpSlugsEngine
 
                 Graphics.Begin();
                 sprites.Draw();
+
+                //Handle IDrawables
+                drawReceivers.AddRange(newDrawables);
+                newDrawables.Clear();
+
+                drawReceivers.RemoveAll(item => removedDrawables.Contains(item));
+                removedDrawables.Clear();
 
                 drawReceivers.RemoveAll(drawable => !drawable.Alive);
                 drawReceivers.ForEach(drawable => drawable.Draw(drawTime));

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using SharpSlugsEngine;
 using SharpSlugsEngine.Input;
-using SharpSlugsEngine.Physics;
 using SharpSlugsEngine.Sound;
 using System.Drawing;
 using System.Windows.Forms;
@@ -170,10 +169,7 @@ namespace Test_Game
             
             sprites.setRotation("ship", angleDegrees);
 
-            bullets.ForEach(bullet => bullet.Update(gameTime));
             bullets.RemoveAll(bullet => bullet.Dead);
-
-            asteroids.ForEach(asteroid => asteroid.Update(gameTime));
             asteroids.RemoveAll(asteroid => asteroid.Dead);
 
             bulletCooldown -= (float)gameTime.deltaTime.TotalSeconds;
@@ -272,9 +268,6 @@ namespace Test_Game
 
             asteroids.AddRange(newAsteroids);
 
-            bullets.RemoveAll(bullet => bullet.Dead);
-            asteroids.RemoveAll(asteroid => asteroid.Dead);
-
             foreach (Asteroid asteroid in asteroids)
             {
                 if (asteroid.CheckCollision(playerPos))
@@ -290,150 +283,9 @@ namespace Test_Game
 
         protected override void Draw(GameTime gameTime)
         {
-            bullets.ForEach(bullet => bullet.Draw());
-            asteroids.ForEach(asteroid => asteroid.Draw());
-            
             if (gameOver)
             {
                 Graphics.DrawBMP(Content.GetImage("GameOver"), 0, 0, (int)Resolution.X, (int)Resolution.Y, 0, DrawType.Screen);
-            }
-        }
-
-        public class Bullet
-        {
-            private Game _game;
-
-            public Vector2 Position { get; private set; }
-            public Vector2 Velocity { get; private set; }
-            public bool Dead;
-
-            public Bullet(Game game, Vector2 pos, Vector2 velocity)
-            {
-                _game = game;
-
-                Position = pos;
-                Velocity = velocity;
-            }
-
-            public void Update(GameTime gameTime)
-            {
-                if (Dead) return;
-
-                Position = Position + Velocity * (float)gameTime.deltaTime.TotalSeconds;
-
-                if (Position.X < 0 || Position.X > _game.Graphics.WorldScale.X || Position.Y < 0 || Position.Y > _game.Graphics.WorldScale.Y)
-                {
-                    Dead = true;
-                }
-            }
-
-            public void Draw()
-            {
-                if (Dead) return;
-
-                _game.Graphics.DrawCircle((Point)Position, 5, Color.White);
-            }
-        }
-
-        public class Asteroid
-        {
-            private Vector2 topLeftOffset;
-            private float hpWidth;
-
-            private PolygonCollider poly;
-            public Vector2[] Vertices => poly.Vertices;
-
-            public Vector2 Position
-            {
-                get => poly.Position;
-                set => poly.Position = value;
-            }
-
-            public Vector2 Velocity
-            {
-                get => poly.Velocity;
-                set => poly.Velocity = value;
-            }
-
-            private Game _game;
-            private float rotSpeed;
-
-            public float Size { get; private set; }
-
-            private int hp;
-            private int maxHp;
-            
-            public bool Dead;
-
-            public Asteroid(Game game, Vector2 pos, Vector2 velocity)
-            {
-                _game = game;
-
-                Random rnd = new Random();
-                Size = (float)rnd.NextDouble() + 0.5f;
-                poly = PolygonCollider.GenerateRandom(Size * 66.66f);
-
-                Initialize(pos, velocity);
-            }
-
-            public Asteroid(Game game, Vector2[] verts, Vector2 pos, Vector2 velocity)
-            {
-                _game = game;
-
-                Size = 1f;
-                poly = new PolygonCollider(verts);
-
-                Initialize(pos, velocity);
-            }
-
-            private void Initialize(Vector2 pos, Vector2 velocity)
-            {
-                rotSpeed = (float)new Random().NextDouble() * 50 - 25;
-
-                hp = (int)(Size * 5);
-                maxHp = hp;
-
-                RectangleF rect = poly.GetBoundingBox();
-                topLeftOffset = rect.Location;
-                hpWidth = rect.Width;
-
-                poly.Position = pos;
-                poly.Velocity = velocity;
-            }
-
-            public void Update(GameTime gameTime)
-            {
-                if (Dead) return;
-
-                poly.Position = poly.Position + poly.Velocity * (float)gameTime.deltaTime.TotalSeconds;
-
-                if (poly.Position.X < -100 || poly.Position.X > _game.Graphics.WorldScale.X + 100 || poly.Position.Y < -100 || poly.Position.Y > _game.Graphics.WorldScale.Y + 100)
-                {
-                    Dead = true;
-                }
-
-                poly.Rotation += rotSpeed * (float)gameTime.deltaTime.TotalSeconds * 5;
-            }
-
-            public bool CheckCollision(Vector2 loc)
-                => poly.IsTouching(loc);
-
-            public void Damage()
-            {
-                if (--hp <= 0)
-                {
-                    Dead = true;
-                }
-            }
-
-            public void Draw()
-            {
-                Vector2 topLeft = Position + topLeftOffset;
-                
-                _game.Graphics.DrawPolygon(poly.Vertices, Color.White, false);
-
-                _game.Graphics.DrawRectangle(topLeft + Vector2.Up * 10, new Vector2(hpWidth, 10), Color.Red);
-                _game.Graphics.DrawRectangle(topLeft + Vector2.Up * 10, new Vector2(hpWidth * (hp / (float)maxHp), 10), Color.Green);
             }
         }
     }
