@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using SharpSlugsEngine;
 using SharpSlugsEngine.Input;
 using SharpSlugsEngine.Physics;
+using SharpSlugsEngine.Sound;
 using System.Drawing;
 using System.Windows.Forms;
 
@@ -94,6 +95,8 @@ namespace Test_Game
             
             cursorSize = sprites.getSize("cursor");
             shipSize = sprites.getSize("ship");
+
+            Content.AddSound("../../Content/pew.mp3", "Pew");
         }
 
         protected override void Update(GameTime gameTime)
@@ -180,6 +183,14 @@ namespace Test_Game
             {
                 bulletCooldown = 0.25f;
                 bullets.Add(new Bullet(this, playerPos - shootDir * shipSize.Y / 2f, shootDir * -500));
+
+                Sound snd = Content.GetSound("Pew");
+                if (snd != null)
+                {
+                    snd.Volume = 10;
+                    snd.DisposeOnFinished = true;
+                    snd.Play();
+                }
             }
 
             if (asteroidCooldown <= 0f)

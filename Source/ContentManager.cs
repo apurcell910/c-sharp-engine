@@ -2,6 +2,8 @@
 using System.IO;
 using System.Collections.Generic;
 using System.Drawing;
+using SharpSlugsEngine.Sound;
+
 namespace SharpSlugsEngine
 {
     public class ContentManager
@@ -9,10 +11,13 @@ namespace SharpSlugsEngine
         private List<string> paths;
         private Dictionary<string, Bitmap> images;
 
+        private Dictionary<string, SoundCache> sounds;
+
         public ContentManager()
         {
-            this.paths = new List<string>();
-            this.images = new Dictionary<string, Bitmap>();
+            paths = new List<string>();
+            images = new Dictionary<string, Bitmap>();
+            sounds = new Dictionary<string, SoundCache>();
         }
 
         public void AddImage(string filePath, string fileName = "image", int scale = 1)
@@ -27,6 +32,50 @@ namespace SharpSlugsEngine
         {
             images.Add(fileName, bmp);
             return;
+        }
+
+        public void AddSound(string filePath, string fileName, int cacheSize = 5)
+        {
+            if (string.IsNullOrEmpty(filePath) || string.IsNullOrEmpty(fileName))
+            {
+                return;
+            }
+
+            if (sounds.ContainsKey(fileName))
+            {
+                return;
+            }
+
+            try
+            {
+                string path = Path.GetFullPath(filePath);
+
+                if (!File.Exists(path))
+                {
+                    return;
+                }
+
+                string ext = Path.GetExtension(path).ToLower();
+
+                if (!(ext == ".aif" || ext == ".aifc" || ext == ".aiff" || ext == ".au" || ext == ".mid"
+                    || ext == ".mp3" || ext == ".snd" || ext == ".wav" || ext == ".wma"))
+                {
+                    return;
+                }
+
+                sounds.Add(fileName, new SoundCache(path, cacheSize));
+            }
+            catch (Exception) { }
+        }
+
+        public Sound.Sound GetSound(string name)
+        {
+            if (sounds.TryGetValue(name, out SoundCache cache))
+            {
+                return cache.GetSound();
+            }
+
+            return null;
         }
 
         public Bitmap ScaleImage(Bitmap bmp, int scale)
