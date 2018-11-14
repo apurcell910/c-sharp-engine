@@ -1,4 +1,6 @@
-﻿namespace SharpSlugsEngine.Physics
+﻿using System.Drawing;
+
+namespace SharpSlugsEngine.Physics
 {
     public abstract class Collider
     {
@@ -175,6 +177,28 @@
             }
 
             return false;
+        }
+
+        public RectangleF GetBoundingBox()
+        {
+            if (Vertices == null || Vertices.Length == 0)
+            {
+                return default(RectangleF);
+            }
+
+            float minX, maxX, minY, maxY;
+            minX = maxX = Vertices[0].X;
+            minY = maxY = Vertices[0].Y;
+
+            foreach (Vector2 vert in Vertices)
+            {
+                if (vert.X < minX) minX = vert.X;
+                if (vert.X > maxX) maxX = vert.X;
+                if (vert.Y < minY) minY = vert.Y;
+                if (vert.Y > maxY) maxY = vert.Y;
+            }
+
+            return new RectangleF(minX, minY, maxX - minX, maxY - minY);
         }
 
         public delegate void ColliderEvent(Collider other);

@@ -53,6 +53,15 @@ namespace SharpSlugsEngine.Physics
                     {
                         triangles.Add(new Triangle(vertexList.GetPrevItem<Vector2>(i), vertexList[i], vertexList.GetNextItem<Vector2>(i)));
                         vertexList.RemoveAt(i);
+
+                        //Recalculate clockwise/counterclockwise
+                        area = 0;
+                        for (int j = 0; j < vertexList.Count; j++)
+                        {
+                            area += (vertexList.GetNextItem<Vector2>(j).X - vertexList[j].X) * (vertexList.GetNextItem<Vector2>(j).Y + vertexList[j].Y);
+                        }
+                        clockwise = area > 0;
+
                         break;
                     }
                 }

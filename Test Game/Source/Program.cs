@@ -220,7 +220,7 @@ namespace Test_Game
             {
                 foreach (Bullet bullet in bullets)
                 {
-                    if (asteroid.CheckCollision(bullet.Position))
+                    if (!asteroid.Dead && asteroid.CheckCollision(bullet.Position))
                     {
                         bullet.Dead = true;
                         asteroid.Damage();
@@ -322,6 +322,9 @@ namespace Test_Game
 
         public class Asteroid
         {
+            private Vector2 topLeftOffset;
+            private float hpWidth;
+
             private PolygonCollider poly;
             public Vector2[] Vertices => poly.Vertices;
 
@@ -355,13 +358,7 @@ namespace Test_Game
                 Size = (float)rnd.NextDouble() + 0.5f;
                 poly = PolygonCollider.GenerateRandom(Size * 66.66f);
 
-                rotSpeed = (float)rnd.NextDouble() * 50 - 25;
-
-                hp = (int)(Size * 5);
-                maxHp = hp;
-
-                poly.Position = pos;
-                poly.Velocity = velocity;
+                Initialize(pos, velocity);
             }
 
             public Asteroid(Game game, Vector2[] verts, Vector2 pos, Vector2 velocity)
@@ -371,10 +368,19 @@ namespace Test_Game
                 Size = 1f;
                 poly = new PolygonCollider(verts);
 
+                Initialize(pos, velocity);
+            }
+
+            private void Initialize(Vector2 pos, Vector2 velocity)
+            {
                 rotSpeed = (float)new Random().NextDouble() * 50 - 25;
 
                 hp = (int)(Size * 5);
                 maxHp = hp;
+
+                RectangleF rect = poly.GetBoundingBox();
+                topLeftOffset = rect.Location;
+                hpWidth = rect.Width;
 
                 poly.Position = pos;
                 poly.Velocity = velocity;
@@ -407,12 +413,12 @@ namespace Test_Game
 
             public void Draw()
             {
-                Vector2 topLeft = poly.Position - new Vector2(66.66f * Size, 66.66f * Size);
-
+                Vector2 topLeft = Position + topLeftOffset;
+                
                 _game.Graphics.DrawPolygon(poly.Vertices, Color.White, false);
 
-                _game.Graphics.DrawRectangle(topLeft + Vector2.Up * 10, new Vector2(133.33f * Size, 10), Color.Red);
-                _game.Graphics.DrawRectangle(topLeft + Vector2.Up * 10, new Vector2(133.33f * Size * (hp / (float)maxHp), 10), Color.Green);
+                _game.Graphics.DrawRectangle(topLeft + Vector2.Up * 10, new Vector2(hpWidth, 10), Color.Red);
+                _game.Graphics.DrawRectangle(topLeft + Vector2.Up * 10, new Vector2(hpWidth * (hp / (float)maxHp), 10), Color.Green);
             }
         }
     }
