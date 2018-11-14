@@ -7,7 +7,7 @@ namespace SharpSlugsEngine.Physics
         /// <summary>
         /// The triangles that make up this collider
         /// </summary>
-        public Triangle[] Triangles { get; protected set; }
+        public PTriangle[] Triangles { get; protected set; }
 
         public Vector2[] Vertices { get; protected set; }
 
@@ -49,7 +49,7 @@ namespace SharpSlugsEngine.Physics
                     {
                         for (int i = 0; i < Triangles.Length; i++)
                         {
-                            Triangles[i] = new Triangle(Triangles[i].VertexOne + value - _position, Triangles[i].VertexTwo + value - _position, Triangles[i].VertexThree + value - _position);
+                            Triangles[i] = new PTriangle(Triangles[i].VertexOne + value - _position, Triangles[i].VertexTwo + value - _position, Triangles[i].VertexThree + value - _position);
                         }
 
                         for (int i = 0; i < Vertices.Length; i++)
@@ -114,7 +114,7 @@ namespace SharpSlugsEngine.Physics
 
                         for (int i = 0; i < Triangles.Length; i++)
                         {
-                            Triangles[i] = new Triangle(Triangles[i].VertexOne.Rotate(centerPoint, rot), Triangles[i].VertexTwo.Rotate(centerPoint, rot),
+                            Triangles[i] = new PTriangle(Triangles[i].VertexOne.Rotate(centerPoint, rot), Triangles[i].VertexTwo.Rotate(centerPoint, rot),
                                 Triangles[i].VertexThree.Rotate(centerPoint, rot));
                         }
                     }
@@ -147,9 +147,9 @@ namespace SharpSlugsEngine.Physics
                 return false;
             }
 
-            foreach (Triangle selfTri in Triangles)
+            foreach (PTriangle selfTri in Triangles)
             {
-                foreach (Triangle otherTri in other.Triangles)
+                foreach (PTriangle otherTri in other.Triangles)
                 {
                     if (selfTri.IsTouching(otherTri))
                     {
@@ -168,7 +168,7 @@ namespace SharpSlugsEngine.Physics
                 return false;
             }
 
-            foreach (Triangle tri in Triangles)
+            foreach (PTriangle tri in Triangles)
             {
                 if (tri.ContainsPoint(point))
                 {

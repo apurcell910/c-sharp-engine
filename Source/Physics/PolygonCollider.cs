@@ -44,14 +44,14 @@ namespace SharpSlugsEngine.Physics
             bool clockwise = area > 0;
             
             //Trim ears until all that's left is a triangle
-            List<Triangle> triangles = new List<Triangle>();
+            List<PTriangle> triangles = new List<PTriangle>();
             while (vertexList.Count > 3)
             {
                 for (int i = 0; i < vertexList.Count; i++)
                 {
                     if (VertexIsEar(vertexList, i, clockwise))
                     {
-                        triangles.Add(new Triangle(vertexList.GetPrevItem<Vector2>(i), vertexList[i], vertexList.GetNextItem<Vector2>(i)));
+                        triangles.Add(new PTriangle(vertexList.GetPrevItem<Vector2>(i), vertexList[i], vertexList.GetNextItem<Vector2>(i)));
                         vertexList.RemoveAt(i);
 
                         //Recalculate clockwise/counterclockwise
@@ -68,7 +68,7 @@ namespace SharpSlugsEngine.Physics
             }
 
             //Add remaining triangle
-            triangles.Add(new Triangle(vertexList[0], vertexList[1], vertexList[2]));
+            triangles.Add(new PTriangle(vertexList[0], vertexList[1], vertexList[2]));
 
             //Remove redundant triangles
             triangles.RemoveAll(tri => tri.Area == 0f);
@@ -102,7 +102,7 @@ namespace SharpSlugsEngine.Physics
             }
 
             //Check if any point is inside the triangle formed from this vertex
-            Triangle tri = new Triangle(vertices[vert1], vertices[vert2], vertices[vert3]);
+            PTriangle tri = new PTriangle(vertices[vert1], vertices[vert2], vertices[vert3]);
             for (int i = 0; i < vertices.Count; i++)
             {
                 //No point checking the vertices of the current triangle
@@ -127,7 +127,7 @@ namespace SharpSlugsEngine.Physics
             {
                 Random rnd = new Random();
 
-                pEllipse circle = new pEllipse(Vector2.Zero, radius, radius);
+                PEllipse circle = new PEllipse(Vector2.Zero, radius, radius);
 
                 List<Vector2> verts = new List<Vector2>();
 

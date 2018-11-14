@@ -263,7 +263,7 @@ namespace SharpSlugsEngine
             DrawTri((int)v1.X, (int)v1.Y, (int)v2.X, (int)v2.Y, (int)v3.X, (int)v3.Y, color, fill, r);
         }
 
-        public void DrawTri(Triangle tri, Color color, bool fill = true, float r = 0, DrawType type = DrawType.World)
+        public void DrawTri(PTriangle tri, Color color, bool fill = true, float r = 0, DrawType type = DrawType.World)
             => DrawTri(tri.VertexOne, tri.VertexTwo, tri.VertexThree, color, fill, r, type);
 
         //TODO: Find center point of polygon to support rotation

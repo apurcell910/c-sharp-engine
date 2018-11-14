@@ -6,7 +6,7 @@ namespace SharpSlugsEngine.Physics
     public struct pEllipse
     {
         public Vector2 center;
-        public List<Triangle> Triangles;
+        public List<PTriangle> Triangles;
         public float Area { get; private set; }
 
         private float findEllipseX(float angle, float a, float b)
@@ -41,7 +41,7 @@ namespace SharpSlugsEngine.Physics
         public pEllipse(Vector2 v1, float height, float width)
         {
             center = v1;
-            Triangles = new List<Triangle>();
+            Triangles = new List<PTriangle>();
             int numTriangle = (int)(50);
             float genericAngle = 360 / (float)numTriangle;
             float nextAngle = 0;
@@ -50,7 +50,7 @@ namespace SharpSlugsEngine.Physics
 
             for (int i = 0; i < numTriangle; i++)
             {
-                Triangles.Add(new Triangle(center, center + new Vector2(findEllipseX(nextAngle, width, height), findEllipseY(nextAngle, width, height)),
+                Triangles.Add(new PTriangle(center, center + new Vector2(findEllipseX(nextAngle, width, height), findEllipseY(nextAngle, width, height)),
                         center + new Vector2(findEllipseX(nextAngle + genericAngle, width, height), findEllipseY(nextAngle + genericAngle, width, height))));
                 nextAngle += genericAngle;
             }

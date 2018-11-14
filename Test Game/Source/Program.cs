@@ -182,7 +182,11 @@ namespace Test_Game
             if (shooting && bulletCooldown <= 0f)
             {
                 bulletCooldown = 0.25f;
-                bullets.Add(new Bullet(this, playerPos - shootDir * shipSize.Y / 2f, shootDir * -500));
+
+                for (int i = -1; i <= 1; i++)
+                {
+                    bullets.Add(new Bullet(this, playerPos - shootDir * shipSize.Y / 2f, shootDir.Rotate(Vector2.Zero, i * 15) * -500));
+                }
 
                 Sound snd = Content.GetSound("Pew");
                 if (snd != null)
