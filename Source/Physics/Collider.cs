@@ -96,13 +96,7 @@ namespace SharpSlugsEngine.Physics
                     if (Vertices != null && Triangles != null && Vertices.Length > 0 && Triangles.Length > 0)
                     {
                         //Find center point of collider
-                        Vector2 centerPoint = Vector2.Zero;
-                        foreach (Vector2 vert in Vertices)
-                        {
-                            centerPoint += vert;
-                        }
-
-                        centerPoint /= Vertices.Length;
+                        Vector2 centerPoint = GetCenter();
 
                         //Difference in current and new rotation
                         float rot = value - _rotation;
@@ -199,6 +193,17 @@ namespace SharpSlugsEngine.Physics
             }
 
             return new RectangleF(minX, minY, maxX - minX, maxY - minY);
+        }
+
+        public Vector2 GetCenter()
+        {
+            Vector2 centerPoint = Vector2.Zero;
+            foreach (Vector2 vert in Vertices)
+            {
+                centerPoint += vert;
+            }
+
+            return centerPoint / Vertices.Length;
         }
 
         public delegate void ColliderEvent(Collider other);

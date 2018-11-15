@@ -43,6 +43,8 @@ namespace Test_Game
 
         private bool gameOver;
 
+        SharpSlugsEngine.Physics.PolygonCollider test;
+
         protected override void Initialize()
         {
             Graphics.BackColor = Color.Black;
@@ -87,15 +89,12 @@ namespace Test_Game
             sprites.add("cursor", new SImage(0, 0, "../../Content/Cursor.png"));
             sprites.scale("cursor", 0.5);
             sprites.display("cursor", true);
-
-            sprites.add("ship", new SImage(640, 360, "../../Content/Ship.png"));
-            sprites.scale("ship", 0.5);
-            sprites.display("ship", true);
             
             cursorSize = sprites.getSize("cursor");
-            shipSize = sprites.getSize("ship");
 
             Content.AddSound("../../Content/pew.mp3", "Pew");
+
+            test = new SharpSlugsEngine.Physics.PolygonCollider(new Vector2(0, -34.375f), new Vector2(25, 15.625f), new Vector2(0, 3.125f), new Vector2(-25, 15.625f));
         }
 
         protected override void Update(GameTime gameTime)
@@ -153,7 +152,6 @@ namespace Test_Game
             if (playerPos.Y > Graphics.WorldScale.Y - shipSize.Y / 2f) playerPos = new Vector2(playerPos.X, Graphics.WorldScale.Y - shipSize.Y / 2f);
             
             sprites.moveto("cursor", (int)(mousePos.X - cursorSize.X / 2f), (int)(mousePos.Y - cursorSize.Y / 2f));
-            sprites.moveto("ship", (int)(playerPos.X - shipSize.X / 2f), (int)(playerPos.Y - shipSize.Y / 2f));
             
             if (usingMouse)
             {
@@ -166,8 +164,6 @@ namespace Test_Game
 
             float angleRadians = (float)Math.Atan2(shootDir.Y, shootDir.X);
             float angleDegrees = angleRadians * (float)(180f / Math.PI) - 90;
-            
-            sprites.setRotation("ship", angleDegrees);
 
             bullets.RemoveAll(bullet => bullet.Dead);
             asteroids.RemoveAll(asteroid => asteroid.Dead);
@@ -181,7 +177,7 @@ namespace Test_Game
 
                 for (int i = -1; i <= 1; i++)
                 {
-                    bullets.Add(new Bullet(this, playerPos - shootDir * shipSize.Y / 2f, shootDir.Rotate(Vector2.Zero, i * 15) * -500));
+                    bullets.Add(new Bullet(this, playerPos - shootDir * Vector2.One * 34.75f, shootDir.Rotate(Vector2.Zero, i * 15) * -500));
                 }
 
                 Sound snd = Content.GetSound("Pew");
@@ -272,17 +268,23 @@ namespace Test_Game
             {
                 if (asteroid.CheckCollision(playerPos))
                 {
-                    sprites.display("ship", false);
                     sprites.display("cursor", false);
                     ShowCursor = true;
                     gameOver = true;
                     break;
                 }
             }
+
+            test.Position = playerPos;
+            test.Rotation = angleDegrees;
         }
 
         protected override void Draw(GameTime gameTime)
         {
+            Graphics.DrawPolygon(test.Vertices, Color.White, false);
+            
+            Graphics.DrawCircle(playerPos, 5, Color.Red);
+
             if (gameOver)
             {
                 Graphics.DrawBMP(Content.GetImage("GameOver"), 0, 0, (int)Resolution.X, (int)Resolution.Y, 0, DrawType.Screen);

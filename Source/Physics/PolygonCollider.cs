@@ -7,7 +7,7 @@ namespace SharpSlugsEngine.Physics
     public class PolygonCollider : Collider
     {
         //TODO: Check that vertices array contains a simple polygon
-        public PolygonCollider(Vector2[] vertices)
+        public PolygonCollider(params Vector2[] vertices)
         {
             if (vertices == null || vertices.Length < 3)
             {

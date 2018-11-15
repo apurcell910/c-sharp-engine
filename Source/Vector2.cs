@@ -66,6 +66,9 @@ namespace SharpSlugsEngine
         public static implicit operator Vector2(Point self) => new Vector2(self.X, self.Y);
         public static explicit operator Point(Vector2 self) => new Point((int)self.X, (int)self.Y);
 
+        public static implicit operator Vector2(SizeF self) => new Vector2(self.Width, self.Height);
+        public static implicit operator SizeF(Vector2 self) => new SizeF(self.X, self.Y);
+
         public static implicit operator Vector2(Size self) => new Vector2(self.Width, self.Height);
         public static explicit operator Size(Vector2 self) => new Size((int)self.X, (int)self.Y);
 
