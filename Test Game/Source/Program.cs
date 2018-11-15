@@ -287,7 +287,7 @@ namespace Test_Game
         protected override void Draw(GameTime gameTime)
         {
             Graphics.DrawPolygon(test.Vertices, Color.White, false);
-            
+            Graphics.DrawLine(Resolution.X / 2f, 0, Resolution.X / 2f, Resolution.Y, Color.Red, DrawType.Screen);
             Graphics.DrawCircle(playerPos, 5, Color.Red);
 
             if (gameOver)
