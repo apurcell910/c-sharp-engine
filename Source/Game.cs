@@ -65,6 +65,8 @@ namespace SharpSlugsEngine
             get => _resolution;
             set
             {
+                Cameras.Resize(_resolution, value);
+
                 _resolution = value;
 
                 platform.ResizeWindow((int)_resolution.X, (int)_resolution.Y);

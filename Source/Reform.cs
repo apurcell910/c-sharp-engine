@@ -21,6 +21,7 @@ namespace SharpSlugsEngine
         private void RecreateGraphics(object sender, System.EventArgs e)
         {
             game.Graphics.RecreateGraphics();
+            game.Cameras.Resize(game._resolution, ClientSize);
             game._resolution = new Vector2(ClientSize.Width, ClientSize.Height);
         }
 

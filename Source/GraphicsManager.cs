@@ -56,7 +56,12 @@ namespace SharpSlugsEngine
 
         internal void Begin()
         {
-            buffer = new Bitmap(platform.form.Width, platform.form.Height, formGraphics);
+            foreach (Camera cam in GetCameras())
+            {
+                cam.Begin();
+            }
+
+            buffer = new Bitmap(platform.form.ClientSize.Width, platform.form.ClientSize.Height, formGraphics);
             bitmapGraphics = Graphics.FromImage(buffer);
 
             SetColor(BackColor);
@@ -65,6 +70,12 @@ namespace SharpSlugsEngine
 
         internal void End()
         {
+            foreach (Camera cam in GetCameras())
+            {
+                DrawBMP(cam.buffer, cam.DrawPosition.X, cam.DrawPosition.Y, cam.DrawSize.X, cam.DrawSize.Y, 0, DrawType.Screen);
+                cam.End();
+            }
+
             formGraphics.DrawImage(buffer, 0, 0);
             buffer.Dispose();
             bitmapGraphics.Dispose();
@@ -90,6 +101,21 @@ namespace SharpSlugsEngine
             bitmapGraphics.ResetTransform();
         }
 
+        private Camera[] GetCameras()
+        {
+            if (!game.Cameras.DisplayAll) return new Camera[] { game.Cameras.Main };
+
+            return game.Cameras.All;
+        }
+
+        private RectangleF WorldToCameraRect(Camera cam, RectangleF rect)
+        {
+            return new RectangleF(cam.WorldToCameraPixels(rect.Location), cam.WorldToCameraPixels(rect.Size));
+        }
+
+        private RectangleF WorldToCameraRect(Camera cam, Vector2 pos, Vector2 size)
+            => WorldToCameraRect(cam, new RectangleF(pos, size));
+
         //Feel like I should just make these take a SpriteObj as well. Maybe for later, shouldn't be too
         //difficult to do.
 
@@ -98,18 +124,18 @@ namespace SharpSlugsEngine
         /// <summary>
         /// The actual DrawRectangle function. All overloads should use this to draw
         /// </summary>
-        internal void DrawRectangle(int x, int y, int w, int h, Color color, bool fill = true, float angle = 0, double xAnchor = 0, double yAnchor = 0)
+        private void DrawRectangle(Graphics g, int x, int y, int w, int h, Color color, bool fill = true, float angle = 0, double xAnchor = 0, double yAnchor = 0)
         {
             SetColor(color);
             Rotate(new PointF((float)(x + (w * xAnchor)), (float)(y + (h * yAnchor))), angle);
 
             if (fill)
             {
-                bitmapGraphics.FillRectangle(brush, new Rectangle(x, y, w, h));
+                g.FillRectangle(brush, new Rectangle(x, y, w, h));
             }
             else
             {
-                bitmapGraphics.DrawRectangle(pen, new Rectangle(x, y, w, h));
+                g.DrawRectangle(pen, new Rectangle(x, y, w, h));
             }
 
             ResetRotation();
@@ -119,11 +145,17 @@ namespace SharpSlugsEngine
         {
             if (type == DrawType.World)
             {
-                pos = ToResolutionScale(pos);
-                size = ToResolutionScale(size);
+                foreach (Camera cam in GetCameras())
+                {
+                    Vector2 camPos = cam.WorldToCameraPixels(pos);
+                    Vector2 camSize = cam.WorldToCameraPixels(size);
+                    DrawRectangle(cam.bitmapGraphics, (int)camPos.X, (int)camPos.Y, (int)camSize.X, (int)camSize.Y, color, fill, angle, xAnchor, yAnchor);
+                }
             }
-
-            DrawRectangle((int)pos.X, (int)pos.Y, (int)size.X, (int)size.Y, color, fill, angle, xAnchor, yAnchor);
+            else
+            {
+                DrawRectangle(bitmapGraphics, (int)pos.X, (int)pos.Y, (int)size.X, (int)size.Y, color, fill, angle, xAnchor, yAnchor);
+            }
         }
 
         public void DrawRectangle(float x, float y, float w, float h, Color color, bool fill = true, float angle = 0, double xAnchor = 0, double yAnchor = 0, DrawType type = DrawType.World)
@@ -135,21 +167,26 @@ namespace SharpSlugsEngine
         /// <summary>
         /// The actual DrawLine function. All overloads should use this to draw
         /// </summary>
-        internal void DrawLine(int x1, int y1, int x2, int y2, Color color)
+        private void DrawLine(Graphics g, int x1, int y1, int x2, int y2, Color color)
         {
             SetColor(color);
-            bitmapGraphics.DrawLine(pen, x1, y1, x2, y2);
+            g.DrawLine(pen, x1, y1, x2, y2);
         }
 
         public void DrawLine(Vector2 v1, Vector2 v2, Color color, DrawType type = DrawType.World)
         {
             if (type == DrawType.World)
             {
-                v1 = ToResolutionScale(v1);
-                v2 = ToResolutionScale(v2);
+                foreach (Camera cam in GetCameras())
+                {
+                    Vector2 camV1 = cam.WorldToCameraPixels(v1);
+                    Vector2 camV2 = cam.WorldToCameraPixels(v2);
+                    DrawLine(cam.bitmapGraphics, (int)camV1.X, (int)camV1.Y, (int)camV2.X, (int)camV2.Y, color);
+                }
+            } else
+            {
+                DrawLine(bitmapGraphics, (int)v1.X, (int)v1.Y, (int)v2.X, (int)v2.Y, color);
             }
-
-            DrawLine((int)v1.X, (int)v1.Y, (int)v2.X, (int)v2.Y, color);
         }
 
         public void DrawLine(float x1, float y1, float x2, float y2, Color color, DrawType type = DrawType.World)
@@ -158,18 +195,18 @@ namespace SharpSlugsEngine
         /// <summary>
         /// The actual DrawEllipse function. All overloads should use this to draw
         /// </summary>
-        internal void DrawEllipse(int x, int y, int w, int h, Color color, bool fill = true, float r = 0, double xAnchor = 0.5f, double yAnchor = 0.5f)
+        private void DrawEllipse(Graphics g, int x, int y, int w, int h, Color color, bool fill = true, float r = 0, double xAnchor = 0.5f, double yAnchor = 0.5f)
         {
             SetColor(color);
             Rotate(new PointF((float)(x + w * xAnchor), (float)(y + h * yAnchor)), r);
 
             if (fill)
             {
-                bitmapGraphics.FillEllipse(brush, x, y, w, h);
+                g.FillEllipse(brush, x, y, w, h);
             }
             else
             {
-                bitmapGraphics.DrawEllipse(pen, x, y, w, h);
+                g.DrawEllipse(pen, x, y, w, h);
             }
 
             ResetRotation();
@@ -179,14 +216,20 @@ namespace SharpSlugsEngine
         {
             if (type == DrawType.World)
             {
-                pos = ToResolutionScale(pos);
-                size = ToResolutionScale(size);
-            }
+                foreach (Camera cam in GetCameras())
+                {
+                    Vector2 camPos = cam.WorldToCameraPixels(pos);
+                    Vector2 camSize = cam.WorldToCameraPixels(size);
 
-            DrawEllipse((int)pos.X, (int)pos.Y, (int)size.X, (int)size.Y, color, fill, r, xAnchor, yAnchor);
+                    DrawEllipse(cam.bitmapGraphics, (int)camPos.X, (int)camPos.Y, (int)camSize.X, (int)camSize.Y, color, fill, r, xAnchor, yAnchor);
+                }
+            } else
+            {
+                DrawEllipse(bitmapGraphics, (int)pos.X, (int)pos.Y, (int)size.X, (int)size.Y, color, fill, r, xAnchor, yAnchor);
+            }
         }
 
-        public void DrawEllipse(float x, float y, float w, float h, Color color, bool fill = true, float r = 0, float xAnchor = 0f, float yAnchor = 0f, DrawType type = DrawType.World)
+        public void DrawEllipse(float x, float y, float w, float h, Color color, bool fill = true, float r = 0, double xAnchor = 0f, double yAnchor = 0f, DrawType type = DrawType.World)
             => DrawEllipse(new Vector2(x, y), new Vector2(w, h), color, fill, r, xAnchor, yAnchor, type);
 
         public void DrawCircle(Vector2 pos, float r, Color color, bool fill = true, DrawType type = DrawType.World)
@@ -203,10 +246,11 @@ namespace SharpSlugsEngine
         /// <summary>
         /// The actual DrawBMP function. All overloads should use this to draw
         /// </summary>
-        internal void DrawBMP(Bitmap bmp, int x, int y, int w, int h, float r, int ix, int iy, int iw, int ih)
+        private void DrawBMP(Graphics g, Bitmap bmp, int x, int y, int w, int h, float r, int ix, int iy, int iw, int ih)
         {
             Rotate(new PointF(x + w / 2f, y + h / 2f), r);
-            bitmapGraphics.DrawImage(bmp, new Rectangle(x, y, w, h), new Rectangle(ix, iy, iw, ih), GraphicsUnit.Pixel);
+            
+            g.DrawImage(bmp, new Rectangle(x, y, w, h), new Rectangle(ix, iy, iw, ih), GraphicsUnit.Pixel);
             ResetRotation();
         }
 
@@ -214,16 +258,19 @@ namespace SharpSlugsEngine
         {
             if (type == DrawType.World)
             {
-                Vector2 position = ToResolutionScale(new Vector2(x, y));
-                Vector2 size = ToResolutionScale(new Vector2(w, h));
-
-                x = position.X;
-                y = position.Y;
-                w = size.X;
-                h = size.Y;
+                Vector2 pos = new Vector2(x, y);
+                Vector2 size = new Vector2(w, h);
+                
+                foreach (Camera cam in GetCameras())
+                {
+                    Vector2 camPos = cam.WorldToCameraPixels(pos);
+                    Vector2 camSize = cam.WorldToCameraPixels(size);
+                    DrawBMP(cam.bitmapGraphics, bmp, (int)camPos.X, (int)camPos.Y, (int)camSize.X, (int)camSize.Y, r, 0, 0, bmp.Width, bmp.Height);
+                }
+            } else
+            {
+                DrawBMP(bitmapGraphics, bmp, (int)x, (int)y, (int)w, (int)h, r, 0, 0, bmp.Width, bmp.Height);
             }
-
-            DrawBMP(bmp, (int)x, (int)y, (int)w, (int)h, r, 0, 0, bmp.Width, bmp.Height);
         }
 
         public void DrawBMP(Bitmap bmp, Vector2 position, Vector2 size, float r = 0, DrawType type = DrawType.World)
@@ -236,18 +283,19 @@ namespace SharpSlugsEngine
         /// <summary>
         /// The actual DrawTri function. All overloads should use this to draw
         /// </summary>
-        internal void DrawTri(int x1, int y1, int x2, int y2, int x3, int y3, Color color, bool fill = true, float r = 0)
+        private void DrawTri(Graphics g, int x1, int y1, int x2, int y2, int x3, int y3, Color color, bool fill = true, float r = 0)
         {
+            SetColor(color);
+
             if (!fill)
             {
-                DrawLine(x1, y1, x2, y2, color);
-                DrawLine(x2, y2, x3, y3, color);
-                DrawLine(x3, y3, x1, y1, color);
+                g.DrawLine(pen, x1, y1, x2, y2);
+                g.DrawLine(pen, x2, y2, x3, y3);
+                g.DrawLine(pen, x3, y3, x1, y1);
             }
             else
             {
-                SetColor(color);
-                bitmapGraphics.FillPolygon(brush, new Point[] { new Point(x1, y1), new Point(x2, y2), new Point(x3, y3) });
+                g.FillPolygon(brush, new Point[] { new Point(x1, y1), new Point(x2, y2), new Point(x3, y3) });
             }
         }
 
@@ -255,12 +303,17 @@ namespace SharpSlugsEngine
         {
             if (type == DrawType.World)
             {
-                v1 = ToResolutionScale(v1);
-                v2 = ToResolutionScale(v2);
-                v3 = ToResolutionScale(v3);
+                foreach (Camera cam in GetCameras())
+                {
+                    Vector2 camV1 = cam.WorldToCameraPixels(v1);
+                    Vector2 camV2 = cam.WorldToCameraPixels(v2);
+                    Vector2 camV3 = cam.WorldToCameraPixels(v3);
+                    DrawTri(cam.bitmapGraphics, (int)camV1.X, (int)camV1.Y, (int)camV2.X, (int)camV2.Y, (int)camV3.X, (int)camV3.Y, color, fill, r);
+                }
+            } else
+            {
+                DrawTri(bitmapGraphics, (int)v1.X, (int)v1.Y, (int)v2.X, (int)v2.Y, (int)v3.X, (int)v3.Y, color, fill, r);
             }
-
-            DrawTri((int)v1.X, (int)v1.Y, (int)v2.X, (int)v2.Y, (int)v3.X, (int)v3.Y, color, fill, r);
         }
 
         public void DrawTri(PTriangle tri, Color color, bool fill = true, float r = 0, DrawType type = DrawType.World)
@@ -270,36 +323,41 @@ namespace SharpSlugsEngine
         /// <summary>
         /// The actual DrawPolygon function. All overloads should use this to draw
         /// </summary>
-        internal void DrawPolygon(Point[] points, Color color, bool fill = true, float r = 0)
+        private void DrawPolygon(Graphics g, Point[] points, Color color, bool fill = true, float r = 0)
         {
             SetColor(color);
 
             if (fill)
             {
-                bitmapGraphics.FillPolygon(brush, points);
+                g.FillPolygon(brush, points);
             }
             else
             {
-                bitmapGraphics.DrawPolygon(pen, points);
+                g.DrawPolygon(pen, points);
             }
         }
 
         public void DrawPolygon(Vector2[] vertices, Color color, bool fill = true, float r = 0, DrawType type = DrawType.World)
         {
             Point[] points = new Point[vertices.Length];
-            for (int i = 0; i < points.Length; i++)
+            if (type == DrawType.World)
             {
-                if (type == DrawType.World)
+                foreach (Camera cam in GetCameras())
                 {
-                    points[i] = (Point)ToResolutionScale(vertices[i]);
+                    for (int i = 0; i < points.Length; i++)
+                    {
+                        points[i] = (Point)cam.WorldToCameraPixels(vertices[i]);
+                    }
+                    DrawPolygon(cam.bitmapGraphics, points, color, fill, r);
                 }
-                else
+            } else
+            {
+                for (int i = 0; i < points.Length; i++)
                 {
                     points[i] = (Point)vertices[i];
                 }
+                DrawPolygon(bitmapGraphics, points, color, fill, r);
             }
-
-            DrawPolygon(points, color, fill, r);
         }
 
         public void SetWorldScale(Vector2 scaleFactor)

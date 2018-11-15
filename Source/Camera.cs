@@ -107,14 +107,22 @@ namespace SharpSlugsEngine
 
         public Vector2 CameraToWorld(Vector2 cameraCoord)
         {
-            Vector2 WorldCoord = new Vector2(cameraCoord.X * DrawWidth / _game.Resolution.X + DrawX, cameraCoord.Y * DrawHeight / _game.Resolution.X + DrawY);
-            return WorldCoord;
+            //Vector2 WorldCoord = new Vector2(cameraCoord.X * DrawWidth / _game.Resolution.X + DrawX, cameraCoord.Y * DrawHeight / _game.Resolution.X + DrawY);
+            cameraCoord = (cameraCoord / DrawSize) * Size;
+            cameraCoord -= Position;
+            cameraCoord /= (_game.Graphics.WorldScale / Size);
+            cameraCoord += Position;
+
+            return cameraCoord;
         }
 
-        public Vector2 WorldToCamera(Vector2 worldCoord)
+        public Vector2 WorldToCameraPixels(Vector2 worldCoord)
         {
-            Vector2 CameraCoord = new Vector2((worldCoord.X - DrawX) * _game.Resolution.X /DrawWidth, (worldCoord.Y - DrawY) * _game.Resolution.Y / DrawHeight);
-            return CameraCoord;
+            worldCoord -= Position;
+            worldCoord *= (_game.Graphics.WorldScale / Size);
+            worldCoord += Position;
+
+            return (worldCoord / Size) * DrawSize;
         }
 
         private Game _game;
@@ -135,11 +143,6 @@ namespace SharpSlugsEngine
         {
             buffer = new Bitmap(DrawWidth, DrawHeight);
             bitmapGraphics = Graphics.FromImage(buffer);
-
-            using (SolidBrush brush = new SolidBrush(_game.Graphics.BackColor))
-            {
-                bitmapGraphics.FillRectangle(brush, new Rectangle(0, 0, buffer.Width, buffer.Height));
-            }
         }
 
         internal void End()

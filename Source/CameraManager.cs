@@ -40,6 +40,17 @@ namespace SharpSlugsEngine
             return cam;
         }
 
+        internal void Resize(Vector2 oldRes, Vector2 newRes)
+        {
+            Vector2 scaler = newRes / oldRes;
+
+            foreach (Camera cam in All)
+            {
+                cam.DrawPosition *= scaler;
+                cam.DrawSize *= scaler;
+            }
+        }
+
         public void RemoveCamera(Camera cam)
         {
             if (cam != null && _cameras.Contains(cam))

@@ -83,6 +83,11 @@ namespace Test_Game
         
         protected override void LoadContent()
         {
+            Cameras.Main.DrawSize = new Vector2(Resolution.X / 2f, Resolution.Y);
+            Camera cam2 = Cameras.Create(0, 0, Graphics.WorldScale.X, Graphics.WorldScale.Y);
+            cam2.DrawPosition = new Vector2(Resolution.X / 2f, 0);
+            cam2.DrawSize = new Vector2(Resolution.X / 2f, Resolution.Y);
+
             Content.AddImage("../../Content/GameOver.png", "GameOver");
             Content.AddImage("../../Content/Asteroid.png", "Asteroid");
 
