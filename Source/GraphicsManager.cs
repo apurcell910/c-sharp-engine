@@ -360,6 +360,47 @@ namespace SharpSlugsEngine
             }
         }
 
+        private Vector2 GetTextCoordinates(Vector2 pos, Vector2 size, TextAlign align)
+        {
+            float x = pos.X;
+            float y = pos.Y;
+
+            if (align == TextAlign.TopCenter || align == TextAlign.MiddleCenter || align == TextAlign.BottomCenter)
+            {
+                x = x - size.X / 2;
+            }
+            else if (align == TextAlign.TopRight || align == TextAlign.MiddleRight || align == TextAlign.BottomRight)
+            {
+                x = x - size.X;
+            }
+
+            if (align == TextAlign.MiddleLeft || align == TextAlign.MiddleCenter || align == TextAlign.MiddleRight)
+            {
+                y = y - size.Y / 2;
+            }
+            else if (align == TextAlign.BottomLeft || align == TextAlign.BottomCenter || align == TextAlign.BottomRight)
+            {
+                y = y - size.Y;
+            }
+
+            return new Vector2(x, y);
+        }
+
+        public void DrawText(string text, Font font, Color color, Vector2 pos, Vector2 size, float r = 0, TextAlign align = TextAlign.TopLeft, DrawType type = DrawType.World)
+        {
+            SetColor(color);
+            
+            Vector2 bmpSize = bitmapGraphics.MeasureString(text, font);
+            using (Bitmap textBmp = new Bitmap((int)bmpSize.X, (int)bmpSize.Y))
+            {
+                using (Graphics textBmpGraphics = Graphics.FromImage(textBmp))
+                {
+                    textBmpGraphics.DrawString(text, font, brush, 0, 0);
+                    DrawBMP(textBmp, GetTextCoordinates(pos, size, align), size, r, type);
+                }
+            }
+        }
+
         public void SetWorldScale(Vector2 scaleFactor)
         {
             WorldScale = scaleFactor;
@@ -370,5 +411,18 @@ namespace SharpSlugsEngine
     {
         Screen,
         World
+    }
+
+    public enum TextAlign
+    {
+        TopLeft,
+        TopCenter,
+        TopRight,
+        MiddleLeft,
+        MiddleCenter,
+        MiddleRight,
+        BottomLeft,
+        BottomCenter,
+        BottomRight
     }
 }

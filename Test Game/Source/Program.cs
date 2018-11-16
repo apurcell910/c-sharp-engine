@@ -295,7 +295,7 @@ namespace Test_Game
 
             if (gameOver)
             {
-                Graphics.DrawBMP(Content.GetImage("GameOver"), 0, 0, (int)Resolution.X, (int)Resolution.Y, 0, DrawType.Screen);
+                Graphics.DrawText("GAME OVER", new Font(SystemFonts.DefaultFont.FontFamily, 256), Color.White, Vector2.Zero, Graphics.WorldScale, 0);
             }
         }
     }

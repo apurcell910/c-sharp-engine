@@ -204,7 +204,7 @@ namespace SharpSlugsEngine.Input
 
         public Vector2 WorldLoc(Camera camera)
         {
-            return camera.CameraToWorld(State.Location);
+            return camera.CameraToWorld(State.Location - camera.DrawPosition);
         }
 
         void IDisposable.Dispose() => UnhookForm();
