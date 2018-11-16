@@ -14,6 +14,7 @@ namespace SharpSlugsEngine
         private Dictionary<string, Bitmap> images;
 
         private Dictionary<string, SoundCache> sounds;
+        private Dictionary<string, FontCache> fonts;
 
         internal ContentManager(Game game)
         {
@@ -22,6 +23,7 @@ namespace SharpSlugsEngine
             paths = new List<string>();
             images = new Dictionary<string, Bitmap>();
             sounds = new Dictionary<string, SoundCache>();
+            fonts = new Dictionary<string, FontCache>();
         }
 
         public void AddImage(string filePath, string fileName = "image", int scale = 1)
@@ -36,6 +38,44 @@ namespace SharpSlugsEngine
         {
             images.Add(fileName, bmp);
             return;
+        }
+
+        public void AddFont(string filePath, string fileName)
+        {
+            if (string.IsNullOrEmpty(filePath) || string.IsNullOrEmpty(fileName))
+            {
+                return;
+            }
+
+            if (fonts.ContainsKey(fileName))
+            {
+                return;
+            }
+
+            if (!File.Exists(filePath) || Path.GetExtension(filePath).ToLower() != ".ttf")
+            {
+                return;
+            }
+
+            try
+            {
+                using (System.Drawing.Text.PrivateFontCollection collection = new System.Drawing.Text.PrivateFontCollection())
+                {
+                    collection.AddFontFile(filePath);
+                    fonts.Add(fileName, new FontCache(collection.Families[0]));
+                }
+            }
+            catch { }
+        }
+
+        public Font GetFont(string name, int emSize = 32)
+        {
+            if (fonts.TryGetValue(name, out FontCache f))
+            {
+                return f.Get(emSize);
+            }
+
+            return null;
         }
 
         public void AddSound(string filePath, string fileName, int cacheSize = 5)
@@ -157,6 +197,30 @@ namespace SharpSlugsEngine
                 }
             }
             return copy;
+        }
+
+        private struct FontCache
+        {
+            public FontFamily family;
+            public Dictionary<int, Font> fonts;
+
+            public FontCache(FontFamily fam)
+            {
+                family = fam;
+                fonts = new Dictionary<int, Font>();
+            }
+
+            public Font Get(int i)
+            {
+                if (fonts.TryGetValue(i, out Font f))
+                {
+                    return f;
+                }
+
+                f = new Font(family, i);
+                fonts.Add(i, f);
+                return f;
+            }
         }
     }
 }

@@ -101,6 +101,8 @@ namespace Test_Game
 
             Content.AddSound("../../Content/pew.mp3", "Pew");
 
+            Content.AddFont("../../Content/heav.ttf", "Heavy Data");
+
             test = new SharpSlugsEngine.Physics.PolygonCollider(new Vector2(0, -34.375f), new Vector2(25, 15.625f), new Vector2(0, 3.125f), new Vector2(-25, 15.625f));
         }
 
@@ -295,7 +297,7 @@ namespace Test_Game
 
             if (gameOver)
             {
-                Graphics.DrawText("GAME OVER", new Font(SystemFonts.DefaultFont.FontFamily, 256), Color.White, Vector2.Zero, Graphics.WorldScale, 0);
+                Graphics.DrawText("GAME OVER", Content.GetFont("Heavy Data", 128), Color.White, Resolution, Resolution, 0, TextAlign.BottomRight, DrawType.Screen);
             }
         }
     }
