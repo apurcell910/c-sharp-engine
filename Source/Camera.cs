@@ -105,24 +105,25 @@ namespace SharpSlugsEngine
             set => DrawSize = new Vector2(_size.X, value);
         }
 
-        public Vector2 CameraToWorld(Vector2 cameraCoord)
+        public Vector2 CameraToWorld(Vector2 cameraCoord, bool ignorePos = false)
         {
-            //Vector2 WorldCoord = new Vector2(cameraCoord.X * DrawWidth / _game.Resolution.X + DrawX, cameraCoord.Y * DrawHeight / _game.Resolution.X + DrawY);
-            cameraCoord = (cameraCoord / DrawSize) * Size;
-            cameraCoord -= Position;
+            cameraCoord /= (Size / _game.Graphics.WorldScale);
+            cameraCoord *= Size;
+            cameraCoord /= DrawSize;
             cameraCoord /= (_game.Graphics.WorldScale / Size);
-            cameraCoord += Position;
+            if (!ignorePos) cameraCoord += Position;
 
             return cameraCoord;
         }
 
-        public Vector2 WorldToCameraPixels(Vector2 worldCoord)
+        public Vector2 WorldToCameraPixels(Vector2 worldCoord, bool ignorePos = false)
         {
-            worldCoord -= Position;
+            if (!ignorePos) worldCoord -= Position;
             worldCoord *= (_game.Graphics.WorldScale / Size);
-            worldCoord += Position;
 
-            return (worldCoord / Size) * DrawSize;
+            worldCoord = (worldCoord / Size) * DrawSize;
+
+            return worldCoord * (Size / _game.Graphics.WorldScale);
         }
 
         private Game _game;
@@ -149,6 +150,11 @@ namespace SharpSlugsEngine
         {
             buffer.Dispose();
             bitmapGraphics.Dispose();
+        }
+
+        public override string ToString()
+        {
+            return "{Position: " + Position + ", Size: " + Size + ", DrawPosition: " + DrawPosition + ", DrawSize: " + DrawSize + "}";
         }
 
         public void Dispose()
