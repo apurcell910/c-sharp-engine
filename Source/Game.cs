@@ -94,6 +94,28 @@ namespace SharpSlugsEngine
             }
         }
 
+        private bool _lockCursor;
+        /// <summary>
+        /// Whether or not to lock the mouse cursor to the game window
+        /// </summary>
+        public bool LockCursor
+        {
+            get => _lockCursor;
+            set
+            {
+                if (value)
+                {
+                    platform.form.LockCursor();
+                }
+                else
+                {
+                    platform.form.UnlockCursor();
+                }
+
+                _lockCursor = value;
+            }
+        }
+
         //This shouldn't need to be accessed from outside of the library
         internal Platform platform;
 

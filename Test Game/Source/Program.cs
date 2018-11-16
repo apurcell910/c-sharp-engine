@@ -79,11 +79,13 @@ namespace Test_Game
             };
             
             ShowCursor = false;
+            LockCursor = true;
         }
         
         protected override void LoadContent()
         {
             Cameras.Main.DrawSize = new Vector2(Resolution.X / 2f, Resolution.Y);
+
             Camera cam2 = Cameras.Create(0, 0, Graphics.WorldScale.X, Graphics.WorldScale.Y);
             cam2.DrawPosition = new Vector2(Resolution.X / 2f, 0);
             cam2.DrawSize = new Vector2(Resolution.X / 2f, Resolution.Y);
@@ -275,6 +277,7 @@ namespace Test_Game
                 {
                     sprites.display("cursor", false);
                     ShowCursor = true;
+                    LockCursor = false;
                     gameOver = true;
                     break;
                 }
