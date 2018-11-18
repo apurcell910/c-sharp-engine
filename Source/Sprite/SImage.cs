@@ -25,6 +25,7 @@ namespace SharpSlugsEngine {
             alive = true;
             angle = 0;
             xAnchor = yAnchor = 0;
+            collider = new Physics.RectangleCollider(x, y, w, h);
         }
         public SImage(int x, int y, string path, int ix = 0, int iy = 0, int iw = 0, int ih = 0) {
             this.x = x;
@@ -40,6 +41,7 @@ namespace SharpSlugsEngine {
             alive = true;
             angle = 0;
             xAnchor = yAnchor = 0;
+            collider = new Physics.RectangleCollider(x, y, w, h);
         }
         public SImage(int x, int y, int w, int h, Bitmap image, int ix = 0, int iy = 0, int iw = 0, int ih = 0) {
             this.x = x;
@@ -55,6 +57,7 @@ namespace SharpSlugsEngine {
             alive = true;
             angle = 0;
             xAnchor = yAnchor = 0;
+            collider = new Physics.RectangleCollider(x, y, w, h);
         }
         public SImage(int x, int y, int w, int h, string path, int ix = 0, int iy = 0, int iw = 0, int ih = 0) {
             this.x = x;
@@ -70,6 +73,7 @@ namespace SharpSlugsEngine {
             alive = true;
             angle = 0;
             xAnchor = yAnchor = 0;
+            collider = new Physics.RectangleCollider(x, y, w, h);
         }
 
         public override void Draw(GraphicsManager graphics) {
