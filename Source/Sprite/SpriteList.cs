@@ -144,19 +144,27 @@ namespace SharpSlugsEngine {
         }
 
         public void setVelocityX(string key, int x) {
-            sprites[key].velocityX = x;
+            sprites[key].setVelocityX(x);
         }
         
         public void setVelocityY(string key, int y) {
-            sprites[key].velocityY = y;
+            sprites[key].setVelocityY(y);
         }
 
         public void setGravityX(string key, int x) {
-            sprites[key].gravityX = x;
+            sprites[key].setGravityX(x);
         }
 
         public void setGravityY(string key, int y) {
-            sprites[key].gravityY = y;
+            sprites[key].setGravityY(y);
+        }
+
+        public void setCollider(string key, Physics.Collider collider) {
+            sprites[key].setCollider(collider);
+        }
+
+        public void addCollision(string key, string other) {
+            sprites[key].addCollision(other);
         }
     }
 }

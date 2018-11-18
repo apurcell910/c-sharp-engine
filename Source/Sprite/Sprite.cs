@@ -18,6 +18,8 @@ namespace SharpSlugsEngine {
         public double xAnchor, yAnchor;
         public bool alive;
         public bool disp;
+        public Physics.Collider collider;
+        public List<string> collisions;
         public virtual void Draw(GraphicsManager graphics) { }
         public virtual void Update() { }
 
@@ -116,6 +118,30 @@ namespace SharpSlugsEngine {
 
         public void setAnchorY(double anchor) {
             yAnchor = anchor;
+        }
+
+        public void setVelocityX(int x) {
+            velocityX = x;
+        }
+
+        public void setVelocityY(int y) {
+            velocityY = y;
+        }
+
+        public void setGravityX(int x) {
+            gravityX = x;
+        }
+
+        public void setGravityY(int y) {
+            gravityY = y;
+        }
+
+        public void setCollider(Physics.Collider collider) {
+            this.collider = collider;
+        }
+
+        public void addCollision(string collision) {
+            this.collisions.Add(collision);
         }
     }
 }
