@@ -45,20 +45,24 @@ namespace SharpSlugsEngine {
         public void move(int x, int y) {
             this.x += x;
             this.y += y;
+            collider.Position = new Vector2(this.x, this.y)
         }
 
         public void moveto(int x, int y)
         {
             this.x = x;
             this.y = y;
+            collider.Position = new Vector2(x, y);
         }
 
         public void moveX(int x) {
             this.x += x;
+            collider.Position = new Vector2(this.x, collider.Position.Y);
         }
 
         public void moveY(int y) {
             this.y += y;
+            collider.Position = new Vector2(collider.Position.X, this.y);
         }
 
         /// <summary>
@@ -68,6 +72,7 @@ namespace SharpSlugsEngine {
         /// <param name="r">How many degrees to rotate the sprite by.</param>
         public void setRotation(float r) {
             this.angle = r;
+            this.collider.Rotation = this.angle;
         }
 
         /// <summary>
@@ -77,6 +82,7 @@ namespace SharpSlugsEngine {
         /// <param name="r">How many degrees to rotate the sprite by.</param>
         public void rotate(float r) {
             this.angle += r;
+            this.collider.Rotation = this.angle;
         }
 
         /// <summary>
@@ -86,6 +92,7 @@ namespace SharpSlugsEngine {
         /// <param name="scale">How much to scale it by(decimal to make it smaller)</param>
         public void scaleX(double scale) {
             w = (int)Math.Round(w * scale);
+            collider.Scale = new Vector2(w, h);
         }
 
         /// <summary>
@@ -95,6 +102,7 @@ namespace SharpSlugsEngine {
         /// <param name="scale">How much to scale it by(decimal to make it smaller)</param>
         public void scaleY(double scale) {
             h = (int)Math.Round(scale * h);
+            collider.Scale = new Vector2(w, h);
         }
 
         /// <summary>
@@ -105,6 +113,7 @@ namespace SharpSlugsEngine {
         public void scale(double scale) {
             w = (int)Math.Round(w * scale);
             h = (int)Math.Round(scale * h);
+            collider.Scale = new Vector2(w, h);
         }
 
         public void setAnchor(double anchor) {
@@ -122,10 +131,22 @@ namespace SharpSlugsEngine {
 
         public void setVelocityX(int x) {
             velocityX = x;
+            collider.Velocity = new Vector2(x, collider.Velocity.Y);
         }
 
         public void setVelocityY(int y) {
             velocityY = y;
+            collider.Velocity = new Vector2(collider.Velocity.X, y);
+        }
+
+        public void addVelocityX(int x) {
+            velocityX += x;
+            collider.Velocity = new Vector2(velocityX, collider.Velocity.Y);
+        }
+
+        public void addVelocityY(int y) {
+            velocityY += y;
+            collider.Velocity = new Vector2(collider.Velocity.X, velocityY);
         }
 
         public void setGravityX(int x) {
