@@ -279,6 +279,21 @@ namespace SharpSlugsEngine
         public void DrawBMP(Bitmap bmp, RectangleF drawRect, float r = 0, DrawType type = DrawType.World)
             => DrawBMP(bmp, drawRect.X, drawRect.Y, drawRect.Width, drawRect.Height, r, type);
 
+        public void DrawBMP(Bitmap bmp, float x, float y, float w, float h, int ix, int iy, int iw, int ih, float r = 0, DrawType type = DrawType.World) {
+            if (type == DrawType.World) {
+                Vector2 pos = new Vector2(x, y);
+                Vector2 size = new Vector2(w, h);
+
+                foreach (Camera cam in GetCameras()) {
+                    Vector2 camPos = cam.WorldToCameraPixels(pos);
+                    Vector2 camSize = cam.WorldToCameraPixels(size, true);
+                    DrawBMP(cam.bitmapGraphics, bmp, (int)camPos.X, (int)camPos.Y, (int)camSize.X, (int)camSize.Y, r, ix, iy, iw, ih);
+                }
+            } else {
+                DrawBMP(bitmapGraphics, bmp, (int)x, (int)y, (int)w, (int)h, r, ix, iy, iw, ih);
+            }
+        }
+
         //TODO: Find center point of triangle to support rotation
         /// <summary>
         /// The actual DrawTri function. All overloads should use this to draw

@@ -76,7 +76,7 @@ namespace SharpSlugsEngine {
             if (ix == 0 && iy == 0 && iw == 0 && ih == 0) {
                 graphics.DrawBMP(image, x, y, w, h, angle);
             } else {
-                //Not implemented
+                graphics.DrawBMP(image, x, y, w, h, ix, iy, iw, ih, angle);
             }
         }
     }
