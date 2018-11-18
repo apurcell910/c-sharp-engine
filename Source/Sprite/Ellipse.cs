@@ -21,6 +21,7 @@ namespace SharpSlugsEngine {
             alive = true;
             angle = 0;
             xAnchor = yAnchor = 0;
+            collider = new Physics.EllipseCollider(x + (w / 2), y + (h / 2), w, h);
         }
 
         public override void Draw(GraphicsManager graphics) {

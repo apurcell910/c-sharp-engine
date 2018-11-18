@@ -21,6 +21,7 @@ namespace SharpSlugsEngine{
             alive = true;
             angle = 0;
             xAnchor = yAnchor = 0;
+            collider = new Physics.RectangleCollider(x, y, w, h);
         }
 
         public override void Draw(GraphicsManager graphics) {
