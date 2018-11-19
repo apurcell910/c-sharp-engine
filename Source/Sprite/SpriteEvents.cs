@@ -25,6 +25,21 @@ namespace SharpSlugsEngine.Sprites //naming namespace Sprite breaks Sprite.cs
             events.Remove(S);
         }
 
+        public void enable(string S)
+        {
+            events[S].enable();
+        }
+
+        public void disable(string S)
+        {
+            events[S].disable();
+        }
+
+        public void swap(string S)
+        {
+            events[S].swap();
+        }
+
         public void Update()
         {
             foreach (KeyValuePair<string, SEvent> eve in events)
@@ -48,6 +63,21 @@ namespace SharpSlugsEngine.Sprites //naming namespace Sprite breaks Sprite.cs
 
         public void call() {
             change?.Invoke();
+        }
+
+        public void enable()
+        {
+            On = false;
+        }
+
+        public void disable()
+        {
+            On = true;
+        }
+
+        public void swap()
+        {
+            On = !On;
         }
 
     }
