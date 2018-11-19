@@ -279,6 +279,9 @@ namespace SharpSlugsEngine
         public void DrawBMP(Bitmap bmp, RectangleF drawRect, float r = 0, DrawType type = DrawType.World)
             => DrawBMP(bmp, drawRect.X, drawRect.Y, drawRect.Width, drawRect.Height, r, type);
 
+        public void DrawBMP(string image, float x, float y, float w, float h, float r = 0, DrawType type = DrawType.World)
+            => DrawBMP(game.Content.GetImage(image), x, y, w, h, r, type);
+
         public void DrawBMP(Bitmap bmp, float x, float y, float w, float h, int ix, int iy, int iw, int ih, float r = 0, DrawType type = DrawType.World) {
             if (type == DrawType.World) {
                 Vector2 pos = new Vector2(x, y);
@@ -293,6 +296,9 @@ namespace SharpSlugsEngine
                 DrawBMP(bitmapGraphics, bmp, (int)x, (int)y, (int)w, (int)h, r, ix, iy, iw, ih);
             }
         }
+
+        public void DrawBMP(string image, float x, float y, float w, float h, int ix, int iy, int iw, int ih, float r = 0, DrawType type = DrawType.World)
+            => DrawBMP(game.Content.GetImage(image), x, y, w, h, ix, iy, iw, ih, r, type);
 
         //TODO: Find center point of triangle to support rotation
         /// <summary>
