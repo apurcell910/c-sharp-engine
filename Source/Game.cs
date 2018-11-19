@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows.Forms;
 using SharpSlugsEngine.Input;
+using SharpSlugsEngine.Sprites;
 
 namespace SharpSlugsEngine
 {
@@ -28,6 +29,8 @@ namespace SharpSlugsEngine
         /// Sprites manager for anything that needs to be displayed each goaround;
         /// </summary>
         public SpriteList sprites { get; private set; }
+
+        public SpriteEvents actions { get; private set; }
 
         /// <summary>
         /// Graphics Manager for the Game object.
@@ -148,6 +151,8 @@ namespace SharpSlugsEngine
             //Create sprites
             sprites = new SpriteList(Graphics);
 
+            actions = new SpriteEvents(sprites);
+
             //Create camera manager
             Cameras = new CameraManager(this);
         }
@@ -194,6 +199,7 @@ namespace SharpSlugsEngine
             updateReceivers.ForEach(updatable => updatable.Update(updateTime));
 
             Update(updateTime);
+            actions.Update();
             sprites.Update();//Should I add updateTime to this? Not sure how it is worked in.
 
             //TODO: Sprint 1, user story 1, task 7 (Timothy)

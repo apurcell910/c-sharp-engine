@@ -45,7 +45,7 @@ namespace SharpSlugsEngine {
         public void move(int x, int y) {
             this.x += x;
             this.y += y;
-            collider.Position = new Vector2(this.x, this.y)
+            collider.Position = new Vector2(this.x, this.y);
         }
 
         public void moveto(int x, int y)

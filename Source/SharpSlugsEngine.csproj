@@ -69,6 +69,7 @@
     <Compile Include="Physics\TriangleCollider.cs" />
     <Compile Include="Sound\Sound.cs" />
     <Compile Include="Sound\SoundCache.cs" />
+    <Compile Include="Sprite\SpriteEvents.cs" />
     <Compile Include="Sprite\Ellipse.cs" />
     <Compile Include="Sprite\SImage.cs" />
     <Compile Include="Sprite\Line.cs" />
