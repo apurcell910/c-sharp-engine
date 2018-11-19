@@ -9,9 +9,9 @@ using System.Threading.Tasks;
 namespace SharpSlugsEngine {
     //Name is to distingish from System.Drawing.Image
     public class SImage : Sprite {
-        Bitmap image;
+        string image;
         int ix, iy, iw, ih; //These are the portions of the source image to draw
-        public SImage(int x, int y, Bitmap image, int ix = 0, int iy = 0, int iw = 0, int ih = 0) {
+        public SImage(int x, int y, string image, int ix = 0, int iy = 0, int iw = 0, int ih = 0) {
             this.x = x;
             this.y = y;
             this.image = image;
@@ -27,42 +27,11 @@ namespace SharpSlugsEngine {
             xAnchor = yAnchor = 0;
             collider = new Physics.RectangleCollider(x, y, w, h);
         }
-        public SImage(int x, int y, string path, int ix = 0, int iy = 0, int iw = 0, int ih = 0) {
-            this.x = x;
-            this.y = y;
-            this.image = new Bitmap(path);
-            this.w = this.image.Width;
-            this.h = this.image.Height;
-            this.ix = ix;
-            this.iy = iy;
-            this.iw = iw;
-            this.ih = ih;
-            disp = false;
-            alive = true;
-            angle = 0;
-            xAnchor = yAnchor = 0;
-            collider = new Physics.RectangleCollider(x, y, w, h);
-        }
-        public SImage(int x, int y, int w, int h, Bitmap image, int ix = 0, int iy = 0, int iw = 0, int ih = 0) {
+
+        public SImage(int x, int y, int w, int h, string image, int ix = 0, int iy = 0, int iw = 0, int ih = 0) {
             this.x = x;
             this.y = y;
             this.image = image;
-            this.w = w;
-            this.h = h;
-            this.ix = ix;
-            this.iy = iy;
-            this.iw = iw;
-            this.ih = ih;
-            disp = false;
-            alive = true;
-            angle = 0;
-            xAnchor = yAnchor = 0;
-            collider = new Physics.RectangleCollider(x, y, w, h);
-        }
-        public SImage(int x, int y, int w, int h, string path, int ix = 0, int iy = 0, int iw = 0, int ih = 0) {
-            this.x = x;
-            this.y = y;
-            this.image = new Bitmap(path);
             this.w = w;
             this.h = h;
             this.ix = ix;
