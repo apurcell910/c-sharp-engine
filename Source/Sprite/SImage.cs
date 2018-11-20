@@ -11,12 +11,14 @@ namespace SharpSlugsEngine {
     public class SImage : Sprite {
         string image;
         int ix, iy, iw, ih; //These are the portions of the source image to draw
-        public SImage(int x, int y, string image, int ix = 0, int iy = 0, int iw = 0, int ih = 0) {
+        ContentManager manager;
+        public SImage(int x, int y, string image, ref ContentManager manager, int ix = 0, int iy = 0, int iw = 0, int ih = 0) {
             this.x = x;
             this.y = y;
             this.image = image;
-            this.w = image.Width;
-            this.h = image.Height;
+            this.manager = manager;
+            this.w = manager.GetImage(image).Width;
+            this.h = manager.GetImage(image).Height;
             this.ix = ix;
             this.iy = iy;
             this.iw = iw;
@@ -28,10 +30,11 @@ namespace SharpSlugsEngine {
             collider = new Physics.RectangleCollider(x, y, w, h);
         }
 
-        public SImage(int x, int y, int w, int h, string image, int ix = 0, int iy = 0, int iw = 0, int ih = 0) {
+        public SImage(int x, int y, int w, int h, string image, ref ContentManager manager, int ix = 0, int iy = 0, int iw = 0, int ih = 0) {
             this.x = x;
             this.y = y;
             this.image = image;
+            this.manager = manager;
             this.w = w;
             this.h = h;
             this.ix = ix;
