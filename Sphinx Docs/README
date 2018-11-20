@@ -1,0 +1,4 @@
+In order to build the documentation, the following must be installed:
+   sphinx - http://www.sphinx-doc.org/en/master/usage/installation.html
+   sphinx_rtd_theme - https://sphinx-rtd-theme.readthedocs.io/en/latest/
+   sphinxcontrib-inlinesyntaxhighlight - https://bitbucket.org/klorenz/sphinxcontrib-inlinesyntaxhighlight
