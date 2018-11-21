@@ -50,8 +50,8 @@ namespace SharpSlugsEngine.Input
 
         private void UnhookForm()
         {
-            _game.platform.form.KeyDown -= RegisterKeyDown;
-            _game.platform.form.KeyUp -= RegisterKeyUp;
+            _game.Platform.Form.KeyDown -= RegisterKeyDown;
+            _game.Platform.Form.KeyUp -= RegisterKeyUp;
         }
 
         private void HookForm()
@@ -59,8 +59,8 @@ namespace SharpSlugsEngine.Input
             //Prevent duplicate hooks
             UnhookForm();
 
-            _game.platform.form.KeyDown += RegisterKeyDown;
-            _game.platform.form.KeyUp += RegisterKeyUp;
+            _game.Platform.Form.KeyDown += RegisterKeyDown;
+            _game.Platform.Form.KeyUp += RegisterKeyUp;
         }
 
         //Update async state when keys are pressed/released

@@ -7,79 +7,144 @@ using SharpSlugsEngine.Sprites;
 
 namespace SharpSlugsEngine
 {
+    /// <summary>
+    /// Provides functionality to create a game. Must be overriden to be used.
+    /// </summary>
     public abstract class Game
     {
+        // Backing fields
+        private bool lockCursorInternal;
+
+        // Fields used to store changes to IUpdatables and IDrawables during Update/Draw cycle
+        // because the real lists cannot be safely changed during this time
+        private List<IUpdatable> newUpdatables = new List<IUpdatable>();
+        private List<IUpdatable> removedUpdatables = new List<IUpdatable>();
+        private List<IDrawable> newDrawables = new List<IDrawable>();
+        private List<IDrawable> removedDrawables = new List<IDrawable>();
+
         private Stopwatch globalClock = new Stopwatch();
         private TimeSpan deltaUpdate = new TimeSpan(0);
         private TimeSpan deltaDraw = new TimeSpan(0);
-        private TimeSpan targetSpf = new TimeSpan(0);    //targetted seconds per frame
+        private TimeSpan targetSpf = new TimeSpan(0);    // targetted seconds per frame
 
         private List<IUpdatable> updateReceivers;
         private List<IDrawable> drawReceivers;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Game"/> class
+        /// </summary>
+        public Game()
+        {
+            // Set default value for all settings
+            Vsync = false;
+            TargetFramerate = -1;
+            FixedTimestep = false;
+            ResolutionInternal = new Vector2(1280, 720);
+
+            // Instantiate lists
+            updateReceivers = new List<IUpdatable>();
+            drawReceivers = new List<IDrawable>();
+
+            // Create platform
+            Platform = new Platform(this);
+
+            // Create graphics manager
+            Graphics = new GraphicsManager(this, Platform);
+
+            // Create input managers
+            Controllers = new DeviceManager(this);
+            Keyboard = new KeyboardManager(this);
+            Mouse = new MouseManager(this);
+
+            // Create Content Manager
+            Content = new ContentManager(this);
+
+            // Create sprites
+            Sprites = new SpriteList(Graphics);
+
+            Actions = new SpriteEvents(Sprites);
+
+            // Create camera manager
+            Cameras = new CameraManager(this);
+        }
+
+        /// <summary>
+        /// Gets the <see cref="DeviceManager"/> containing this <see cref="Game"/>'s controllers
+        /// </summary>
         public DeviceManager Controllers { get; private set; }
 
+        /// <summary>
+        /// Gets the <see cref="KeyboardManager"/> that tracks this <see cref="Game"/>'s keyboard input
+        /// </summary>
         public KeyboardManager Keyboard { get; private set; }
 
+        /// <summary>
+        /// Gets the <see cref="MouseManager"/> that tracks this <see cref="Game"/>'s mouse input
+        /// </summary>
         public MouseManager Mouse { get; private set; }
 
+        /// <summary>
+        /// Gets the <see cref="CameraManager"/> containing this <see cref="Game"/>'s <see cref="Camera"/>s
+        /// </summary>
         public CameraManager Cameras { get; private set; }
 
         /// <summary>
-        /// Sprites manager for anything that needs to be displayed each goaround;
+        /// Gets the sprites manager for anything that needs to be displayed each call to <see cref="Draw(GameTime)"/>
         /// </summary>
-        public SpriteList sprites { get; private set; }
-
-        public SpriteEvents actions { get; private set; }
+        public SpriteList Sprites { get; private set; }
 
         /// <summary>
-        /// Graphics Manager for the Game object.
+        /// Gets the <see cref="SpriteEvents"/> instance that handles all sprite events for this <see cref="Game"/>
+        /// </summary>
+        public SpriteEvents Actions { get; private set; }
+
+        /// <summary>
+        /// Gets the <see cref="GraphicsManager"/> for this <see cref="Game"/>
         /// </summary>
         public GraphicsManager Graphics { get; private set; }
 
+        /// <summary>
+        /// Gets the <see cref="ContentManager"/> for this <see cref="Game"/>
+        /// </summary>
         public ContentManager Content { get; private set; }
 
         /// <summary>
-        /// Controls whether or not the game should lock to the monitor's refresh rate.
+        /// Gets or sets a value indicating whether or not the game should lock to the monitor's refresh rate.
         /// Overrides <see cref="TargetFramerate"/> if applicable.
         /// </summary>
-        public bool Vsync { get; protected set; } //TODO: Sprint 1, user story 1, task 6 (Timothy)
+        public bool Vsync { get; protected set; }
 
         /// <summary>
-        /// The framerate the game will attempt to reach (But not exceed). Set to -1 for no target.
+        /// Gets or sets the framerate the game will attempt to reach (But not exceed). Set to -1 for no target.
         /// Overriden by <see cref="Vsync"/> if applicable.
         /// </summary>
-        public int TargetFramerate { get; protected set; } //TODO: Sprint 1, user story 1, task 6 (Timothy)
+        public int TargetFramerate { get; protected set; }
 
         /// <summary>
-        /// If enabled, the GameTime passed to Update and Draw will always assume the target framerate is being met.
+        /// Gets or sets a value indicating whether the GameTime passed to Update and Draw will always assume the target framerate is being met.
         /// <see cref="TargetFramerate"/> must be set for this to take effect.
         /// </summary>
         public bool FixedTimestep { get; protected set; }
 
-        //Backing field for the Resolution property
-        internal Vector2 _resolution;
-
         /// <summary>
-        /// The resolution of the game window. <see cref="Vector2.X" /> controls width and <see cref="Vector2.Y"/> controls height.
+        /// Gets or sets the resolution of the game window. <see cref="Vector2.X" /> controls width and <see cref="Vector2.Y"/> controls height.
         /// </summary>
         public Vector2 Resolution
         {
-            get => _resolution;
+            get => ResolutionInternal;
             set
             {
-                Cameras.Resize(_resolution, value);
+                Cameras.Resize(ResolutionInternal, value);
 
-                _resolution = value;
+                ResolutionInternal = value;
 
-                platform.ResizeWindow((int)_resolution.X, (int)_resolution.Y);
-                //Update resolution of game window
-                //TODO: Sprint 1, user story 1, task 5 (Harpreet)
+                // Update resolution of game window
+                Platform.ResizeWindow((int)ResolutionInternal.X, (int)ResolutionInternal.Y);
             }
         }
 
         /// <summary>
-        /// Whether or not to show the cursor when hovering over the game window.
+        /// Gets or sets a value indicating whether or not to show the cursor when hovering over the game window.
         /// </summary>
         public bool ShowCursor
         {
@@ -96,87 +161,109 @@ namespace SharpSlugsEngine
                 }
             }
         }
-
-        private bool _lockCursor;
+        
         /// <summary>
-        /// Whether or not to lock the mouse cursor to the game window
+        /// Gets or sets a value indicating whether or not to lock the mouse cursor to the game window
         /// </summary>
         public bool LockCursor
         {
-            get => _lockCursor;
+            get => lockCursorInternal;
             set
             {
                 if (value)
                 {
-                    platform.form.LockCursor();
+                    Platform.Form.LockCursor();
                 }
                 else
                 {
-                    platform.form.UnlockCursor();
+                    Platform.Form.UnlockCursor();
                 }
 
-                _lockCursor = value;
+                lockCursorInternal = value;
             }
         }
 
-        //This shouldn't need to be accessed from outside of the library
-        internal Platform platform;
-
-        public Game()
-        {
-            //Set default value for all settings
-            Vsync = false;
-            TargetFramerate = -1;
-            FixedTimestep = false;
-            _resolution = new Vector2(1280, 720);
-
-            //Instantiate lists
-            updateReceivers = new List<IUpdatable>();
-            drawReceivers = new List<IDrawable>();
-
-            //Create platform
-            platform = new Platform(this);
-
-            //Create graphics manager
-            Graphics = new GraphicsManager(this, platform);
-            
-            //Create input managers
-            Controllers = new DeviceManager(this);
-            Keyboard = new KeyboardManager(this);
-            Mouse = new MouseManager(this);
-            
-            //Create Content Manager
-            Content = new ContentManager(this);
-
-            //Create sprites
-            sprites = new SpriteList(Graphics);
-
-            actions = new SpriteEvents(sprites);
-
-            //Create camera manager
-            Cameras = new CameraManager(this);
-        }
+        /// <summary>
+        /// Gets or sets the <see cref="Game"/>'s resolution. Bypasses all logic related to this.
+        /// In most cases, use of <see cref="Resolution"/> is preferred.
+        /// </summary>
+        internal Vector2 ResolutionInternal { get; set; }
+        
+        /// <summary>
+        /// Gets the <see cref="SharpSlugsEngine.Platform"/> associated with this <see cref="Game"/>
+        /// </summary>
+        internal Platform Platform { get; private set; }
 
         /// <summary>
         /// Sets up the Game class and begins the main loop of <see cref="Update"/> and <see cref="Draw"/>
         /// </summary>
         public void Run()
         {
-            //Call setup functions
+            // Call setup functions
             Initialize();
             Cameras.Main = Cameras.Create(0, 0, Graphics.WorldScale.X, Graphics.WorldScale.Y);
             LoadContent();
             
             CheckValues();
             
-            //Begin running the game loop
+            // Begin running the game loop
             globalClock.Start();
-            platform.BeginRun();
+            Platform.BeginRun();
+        }
+        
+        /// <summary>
+        /// Register component "<paramref name="updatable"/>" to receive updates before the main <see cref="Update"/> call
+        /// </summary>
+        /// <param name="updatable">The <see cref="IUpdatable"/> to begin calling <see cref="IUpdatable.Update(GameTime)"/> on</param>
+        public void AddUpdatable(IUpdatable updatable)
+        {
+            if (!newUpdatables.Contains(updatable))
+            {
+                newUpdatables.Add(updatable);
+            }
         }
 
+        /// <summary>
+        /// Remove component "<paramref name="updatable"/>" from update list
+        /// </summary>
+        /// <param name="updatable">The <see cref="IUpdatable"/> to stop calling <see cref="IUpdatable.Update(GameTime)"/> on</param>
+        public void RemoveUpdatable(IUpdatable updatable)
+        {
+            if (!removedUpdatables.Contains(updatable))
+            {
+                removedUpdatables.Add(updatable);
+            }
+        }
+        
+        /// <summary>
+        /// Register component "<paramref name="drawable"/>" to receive updates before the main <see cref="Draw"/> call
+        /// </summary>
+        /// <param name="drawable">The <see cref="IDrawable"/> to begin calling <see cref="IDrawable.Draw(GameTime)"/> on</param>
+        public void AddDrawable(IDrawable drawable)
+        {
+            if (!newDrawables.Contains(drawable))
+            {
+                newDrawables.Add(drawable);
+            }
+        }
+
+        /// <summary>
+        /// Remove component "<paramref name="drawable"/>" from draw list
+        /// </summary>
+        /// <param name="drawable">The <see cref="IDrawable"/> to stop calling <see cref="IDrawable.Draw(GameTime)"/> on</param>
+        public void RemoveDrawable(IDrawable drawable)
+        {
+            if (!removedDrawables.Contains(drawable))
+            {
+                removedDrawables.Add(drawable);
+            }
+        }
+
+        /// <summary>
+        /// Handles the updating and drawing for a single frame. Called from <see cref="Platform.PlatformIdle()"/>
+        /// </summary>
         internal void ProcessFrame()
         {
-            //TODO: Sprint 1, user story 1, task 4 (Harpreet)
             GameTime updateTime = new GameTime();
             GameTime drawTime = new GameTime();
 
@@ -188,7 +275,7 @@ namespace SharpSlugsEngine
             Keyboard.Update();
             Mouse.Update();
 
-            //Handle IUpdatables
+            // Handle IUpdatables
             updateReceivers.AddRange(newUpdatables);
             newUpdatables.Clear();
 
@@ -199,25 +286,23 @@ namespace SharpSlugsEngine
             updateReceivers.ForEach(updatable => updatable.Update(updateTime));
 
             Update(updateTime);
-            actions.Update();
-            sprites.Update();//Should I add updateTime to this? Not sure how it is worked in.
+            Actions.Update();
+            Sprites.Update(); // Should I add updateTime to this? Not sure how it is worked in.
 
-            //TODO: Sprint 1, user story 1, task 7 (Timothy)
-
-            
             drawTime.deltaTime = globalClock.Elapsed - deltaDraw;
             if (targetSpf != TimeSpan.Zero)
             {
-                //TODO: FIX THIS TIMOHTY
-                if (targetSpf.TotalMilliseconds >= drawTime.deltaTime.TotalMilliseconds) //if the targetUpdate is within 1/4 of a second of time passed
+                // TODO: FIX THIS TIMOHTY
+                // if the targetUpdate is within 1/4 of a second of time passed
+                if (targetSpf.TotalMilliseconds >= drawTime.deltaTime.TotalMilliseconds)
                 {
                     deltaDraw = globalClock.Elapsed;
                     drawTime.totalTime = globalClock.Elapsed;
 
                     Graphics.Begin();
-                    sprites.Draw();
+                    Sprites.Draw();
 
-                    //Handle IDrawables
+                    // Handle IDrawables
                     drawReceivers.AddRange(newDrawables);
                     newDrawables.Clear();
 
@@ -230,7 +315,8 @@ namespace SharpSlugsEngine
                     Draw(drawTime);
                     Graphics.End();
                 }
-                //else skip graphics step.
+
+                // else skip graphics step.
             }
             else
             {
@@ -238,9 +324,9 @@ namespace SharpSlugsEngine
                 drawTime.totalTime = globalClock.Elapsed;
 
                 Graphics.Begin();
-                sprites.Draw();
+                Sprites.Draw();
 
-                //Handle IDrawables
+                // Handle IDrawables
                 drawReceivers.AddRange(newDrawables);
                 newDrawables.Clear();
 
@@ -255,55 +341,10 @@ namespace SharpSlugsEngine
             }
         }
 
-        private List<IUpdatable> newUpdatables = new List<IUpdatable>();
         /// <summary>
-        /// Register component "<paramref name="updatable"/>" to receive updates before the main <see cref="Update"/> call
+        /// Calculates the targetted seconds per frame
         /// </summary>
-        public void AddUpdatable(IUpdatable updatable)
-        {
-            if (!newUpdatables.Contains(updatable))
-            {
-                newUpdatables.Add(updatable);
-            }
-        }
-
-        private List<IUpdatable> removedUpdatables = new List<IUpdatable>();
-        /// <summary>
-        /// Remove component "<paramref name="updatable"/>" from update list
-        /// </summary>
-        public void RemoveUpdatable(IUpdatable updatable)
-        {
-            if (!removedUpdatables.Contains(updatable))
-            {
-                removedUpdatables.Add(updatable);
-            }
-        }
-
-        private List<IDrawable> newDrawables = new List<IDrawable>();
-        /// <summary>
-        /// Register component "<paramref name="drawable"/>" to receive updates before the main <see cref="Draw"/> call
-        /// </summary>
-        public void AddDrawable(IDrawable drawable)
-        {
-            if (!newDrawables.Contains(drawable))
-            {
-                newDrawables.Add(drawable);
-            }
-        }
-
-        private List<IDrawable> removedDrawables = new List<IDrawable>();
-        /// <summary>
-        /// Remove component "<paramref name="drawable"/>" from draw list
-        /// </summary>
-        public void RemoveDrawable(IDrawable drawable)
-        {
-            if (!removedDrawables.Contains(drawable))
-            {
-                removedDrawables.Add(drawable);
-            }
-        }
-
-        internal void CheckValues() //Use initialized values to fill out rest of needed values.
+        internal void CheckValues() // Use initialized values to fill out rest of needed values.
         {
             if (Vsync == false)
             {
@@ -313,27 +354,30 @@ namespace SharpSlugsEngine
                 }
                 else
                 {
-                    targetSpf = new TimeSpan((long)((TimeSpan.TicksPerSecond) / TargetFramerate));
+                    targetSpf = new TimeSpan(TimeSpan.TicksPerSecond / TargetFramerate);
                 }
             }
             else
             {
-                targetSpf = TimeSpan.Zero;//todo: Implement VSync
+                targetSpf = TimeSpan.Zero; // todo: Implement VSync
             }
-            
         }
 
         /// <summary>
         /// Optionally override in order to change settings or setup other game variables.
         /// Called directly before <see cref="LoadContent"/>.
         /// </summary>
-        protected virtual void Initialize() { }
+        protected virtual void Initialize()
+        {
+        }
 
         /// <summary>
         /// Optionally override in order to load from the content manager.
         /// Called after <see cref="Initialize"/> and before beginning the main loop.
         /// </summary>
-        protected virtual void LoadContent() { }
+        protected virtual void LoadContent()
+        {
+        }
 
         /// <summary>
         /// The main update loop of the Game class. Called before <see cref="Draw"/> on every frame.

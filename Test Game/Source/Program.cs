@@ -94,11 +94,11 @@ namespace Test_Game
             Content.AddImage("../../Content/Asteroid.png", "Asteroid");
 
             ContentManager c = Content;
-            sprites.add("cursor", new SImage(0, 0, "../../Content/Cursor.png", ref c));
-            sprites.scale("cursor", 0.5);
-            sprites.display("cursor", true);
+            Sprites.add("cursor", new SImage(0, 0, "../../Content/Cursor.png", ref c));
+            Sprites.scale("cursor", 0.5);
+            Sprites.display("cursor", true);
             
-            cursorSize = sprites.getSize("cursor");
+            cursorSize = Sprites.getSize("cursor");
 
             Content.AddSound("../../Content/pew.mp3", "Pew");
 
@@ -138,7 +138,7 @@ namespace Test_Game
                 }
             }
             
-            sprites.display("cursor", usingMouse);
+            Sprites.display("cursor", usingMouse);
 
             //Apply InputAction bindings to this vector
             if (inputActions["Left"].IsPressed) moveVec = new Vector2(-1, moveVec.Y);
@@ -161,7 +161,7 @@ namespace Test_Game
             if (playerPos.Y < shipSize.Y / 2f) playerPos = new Vector2(playerPos.X, shipSize.Y / 2f);
             if (playerPos.Y > Graphics.WorldScale.Y - shipSize.Y / 2f) playerPos = new Vector2(playerPos.X, Graphics.WorldScale.Y - shipSize.Y / 2f);
             
-            sprites.moveto("cursor", (int)(mousePos.X - cursorSize.X / 2f), (int)(mousePos.Y - cursorSize.Y / 2f));
+            Sprites.moveto("cursor", (int)(mousePos.X - cursorSize.X / 2f), (int)(mousePos.Y - cursorSize.Y / 2f));
             
             if (usingMouse)
             {
@@ -278,7 +278,7 @@ namespace Test_Game
             {
                 if (asteroid.CheckCollision(playerPos))
                 {
-                    sprites.display("cursor", false);
+                    Sprites.display("cursor", false);
                     ShowCursor = true;
                     LockCursor = false;
                     gameOver = true;

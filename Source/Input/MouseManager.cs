@@ -47,18 +47,18 @@ namespace SharpSlugsEngine.Input
 
         private void UnhookForm()
         {
-            _game.platform.form.MouseDown -= new MouseEventHandler(MouseDown);
-            _game.platform.form.MouseUp -= new MouseEventHandler(MouseUp);
-            _game.platform.form.MouseMove -= new MouseEventHandler(MouseMove);
+            _game.Platform.Form.MouseDown -= new MouseEventHandler(MouseDown);
+            _game.Platform.Form.MouseUp -= new MouseEventHandler(MouseUp);
+            _game.Platform.Form.MouseMove -= new MouseEventHandler(MouseMove);
         }
 
         private void HookForm()
         {
             UnhookForm();
 
-            _game.platform.form.MouseDown += new MouseEventHandler(MouseDown);
-            _game.platform.form.MouseUp += new MouseEventHandler(MouseUp);
-            _game.platform.form.MouseMove += new MouseEventHandler(MouseMove);
+            _game.Platform.Form.MouseDown += new MouseEventHandler(MouseDown);
+            _game.Platform.Form.MouseUp += new MouseEventHandler(MouseUp);
+            _game.Platform.Form.MouseMove += new MouseEventHandler(MouseMove);
         }
 
         private void MouseDown(Object sender, MouseEventArgs e)

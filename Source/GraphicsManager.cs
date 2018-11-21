@@ -23,8 +23,8 @@ namespace SharpSlugsEngine
 
         public Color BackColor
         {
-            get => platform.form.BackColor;
-            set => platform.form.BackColor = value;
+            get => platform.Form.BackColor;
+            set => platform.Form.BackColor = value;
         }
 
         internal GraphicsManager(Game game, Platform platform)
@@ -35,13 +35,13 @@ namespace SharpSlugsEngine
             brush = new SolidBrush(Color.Red);
             pen = new Pen(brush);
 
-            formGraphics = platform.form.CreateGraphics();
+            formGraphics = platform.Form.CreateGraphics();
         }
 
         internal void RecreateGraphics()
         {
             formGraphics.Dispose();
-            formGraphics = platform.form.CreateGraphics();
+            formGraphics = platform.Form.CreateGraphics();
         }
 
         public Vector2 ToWorldScale(Vector2 unscaledVector)
@@ -61,7 +61,7 @@ namespace SharpSlugsEngine
                 cam.Begin();
             }
 
-            buffer = new Bitmap(platform.form.ClientSize.Width, platform.form.ClientSize.Height, formGraphics);
+            buffer = new Bitmap(platform.Form.ClientSize.Width, platform.Form.ClientSize.Height, formGraphics);
             bitmapGraphics = Graphics.FromImage(buffer);
 
             SetColor(BackColor);

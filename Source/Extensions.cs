@@ -3,11 +3,17 @@ using System.Collections;
 
 namespace SharpSlugsEngine
 {
+    /// <summary>
+    /// Contains various extension methods used by the library
+    /// </summary>
     public static class Extensions
     {
         /// <summary>
         /// Returns the index before <paramref name="i"/> in <paramref name="self"/>, wrapping if necessary
         /// </summary>
+        /// <param name="self">The <see cref="IList"/> object to pull indices from</param>
+        /// <param name="i">The index to search before</param>
+        /// <returns>The calculated index</returns>
         public static int GetPrevIndex(this IList self, int i)
         {
             if (i < 0 || i >= self.Count)
@@ -21,6 +27,9 @@ namespace SharpSlugsEngine
         /// <summary>
         /// Returns the index after <paramref name="i"/> in <paramref name="self"/>, wrapping if necessary
         /// </summary>
+        /// <param name="self">The <see cref="IList"/> object to pull indices from</param>
+        /// <param name="i">The index to search after</param>
+        /// <returns>The calculated index</returns>
         public static int GetNextIndex(this IList self, int i)
         {
             if (i < 0 || i >= self.Count)
@@ -34,6 +43,10 @@ namespace SharpSlugsEngine
         /// <summary>
         /// Returns the item before index <paramref name="i"/> in <paramref name="self"/>, wrapping if necessary
         /// </summary>
+        /// <typeparam name="T">The <see cref="Type"/> to cast the returned object to</typeparam>
+        /// <param name="self">The <see cref="IList"/> object to pull objects from</param>
+        /// <param name="i">The index to search before</param>
+        /// <returns>The item at the index before <paramref name="i"/> in <paramref name="self"/></returns>
         public static T GetPrevItem<T>(this IList self, int i)
         {
             return (T)self[self.GetPrevIndex(i)];
@@ -42,6 +55,10 @@ namespace SharpSlugsEngine
         /// <summary>
         /// Returns the item after index <paramref name="i"/> in <paramref name="self"/>, wrapping if necessary
         /// </summary>
+        /// <typeparam name="T">The <see cref="Type"/> to cast the returned object to</typeparam>
+        /// <param name="self">The <see cref="IList"/> object to pull objects from</param>
+        /// <param name="i">The index to search after</param>
+        /// <returns>The item at the index after <paramref name="i"/> in <paramref name="self"/></returns>
         public static T GetNextItem<T>(this IList self, int i)
         {
             return (T)self[self.GetNextIndex(i)];
