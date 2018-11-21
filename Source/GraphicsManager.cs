@@ -72,7 +72,7 @@ namespace SharpSlugsEngine
         {
             foreach (Camera cam in GetCameras())
             {
-                DrawBMP(cam.buffer, cam.DrawPosition.X, cam.DrawPosition.Y, cam.DrawSize.X, cam.DrawSize.Y, 0, DrawType.Screen);
+                DrawBMP(cam.Buffer, cam.DrawPosition.X, cam.DrawPosition.Y, cam.DrawSize.X, cam.DrawSize.Y, 0, DrawType.Screen);
                 cam.End();
             }
 
@@ -110,7 +110,7 @@ namespace SharpSlugsEngine
 
         private RectangleF WorldToCameraRect(Camera cam, RectangleF rect)
         {
-            return new RectangleF(cam.WorldToCameraPixels(rect.Location), cam.WorldToCameraPixels(rect.Size));
+            return new RectangleF(cam.WorldToCamera(rect.Location), cam.WorldToCamera(rect.Size));
         }
 
         private RectangleF WorldToCameraRect(Camera cam, Vector2 pos, Vector2 size)
@@ -147,9 +147,9 @@ namespace SharpSlugsEngine
             {
                 foreach (Camera cam in GetCameras())
                 {
-                    Vector2 camPos = cam.WorldToCameraPixels(pos);
-                    Vector2 camSize = cam.WorldToCameraPixels(size, true);
-                    DrawRectangle(cam.bitmapGraphics, (int)camPos.X, (int)camPos.Y, (int)camSize.X, (int)camSize.Y, color, fill, angle, xAnchor, yAnchor);
+                    Vector2 camPos = cam.WorldToCamera(pos);
+                    Vector2 camSize = cam.WorldToCamera(size, true);
+                    DrawRectangle(cam.BitmapGraphics, (int)camPos.X, (int)camPos.Y, (int)camSize.X, (int)camSize.Y, color, fill, angle, xAnchor, yAnchor);
                 }
             }
             else
@@ -179,9 +179,9 @@ namespace SharpSlugsEngine
             {
                 foreach (Camera cam in GetCameras())
                 {
-                    Vector2 camV1 = cam.WorldToCameraPixels(v1);
-                    Vector2 camV2 = cam.WorldToCameraPixels(v2);
-                    DrawLine(cam.bitmapGraphics, (int)camV1.X, (int)camV1.Y, (int)camV2.X, (int)camV2.Y, color);
+                    Vector2 camV1 = cam.WorldToCamera(v1);
+                    Vector2 camV2 = cam.WorldToCamera(v2);
+                    DrawLine(cam.BitmapGraphics, (int)camV1.X, (int)camV1.Y, (int)camV2.X, (int)camV2.Y, color);
                 }
             } else
             {
@@ -218,10 +218,10 @@ namespace SharpSlugsEngine
             {
                 foreach (Camera cam in GetCameras())
                 {
-                    Vector2 camPos = cam.WorldToCameraPixels(pos);
-                    Vector2 camSize = cam.WorldToCameraPixels(size, true);
+                    Vector2 camPos = cam.WorldToCamera(pos);
+                    Vector2 camSize = cam.WorldToCamera(size, true);
 
-                    DrawEllipse(cam.bitmapGraphics, (int)camPos.X, (int)camPos.Y, (int)camSize.X, (int)camSize.Y, color, fill, r, xAnchor, yAnchor);
+                    DrawEllipse(cam.BitmapGraphics, (int)camPos.X, (int)camPos.Y, (int)camSize.X, (int)camSize.Y, color, fill, r, xAnchor, yAnchor);
                 }
             } else
             {
@@ -263,9 +263,9 @@ namespace SharpSlugsEngine
                 
                 foreach (Camera cam in GetCameras())
                 {
-                    Vector2 camPos = cam.WorldToCameraPixels(pos);
-                    Vector2 camSize = cam.WorldToCameraPixels(size, true);
-                    DrawBMP(cam.bitmapGraphics, bmp, (int)camPos.X, (int)camPos.Y, (int)camSize.X, (int)camSize.Y, r, 0, 0, bmp.Width, bmp.Height);
+                    Vector2 camPos = cam.WorldToCamera(pos);
+                    Vector2 camSize = cam.WorldToCamera(size, true);
+                    DrawBMP(cam.BitmapGraphics, bmp, (int)camPos.X, (int)camPos.Y, (int)camSize.X, (int)camSize.Y, r, 0, 0, bmp.Width, bmp.Height);
                 }
             } else
             {
@@ -288,9 +288,9 @@ namespace SharpSlugsEngine
                 Vector2 size = new Vector2(w, h);
 
                 foreach (Camera cam in GetCameras()) {
-                    Vector2 camPos = cam.WorldToCameraPixels(pos);
-                    Vector2 camSize = cam.WorldToCameraPixels(size, true);
-                    DrawBMP(cam.bitmapGraphics, bmp, (int)camPos.X, (int)camPos.Y, (int)camSize.X, (int)camSize.Y, r, ix, iy, iw, ih);
+                    Vector2 camPos = cam.WorldToCamera(pos);
+                    Vector2 camSize = cam.WorldToCamera(size, true);
+                    DrawBMP(cam.BitmapGraphics, bmp, (int)camPos.X, (int)camPos.Y, (int)camSize.X, (int)camSize.Y, r, ix, iy, iw, ih);
                 }
             } else {
                 DrawBMP(bitmapGraphics, bmp, (int)x, (int)y, (int)w, (int)h, r, ix, iy, iw, ih);
@@ -326,10 +326,10 @@ namespace SharpSlugsEngine
             {
                 foreach (Camera cam in GetCameras())
                 {
-                    Vector2 camV1 = cam.WorldToCameraPixels(v1);
-                    Vector2 camV2 = cam.WorldToCameraPixels(v2);
-                    Vector2 camV3 = cam.WorldToCameraPixels(v3);
-                    DrawTri(cam.bitmapGraphics, (int)camV1.X, (int)camV1.Y, (int)camV2.X, (int)camV2.Y, (int)camV3.X, (int)camV3.Y, color, fill, r);
+                    Vector2 camV1 = cam.WorldToCamera(v1);
+                    Vector2 camV2 = cam.WorldToCamera(v2);
+                    Vector2 camV3 = cam.WorldToCamera(v3);
+                    DrawTri(cam.BitmapGraphics, (int)camV1.X, (int)camV1.Y, (int)camV2.X, (int)camV2.Y, (int)camV3.X, (int)camV3.Y, color, fill, r);
                 }
             } else
             {
@@ -367,9 +367,9 @@ namespace SharpSlugsEngine
                 {
                     for (int i = 0; i < points.Length; i++)
                     {
-                        points[i] = (Point)cam.WorldToCameraPixels(vertices[i]);
+                        points[i] = (Point)cam.WorldToCamera(vertices[i]);
                     }
-                    DrawPolygon(cam.bitmapGraphics, points, color, fill, r);
+                    DrawPolygon(cam.BitmapGraphics, points, color, fill, r);
                 }
             } else
             {
