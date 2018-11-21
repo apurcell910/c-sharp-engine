@@ -14,8 +14,8 @@ namespace SharpSlugsEngine.Physics
 
         public TriangleCollider(PTriangle tri)
         {
-            Triangles = new PTriangle[] { tri };
-            Vertices = new Vector2[] { tri.VertexOne, tri.VertexTwo, tri.VertexThree };
+            TrianglesInternal = new PTriangle[] { tri };
+            VerticesInternal = new Vector2[] { tri.VertexOne, tri.VertexTwo, tri.VertexThree };
         }
     }
 }

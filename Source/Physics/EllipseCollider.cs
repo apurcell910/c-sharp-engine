@@ -9,7 +9,7 @@ namespace SharpSlugsEngine.Physics
     class EllipseCollider : Collider
     {
         public EllipseCollider(int x, int y, int w, int h) {
-            Triangles = new PEllipse(new Vector2(x, y), h, w).Triangles.ToArray();
+            TrianglesInternal = new PEllipse(new Vector2(x, y), h, w).Triangles.ToArray();
         }
     }
 }

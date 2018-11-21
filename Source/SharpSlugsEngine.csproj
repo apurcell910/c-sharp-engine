@@ -61,7 +61,9 @@
     <Compile Include="Physics\MovementManager.cs" />
     <Compile Include="Physics\PEllipse.cs" />
     <Compile Include="Physics\EllipseCollider.cs" />
-    <Compile Include="Physics\Collider.cs" />
+    <Compile Include="Physics\Collider.cs">
+      <ExcludeFromStyleCop>False</ExcludeFromStyleCop>
+    </Compile>
     <Compile Include="Physics\PolygonCollider.cs" />
     <Compile Include="Physics\PRectangle.cs" />
     <Compile Include="Physics\RectangleCollider.cs" />

@@ -2,148 +2,233 @@
 
 namespace SharpSlugsEngine.Physics
 {
+    /// <summary>
+    /// Generic collision class composed of <see cref="PTriangle"/>s
+    /// </summary>
     public abstract class Collider
     {
-        /// <summary>
-        /// The triangles that make up this collider
-        /// </summary>
-        public PTriangle[] Triangles { get; protected set; }
+        private bool isPhysicsObjectInternal;
+        private Vector2 positionInternal;
+        private Vector2 velocityInternal;
+        private float rotationInternal;
+        private Vector2 scaleInternal = Vector2.One;
 
-        public Vector2[] Vertices { get; protected set; }
+        /// <summary>
+        /// Used for all events relating to <see cref="Collider"/>s
+        /// </summary>
+        /// <param name="self">The <see cref="Collider"/> calling the event</param>
+        /// <param name="other">The <see cref="Collider"/> detected as touching the calling <see cref="Collider"/></param>
+        public delegate void ColliderEvent(Collider self, Collider other);
 
         /// <summary>
-        /// Whether or not the collider should act as a trigger (ie non-solid)
+        /// Called when another collider enters this collider
         /// </summary>
-        public bool IsTrigger { get; set; }
-
-        private bool _isPhysicsObject;
-        /// <summary>
-        /// Whether or not the collider should receive physics updates (Gravity, velocity, etc)
-        /// </summary>
-        public bool IsPhysicsObject
+        public event ColliderEvent ColliderEnter
         {
-            get => _isPhysicsObject;
+            add => ColliderEnterInternal += value;
+            remove => ColliderEnterInternal -= value;
+        }
+
+        /// <summary>
+        /// Called when another collider leaves this collider
+        /// </summary>
+        public event ColliderEvent ColliderLeave
+        {
+            add => ColliderLeaveInternal += value;
+            remove => ColliderLeaveInternal -= value;
+        }
+
+        /// <summary>
+        /// Called continuously while another collider is touching this collider
+        /// </summary>
+        public event ColliderEvent ColliderStay
+        {
+            add => ColliderStayInternal += value;
+            remove => ColliderStayInternal -= value;
+        }
+
+        /// <summary>
+        /// The backing field for <see cref="ColliderEnter"/>
+        /// </summary>
+        internal event ColliderEvent ColliderEnterInternal; // TODO: Not implemented
+
+        /// <summary>
+        /// The backing field for <see cref="ColliderLeave"/>
+        /// </summary>
+        internal event ColliderEvent ColliderLeaveInternal; // TODO: Not implemented
+
+        /// <summary>
+        /// The backing field for <see cref="ColliderStay"/>
+        /// </summary>
+        internal event ColliderEvent ColliderStayInternal; // TODO: Not implemented
+
+        /// <summary>
+        /// Gets the triangles that make up this collider
+        /// </summary>
+        public PTriangle[] Triangles => (PTriangle[])TrianglesInternal.Clone();
+
+        /// <summary>
+        /// Gets the vertices that make up the edges of this collider
+        /// </summary>
+        public Vector2[] Vertices => (Vector2[])VerticesInternal.Clone();
+        
+        /// <summary>
+        /// Gets or sets a value indicating whether or not the collider should act as a trigger (ie non-solid)
+        /// </summary>
+        public bool IsTrigger { get; set; } // TODO: Not implemented
+        
+        /// <summary>
+        /// Gets or sets a value indicating whether or not the collider should receive physics updates (Gravity, velocity, etc)
+        /// </summary>
+        public bool IsPhysicsObject // TODO: Not implemented
+        {
+            get => isPhysicsObjectInternal;
             set
             {
-                _isPhysicsObject = value;
+                isPhysicsObjectInternal = value;
 
-                if (!_isPhysicsObject)
+                if (!isPhysicsObjectInternal)
                 {
-                    _velocity = Vector2.Zero;
+                    velocityInternal = Vector2.Zero;
                 }
             }
         }
-
-        private Vector2 _position;
+        
         /// <summary>
-        /// The current world position of this collider
+        /// Gets or sets the current world position of this collider
         /// </summary>
         public Vector2 Position
         {
-            get => _position;
+            get => positionInternal;
             set
             {
                 if (!float.IsNaN(value.X) && !float.IsNaN(value.Y) && !float.IsInfinity(value.X) && !float.IsInfinity(value.Y))
                 {
-                    if (Triangles != null)
+                    if (TrianglesInternal != null && VerticesInternal != null)
                     {
-                        for (int i = 0; i < Triangles.Length; i++)
+                        for (int i = 0; i < TrianglesInternal.Length; i++)
                         {
-                            Triangles[i] = new PTriangle(Triangles[i].VertexOne + value - _position, Triangles[i].VertexTwo + value - _position, Triangles[i].VertexThree + value - _position);
+                            TrianglesInternal[i] = new PTriangle(
+                                TrianglesInternal[i].VertexOne + value - positionInternal, 
+                                TrianglesInternal[i].VertexTwo + value - positionInternal, 
+                                TrianglesInternal[i].VertexThree + value - positionInternal);
                         }
 
-                        for (int i = 0; i < Vertices.Length; i++)
+                        for (int i = 0; i < VerticesInternal.Length; i++)
                         {
-                            Vertices[i] += value - _position;
+                            VerticesInternal[i] += value - positionInternal;
                         }
                     }
 
-                    _position = value;
+                    positionInternal = value;
                 }
             }
         }
-
-        private Vector2 _velocity;
+        
         /// <summary>
-        /// The current velocity of this collider
+        /// Gets or sets the current velocity of this collider
         /// </summary>
-        public Vector2 Velocity
+        public Vector2 Velocity // TODO: Not implemented
         {
-            get => _velocity;
+            get => velocityInternal;
             set
             {
-                if (!_isPhysicsObject && !float.IsNaN(value.X) && !float.IsNaN(value.Y) && !float.IsInfinity(value.X) && !float.IsInfinity(value.Y))
+                if (!isPhysicsObjectInternal && !float.IsNaN(value.X) && !float.IsNaN(value.Y) && !float.IsInfinity(value.X) && !float.IsInfinity(value.Y))
                 {
-                    _velocity = value;
+                    velocityInternal = value;
                 }
             }
         }
-
-        private float _rotation;
+        
         /// <summary>
-        /// The current rotation of this collider
+        /// Gets or sets the current rotation of this collider
         /// </summary>
         public float Rotation
         {
-            get => _rotation;
+            get => rotationInternal;
             set
             {
                 if (!float.IsNaN(value) && !float.IsInfinity(value))
                 {
-                    while (value < 0) value += 360;
-                    while (value >= 360) value -= 360;
-
-                    if (Vertices != null && Triangles != null && Vertices.Length > 0 && Triangles.Length > 0)
+                    while (value < 0)
                     {
-                        //Find center point of collider
+                        value += 360;
+                    }
+
+                    while (value >= 360)
+                    {
+                        value -= 360;
+                    }
+
+                    if (VerticesInternal != null && TrianglesInternal != null && VerticesInternal.Length > 0 && TrianglesInternal.Length > 0)
+                    {
+                        // Find center point of collider
                         Vector2 centerPoint = GetCenter();
 
-                        //Difference in current and new rotation
-                        float rot = value - _rotation;
+                        // Difference in current and new rotation
+                        float rot = value - rotationInternal;
 
-                        for (int i = 0; i < Vertices.Length; i++)
+                        for (int i = 0; i < VerticesInternal.Length; i++)
                         {
-                            Vertices[i] = Vertices[i].Rotate(centerPoint, rot);
+                            VerticesInternal[i] = VerticesInternal[i].Rotate(centerPoint, rot);
                         }
 
-                        for (int i = 0; i < Triangles.Length; i++)
+                        for (int i = 0; i < TrianglesInternal.Length; i++)
                         {
-                            Triangles[i] = new PTriangle(Triangles[i].VertexOne.Rotate(centerPoint, rot), Triangles[i].VertexTwo.Rotate(centerPoint, rot),
-                                Triangles[i].VertexThree.Rotate(centerPoint, rot));
+                            TrianglesInternal[i] = new PTriangle(
+                                TrianglesInternal[i].VertexOne.Rotate(centerPoint, rot), 
+                                TrianglesInternal[i].VertexTwo.Rotate(centerPoint, rot),
+                                TrianglesInternal[i].VertexThree.Rotate(centerPoint, rot));
                         }
                     }
 
-                    _rotation = value;
+                    rotationInternal = value;
                 }
             }
         }
-
-        private Vector2 _scale = Vector2.One;
+        
         /// <summary>
-        /// The current scale multiplier of this collider
+        /// Gets or sets the current scale multiplier of this collider
         /// </summary>
         public Vector2 Scale
         {
-            get => _scale;
+            get => scaleInternal;
             set
             {
                 if (value.X > 0 && value.Y > 0 && !float.IsNaN(value.X) && !float.IsNaN(value.Y) && !float.IsInfinity(value.X) && !float.IsInfinity(value.Y))
                 {
-                    _scale = value;
+                    scaleInternal = value;
                 }
             }
         }
 
+        /// <summary>
+        /// Gets or sets the triangles the make up this collider.
+        /// Note: This is the actual <see cref="PTriangle"/> array, modify with caution
+        /// </summary>
+        protected PTriangle[] TrianglesInternal { get; set; }
+
+        /// <summary>
+        /// Gets or sets the vertices that make up the edges of this collider.
+        /// Note: This is the actual <see cref="Vector2"/> array, modify with caution
+        /// </summary>
+        protected Vector2[] VerticesInternal { get; set; }
+
+        /// <summary>
+        /// Calculates whether or not this <see cref="Collider"/> is touching the <see cref="Collider"/> "<paramref name="other"/>"
+        /// </summary>
+        /// <param name="other">The <see cref="Collider"/> to check collision against</param>
+        /// <returns>A bool indicating whether or not the <see cref="Collider"/>s are touching</returns>
         public bool IsTouching(Collider other)
         {
-            if (Triangles == null || Triangles.Length == 0 || other == null || other.Triangles == null || other.Triangles.Length == 0)
+            if (TrianglesInternal == null || TrianglesInternal.Length == 0 || other == null || other.TrianglesInternal == null || other.TrianglesInternal.Length == 0)
             {
                 return false;
             }
 
-            foreach (PTriangle selfTri in Triangles)
+            foreach (PTriangle selfTri in TrianglesInternal)
             {
-                foreach (PTriangle otherTri in other.Triangles)
+                foreach (PTriangle otherTri in other.TrianglesInternal)
                 {
                     if (selfTri.IsTouching(otherTri))
                     {
@@ -155,14 +240,19 @@ namespace SharpSlugsEngine.Physics
             return false;
         }
 
+        /// <summary>
+        /// Calculates whether or not this <see cref="Collider"/> is touching the <see cref="Vector2"/> "<paramref name="point"/>"
+        /// </summary>
+        /// <param name="point">The <see cref="Vector2"/> to check collision against</param>
+        /// <returns>A bool indicating whether or not the <see cref="Vector2"/> is within this <see cref="Collider"/></returns>
         public bool IsTouching(Vector2 point)
         {
-            if (Triangles == null || Triangles.Length == 0)
+            if (TrianglesInternal == null || TrianglesInternal.Length == 0)
             {
                 return false;
             }
 
-            foreach (PTriangle tri in Triangles)
+            foreach (PTriangle tri in TrianglesInternal)
             {
                 if (tri.ContainsPoint(point))
                 {
@@ -173,69 +263,58 @@ namespace SharpSlugsEngine.Physics
             return false;
         }
 
+        /// <summary>
+        /// Calculates a bounding box for this <see cref="Collider"/>
+        /// </summary>
+        /// <returns>a <see cref="RectangleF"/> containing the bounding box in world coordinates</returns>
         public RectangleF GetBoundingBox()
         {
-            if (Vertices == null || Vertices.Length == 0)
+            if (VerticesInternal == null || VerticesInternal.Length == 0)
             {
                 return default(RectangleF);
             }
 
             float minX, maxX, minY, maxY;
-            minX = maxX = Vertices[0].X;
-            minY = maxY = Vertices[0].Y;
+            minX = maxX = VerticesInternal[0].X;
+            minY = maxY = VerticesInternal[0].Y;
 
-            foreach (Vector2 vert in Vertices)
+            foreach (Vector2 vert in VerticesInternal)
             {
-                if (vert.X < minX) minX = vert.X;
-                if (vert.X > maxX) maxX = vert.X;
-                if (vert.Y < minY) minY = vert.Y;
-                if (vert.Y > maxY) maxY = vert.Y;
+                if (vert.X < minX)
+                {
+                    minX = vert.X;
+                }
+                else if (vert.X > maxX)
+                {
+                    maxX = vert.X;
+                }
+
+                if (vert.Y < minY)
+                {
+                    minY = vert.Y;
+                }
+                else if (vert.Y > maxY)
+                {
+                    maxY = vert.Y;
+                }
             }
 
             return new RectangleF(minX, minY, maxX - minX, maxY - minY);
         }
 
+        /// <summary>
+        /// Calculates the center point of this <see cref="Collider"/> as the average of all points in <see cref="Vertices"/>
+        /// </summary>
+        /// <returns>The center point of this <see cref="Collider"/></returns>
         public Vector2 GetCenter()
         {
             Vector2 centerPoint = Vector2.Zero;
-            foreach (Vector2 vert in Vertices)
+            foreach (Vector2 vert in VerticesInternal)
             {
                 centerPoint += vert;
             }
 
-            return centerPoint / Vertices.Length;
-        }
-
-        public delegate void ColliderEvent(Collider other);
-
-        protected event ColliderEvent _colliderEnter;
-        /// <summary>
-        /// Called when another collider enters this collider
-        /// </summary>
-        public event ColliderEvent ColliderEnter
-        {
-            add => _colliderEnter += value;
-            remove => _colliderEnter -= value;
-        }
-
-        protected event ColliderEvent _colliderLeave;
-        /// <summary>
-        /// Called when another collider leaves this collider
-        /// </summary>
-        public event ColliderEvent ColliderLeave
-        {
-            add => _colliderLeave += value;
-            remove => _colliderLeave -= value;
-        }
-
-        protected event ColliderEvent _colliderStay;
-        /// <summary>
-        /// Called continuously while another collider is touching this collider
-        /// </summary>
-        public event ColliderEvent ColliderStay
-        {
-            add => _colliderStay += value;
-            remove => _colliderStay -= value;
+            return centerPoint / VerticesInternal.Length;
         }
     }
 }

@@ -10,7 +10,7 @@ namespace SharpSlugsEngine.Physics
     {
         public RectangleCollider(int x, int y, int w, int h) {
 
-            Vertices = new Vector2[]
+            VerticesInternal = new Vector2[]
             {
                 new Vector2(x, y),
                 new Vector2(x + w, y),
@@ -20,7 +20,7 @@ namespace SharpSlugsEngine.Physics
             
             PRectangle rectangle = new PRectangle(Vertices[0], Vertices[1], Vertices[2], Vertices[3]);
 
-            Triangles = new PTriangle[]
+            TrianglesInternal = new PTriangle[]
             {
                 rectangle.TriOne,
                 rectangle.TriTwo

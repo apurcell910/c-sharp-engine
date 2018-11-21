@@ -1,62 +1,357 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace SharpSlugsEngine.Input
 {
+    /// <summary>
+    /// Handles input for all types of Xbox controllers
+    /// </summary>
     public class XboxController : GameController
     {
-        private static readonly ButtonType[] allButtons = (ButtonType[])Enum.GetValues(typeof(ButtonType));
+        private static readonly ButtonType[] AllButtons = (ButtonType[])Enum.GetValues(typeof(ButtonType));
         
-        private ButtonState _asyncButtonState;
-        private ButtonState _oldButtonState;
-        private ButtonState _currentButtonState;
+        private ButtonState asyncButtonState;
+        private ButtonState oldButtonState;
+        private ButtonState currentButtonState;
 
-        private ControlStick _asyncLStickState;
-        private ControlStick _oldLStickState;
-        private ControlStick _currentLStickState;
+        private ControlStick asyncLStickState;
+        private ControlStick oldLStickState;
+        private ControlStick currentLStickState;
 
-        private ControlStick _asyncRStickState;
-        private ControlStick _oldRStickState;
-        private ControlStick _currentRStickState;
+        private ControlStick asyncRStickState;
+        private ControlStick oldRStickState;
+        private ControlStick currentRStickState;
 
-        public ButtonState Buttons { get; private set; }
-        public ControlStick LeftStick { get; private set; }
-        public ControlStick RightStick { get; private set; }
-
+        /// <summary>
+        /// Initializes a new instance of the <see cref="XboxController"/> class that pulls input from the given <see cref="InputDevice"/>
+        /// </summary>
+        /// <param name="device">The <see cref="InputDevice"/> to pull input from</param>
         internal XboxController(InputDevice device) : base(device)
         {
-            //Make sure this is actually an xbox controller
+            // Make sure this is actually an xbox controller
             if (Type != ControllerType.Xbox && Type != ControllerType.Xbox360 && Type != ControllerType.XboxOne && Type != ControllerType.XboxOneS)
             {
                 throw new ArgumentException("Device is not an Xbox controller");
             }
         }
+
+        /// <summary>
+        /// Used for all button events
+        /// </summary>
+        public delegate void ButtonPressed();
+
+        /// <summary>
+        /// Used for controller disconnect and reconnect events
+        /// </summary>
+        public delegate void ControllerConnection();
+
+        /// <summary>
+        /// Called when the A button is pressed
+        /// </summary>
+        public event ButtonPressed APressed
+        {
+            add => APressedInternal += value;
+            remove => APressedInternal -= value;
+        }
+
+        /// <summary>
+        /// Called when the B button is pressed
+        /// </summary>
+        public event ButtonPressed BPressed
+        {
+            add => BPressedInternal += value;
+            remove => BPressedInternal -= value;
+        }
+
+        /// <summary>
+        /// Called when the X button is pressed
+        /// </summary>
+        public event ButtonPressed XPressed
+        {
+            add => XPressedInternal += value;
+            remove => XPressedInternal -= value;
+        }
+
+        /// <summary>
+        /// Called when the Y button is pressed
+        /// </summary>
+        public event ButtonPressed YPressed
+        {
+            add => YPressedInternal += value;
+            remove => YPressedInternal -= value;
+        }
+
+        /// <summary>
+        /// Called when the left bumber is pressed
+        /// </summary>
+        public event ButtonPressed LBPressed
+        {
+            add => LBPressedInternal += value;
+            remove => LBPressedInternal -= value;
+        }
+
+        /// <summary>
+        /// Called when the right bumper is pressed
+        /// </summary>
+        public event ButtonPressed RBPressed
+        {
+            add => RBPressedInternal += value;
+            remove => RBPressedInternal -= value;
+        }
+
+        /// <summary>
+        /// Called when the back button is pressed
+        /// </summary>
+        public event ButtonPressed BackPressed
+        {
+            add => BackPressedInternal += value;
+            remove => BackPressedInternal -= value;
+        }
+
+        /// <summary>
+        /// Called when the start button is pressed
+        /// </summary>
+        public event ButtonPressed StartPressed
+        {
+            add => StartPressedInternal += value;
+            remove => StartPressedInternal -= value;
+        }
+
+        /// <summary>
+        /// Called when dpad up is pressed
+        /// </summary>
+        public event ButtonPressed DPadUpPressed
+        {
+            add => DPadUpPressedInternal += value;
+            remove => DPadUpPressedInternal -= value;
+        }
+
+        /// <summary>
+        /// Called when dpad down is pressed
+        /// </summary>
+        public event ButtonPressed DPadDownPressed
+        {
+            add => DPadDownPressedInternal += value;
+            remove => DPadDownPressedInternal -= value;
+        }
+
+        /// <summary>
+        /// Called when dpad left is pressed
+        /// </summary>
+        public event ButtonPressed DPadLeftPressed
+        {
+            add => DPadLeftPressedInternal += value;
+            remove => DPadLeftPressedInternal -= value;
+        }
+
+        /// <summary>
+        /// Called when dpad right is pressed
+        /// </summary>
+        public event ButtonPressed DPadRightPressed
+        {
+            add => DPadRightPressedInternal += value;
+            remove => DPadRightPressedInternal -= value;
+        }
+
+        /// <summary>
+        /// Called when the left stick is pressed
+        /// </summary>
+        public event ButtonPressed LeftStickPressed
+        {
+            add => LeftStickPressedInternal += value;
+            remove => LeftStickPressedInternal -= value;
+        }
+
+        /// <summary>
+        /// Called when the right stick is pressed
+        /// </summary>
+        public event ButtonPressed RightStickPressed
+        {
+            add => RightStickPressedInternal += value;
+            remove => RightStickPressedInternal -= value;
+        }
         
+        /// <summary>
+        /// Called when the <see cref="XboxController"/> disconnects from the computer
+        /// </summary>
+        public event ControllerConnection Disconnected
+        {
+            add => DisconnectedInternal += value;
+            remove => DisconnectedInternal -= value;
+        }
+
+        /// <summary>
+        /// Called when the <see cref="XboxController"/> reconnects to the computer
+        /// </summary>
+        public event ControllerConnection Connected
+        {
+            add => ConnectedInternal += value;
+            remove => ConnectedInternal -= value;
+        }
+
+        /// <summary>
+        /// Private backing field for <see cref="APressed"/>
+        /// </summary>
+        private event ButtonPressed APressedInternal;
+
+        /// <summary>
+        /// Private backing field for <see cref="BPressed"/>
+        /// </summary>
+        private event ButtonPressed BPressedInternal;
+
+        /// <summary>
+        /// Private backing field for <see cref="XPressed"/>
+        /// </summary>
+        private event ButtonPressed XPressedInternal;
+
+        /// <summary>
+        /// Private backing field for <see cref="YPressed"/>
+        /// </summary>
+        private event ButtonPressed YPressedInternal;
+
+        /// <summary>
+        /// Private backing field for <see cref="LBPressed"/>
+        /// </summary>
+        private event ButtonPressed LBPressedInternal;
+
+        /// <summary>
+        /// Private backing field for <see cref="RBPressed"/>
+        /// </summary>
+        private event ButtonPressed RBPressedInternal;
+
+        /// <summary>
+        /// Private backing field for <see cref="BackPressed"/>
+        /// </summary>
+        private event ButtonPressed BackPressedInternal;
+
+        /// <summary>
+        /// Private backing field for <see cref="StartPressed"/>
+        /// </summary>
+        private event ButtonPressed StartPressedInternal;
+
+        /// <summary>
+        /// Private backing field for <see cref="DPadUpPressed"/>
+        /// </summary>
+        private event ButtonPressed DPadUpPressedInternal;
+
+        /// <summary>
+        /// Private backing field for <see cref="DPadDownPressed"/>
+        /// </summary>
+        private event ButtonPressed DPadDownPressedInternal;
+
+        /// <summary>
+        /// Private backing field for <see cref="DPadLeftPressed"/>
+        /// </summary>
+        private event ButtonPressed DPadLeftPressedInternal;
+
+        /// <summary>
+        /// Private backing field for <see cref="DPadRightPressed"/>
+        /// </summary>
+        private event ButtonPressed DPadRightPressedInternal;
+
+        /// <summary>
+        /// Private backing field for <see cref="LeftStickPressed"/>
+        /// </summary>
+        private event ButtonPressed LeftStickPressedInternal;
+
+        /// <summary>
+        /// Private backing field for <see cref="RightStickPressed"/>
+        /// </summary>
+        private event ButtonPressed RightStickPressedInternal;
+
+        /// <summary>
+        /// Private backing field for <see cref="Disconnected"/>
+        /// </summary>
+        private event ControllerConnection DisconnectedInternal;
+
+        /// <summary>
+        /// Private backing field for <see cref="Connected"/>
+        /// </summary>
+        private event ControllerConnection ConnectedInternal;
+
+        /// <summary>
+        /// Bitmask enum for <see cref="XboxController"/> buttons
+        /// </summary>
+        public enum ButtonType
+        {
+            A = 1,
+            B = 2,
+            X = 4,
+            Y = 8,
+            LB = 16,
+            RB = 32,
+            Back = 64,
+            Start = 128,
+            DPadLeft = 256,
+            DPadRight = 512,
+            DPadUp = 1024,
+            DPadDown = 2048,
+            LStick = 4096,
+            RStick = 8192
+        }
+
+        /// <summary>
+        /// Gets the current state of the buttons on this <see cref="XboxController"/>
+        /// </summary>
+        public ButtonState Buttons { get; private set; }
+
+        /// <summary>
+        /// Gets the current state of the left stick on this <see cref="XboxController"/>
+        /// </summary>
+        public ControlStick LeftStick { get; private set; }
+
+        /// <summary>
+        /// Gets the current state of the right stick on this <see cref="XboxController"/>
+        /// </summary>
+        public ControlStick RightStick { get; private set; }
+        
+        /// <summary>
+        /// Checks if any button from the given bitmask is pressed
+        /// </summary>
+        /// <param name="buttons">A bitmask of <see cref="ButtonType"/>s to check</param>
+        /// <returns>A bool indicating if any of the given buttons are pressed</returns>
         public bool AnyIsPressed(ButtonType buttons)
         {
-            foreach (ButtonType type in allButtons)
+            foreach (ButtonType type in AllButtons)
             {
                 if ((buttons & type) == type)
                 {
-                    if (GetButtonState(type).IsPressed) return true;
+                    if (GetButtonState(type).IsPressed)
+                    {
+                        return true;
+                    }
                 }
             }
 
             return false;
         }
 
+        /// <summary>
+        /// Checks if any button from the given bitmask was pressed
+        /// </summary>
+        /// <param name="buttons">A bitmask of <see cref="ButtonType"/>s to check</param>
+        /// <returns>A bool indicating if any of the given buttons were pressed</returns>
         public bool AnyWasPressed(ButtonType buttons)
         {
-            foreach (ButtonType type in allButtons)
+            foreach (ButtonType type in AllButtons)
             {
                 if ((buttons & type) == type)
                 {
-                    if (GetButtonState(type).WasPressed) return true;
+                    if (GetButtonState(type).WasPressed)
+                    {
+                        return true;
+                    }
                 }
             }
 
             return false;
         }
 
+        /// <summary>
+        /// Gets the state of the given button
+        /// </summary>
+        /// <param name="button">The button to check</param>
+        /// <returns>A <see cref="Button"/> instance for the given button</returns>
         public Button GetButtonState(ButtonType button)
         {
             switch (button)
@@ -94,93 +389,109 @@ namespace SharpSlugsEngine.Input
             }
         }
 
+        /// <summary>
+        /// Called when the child <see cref="InputDevice"/> is disconnected from the computer
+        /// </summary>
         protected override void OnDisconnect()
         {
-            _disconnected?.Invoke();
+            DisconnectedInternal?.Invoke();
         }
 
+        /// <summary>
+        /// Called when the child <see cref="InputDevice"/> is reconnected to the computer
+        /// </summary>
         protected override void OnConnect()
         {
-            //Pass the event upward
-            _connected?.Invoke();
+            // Pass the event upward
+            ConnectedInternal?.Invoke();
         }
 
+        /// <summary>
+        /// Called every frame to update the button/stick states
+        /// </summary>
+        [SuppressMessage("Microsoft.StyleCop.CSharp.NamingRules", "SA1305:FieldNamesMustNotUseHungarianNotation", Justification = "False positive")]
+        [SuppressMessage("Microsoft.StyleCop.CSharp.LayoutRules", "SA1503:CurlyBracketsMustNotBeOmitted", Justification = "Large amount of boilerplate code, would be much worse with 3 more lines each.")]
         protected override void UpdateController()
         {
-            //Update the current/old controller state from the asynchronous reading
-            _oldButtonState = _currentButtonState;
-            _currentButtonState = _asyncButtonState;
+            // Update the current/old controller state from the asynchronous reading
+            oldButtonState = currentButtonState;
+            currentButtonState = asyncButtonState;
 
-            _oldLStickState = _currentLStickState;
-            _currentLStickState = _asyncLStickState;
+            oldLStickState = currentLStickState;
+            currentLStickState = asyncLStickState;
 
-            _oldRStickState = _currentRStickState;
-            _currentRStickState = _asyncRStickState;
+            oldRStickState = currentRStickState;
+            currentRStickState = asyncRStickState;
 
-            //Just a ton of boilerplate here
-            Button a = new Button(_currentButtonState.A.IsPressed, _currentButtonState.A.IsPressed && !_oldButtonState.A.IsPressed);
-            Button b = new Button(_currentButtonState.B.IsPressed, _currentButtonState.B.IsPressed && !_oldButtonState.B.IsPressed);
-            Button x = new Button(_currentButtonState.X.IsPressed, _currentButtonState.X.IsPressed && !_oldButtonState.X.IsPressed);
-            Button y = new Button(_currentButtonState.Y.IsPressed, _currentButtonState.Y.IsPressed && !_oldButtonState.Y.IsPressed);
-            Button lb = new Button(_currentButtonState.LB.IsPressed, _currentButtonState.LB.IsPressed && !_oldButtonState.LB.IsPressed);
-            Button rb = new Button(_currentButtonState.RB.IsPressed, _currentButtonState.RB.IsPressed && !_oldButtonState.RB.IsPressed);
-            Button back = new Button(_currentButtonState.Back.IsPressed, _currentButtonState.Back.IsPressed && !_oldButtonState.Back.IsPressed);
-            Button start = new Button(_currentButtonState.Start.IsPressed, _currentButtonState.Start.IsPressed && !_oldButtonState.Start.IsPressed);
-            Button dpadUp = new Button(_currentButtonState.DPadUp.IsPressed, _currentButtonState.DPadUp.IsPressed && !_oldButtonState.DPadUp.IsPressed);
-            Button dpadDown = new Button(_currentButtonState.DPadDown.IsPressed, _currentButtonState.DPadDown.IsPressed && !_oldButtonState.DPadDown.IsPressed);
-            Button dpadLeft = new Button(_currentButtonState.DPadLeft.IsPressed, _currentButtonState.DPadLeft.IsPressed && !_oldButtonState.DPadLeft.IsPressed);
-            Button dpadRight = new Button(_currentButtonState.DPadRight.IsPressed, _currentButtonState.DPadRight.IsPressed && !_oldButtonState.DPadRight.IsPressed);
-            Button lStick = new Button(_currentLStickState.Button.IsPressed, _currentLStickState.Button.IsPressed && !_oldLStickState.Button.IsPressed);
-            Button rStick = new Button(_currentRStickState.Button.IsPressed, _currentRStickState.Button.IsPressed && !_oldRStickState.Button.IsPressed);
+            // Just a ton of boilerplate here
+            Button a = new Button(currentButtonState.A.IsPressed, currentButtonState.A.IsPressed && !oldButtonState.A.IsPressed);
+            Button b = new Button(currentButtonState.B.IsPressed, currentButtonState.B.IsPressed && !oldButtonState.B.IsPressed);
+            Button x = new Button(currentButtonState.X.IsPressed, currentButtonState.X.IsPressed && !oldButtonState.X.IsPressed);
+            Button y = new Button(currentButtonState.Y.IsPressed, currentButtonState.Y.IsPressed && !oldButtonState.Y.IsPressed);
+            Button lb = new Button(currentButtonState.LB.IsPressed, currentButtonState.LB.IsPressed && !oldButtonState.LB.IsPressed);
+            Button rb = new Button(currentButtonState.RB.IsPressed, currentButtonState.RB.IsPressed && !oldButtonState.RB.IsPressed);
+            Button back = new Button(currentButtonState.Back.IsPressed, currentButtonState.Back.IsPressed && !oldButtonState.Back.IsPressed);
+            Button start = new Button(currentButtonState.Start.IsPressed, currentButtonState.Start.IsPressed && !oldButtonState.Start.IsPressed);
+            Button dpadUp = new Button(currentButtonState.DPadUp.IsPressed, currentButtonState.DPadUp.IsPressed && !oldButtonState.DPadUp.IsPressed);
+            Button dpadDown = new Button(currentButtonState.DPadDown.IsPressed, currentButtonState.DPadDown.IsPressed && !oldButtonState.DPadDown.IsPressed);
+            Button dpadLeft = new Button(currentButtonState.DPadLeft.IsPressed, currentButtonState.DPadLeft.IsPressed && !oldButtonState.DPadLeft.IsPressed);
+            Button dpadRight = new Button(currentButtonState.DPadRight.IsPressed, currentButtonState.DPadRight.IsPressed && !oldButtonState.DPadRight.IsPressed);
+            Button lStick = new Button(currentLStickState.Button.IsPressed, currentLStickState.Button.IsPressed && !oldLStickState.Button.IsPressed);
+            Button rStick = new Button(currentRStickState.Button.IsPressed, currentRStickState.Button.IsPressed && !oldRStickState.Button.IsPressed);
 
             Buttons = new ButtonState(a, b, x, y, lb, rb, back, start, dpadLeft, dpadRight, dpadUp, dpadDown);
-            LeftStick = new ControlStick(_currentLStickState.State, lStick);
-            RightStick = new ControlStick(_currentRStickState.State, rStick);
+            LeftStick = new ControlStick(currentLStickState.State, lStick);
+            RightStick = new ControlStick(currentRStickState.State, rStick);
 
-            if (_aPressed != null && Buttons.A.WasPressed) _aPressed();
-            if (_bPressed != null && Buttons.B.WasPressed) _bPressed();
-            if (_xPressed != null && Buttons.X.WasPressed) _xPressed();
-            if (_yPressed != null && Buttons.Y.WasPressed) _yPressed();
-            if (_lbPressed != null && Buttons.LB.WasPressed) _lbPressed();
-            if (_rbPressed != null && Buttons.RB.WasPressed) _rbPressed();
-            if (_backPressed != null && Buttons.Back.WasPressed) _backPressed();
-            if (_startPressed != null && Buttons.Start.WasPressed) _startPressed();
-            if (_dpadUpPressed != null && Buttons.DPadUp.WasPressed) _dpadUpPressed();
-            if (_dpadDownPressed != null && Buttons.DPadDown.WasPressed) _dpadDownPressed();
-            if (_dpadLeftPressed != null && Buttons.DPadLeft.WasPressed) _dpadLeftPressed();
-            if (_dpadRightPressed != null && Buttons.DPadRight.WasPressed) _dpadRightPressed();
-            if (_leftStickPressed != null && LeftStick.Button.WasPressed) _leftStickPressed();
-            if (_rightStickPressed != null && RightStick.Button.WasPressed) _rightStickPressed();
+            if (APressedInternal != null && Buttons.A.WasPressed) APressedInternal();
+            if (BPressedInternal != null && Buttons.B.WasPressed) BPressedInternal();
+            if (XPressedInternal != null && Buttons.X.WasPressed) XPressedInternal();
+            if (YPressedInternal != null && Buttons.Y.WasPressed) YPressedInternal();
+            if (LBPressedInternal != null && Buttons.LB.WasPressed) LBPressedInternal();
+            if (RBPressedInternal != null && Buttons.RB.WasPressed) RBPressedInternal();
+            if (BackPressedInternal != null && Buttons.Back.WasPressed) BackPressedInternal();
+            if (StartPressedInternal != null && Buttons.Start.WasPressed) StartPressedInternal();
+            if (DPadUpPressedInternal != null && Buttons.DPadUp.WasPressed) DPadUpPressedInternal();
+            if (DPadDownPressedInternal != null && Buttons.DPadDown.WasPressed) DPadDownPressedInternal();
+            if (DPadLeftPressedInternal != null && Buttons.DPadLeft.WasPressed) DPadLeftPressedInternal();
+            if (DPadRightPressedInternal != null && Buttons.DPadRight.WasPressed) DPadRightPressedInternal();
+            if (LeftStickPressedInternal != null && LeftStick.Button.WasPressed) LeftStickPressedInternal();
+            if (RightStickPressedInternal != null && RightStick.Button.WasPressed) RightStickPressedInternal();
         }
 
+        /// <summary>
+        /// Converts the given <see cref="byte"/>[] into inputs
+        /// </summary>
+        /// <param name="bytes">The bytes received from the child <see cref="InputDevice"/></param>
+        [SuppressMessage("Microsoft.StyleCop.CSharp.NamingRules", "SA1305:FieldNamesMustNotUseHungarianNotation", Justification = "False positive")]
         protected override void ProcessDeviceBytes(byte[] bytes)
         {
-            //Sticks are contained in bytes 1-8
+            // Sticks are contained in bytes 1-8
             ushort leftStickX = BitConverter.ToUInt16(bytes, 1);
             ushort leftStickY = BitConverter.ToUInt16(bytes, 3);
             ushort rightStickX = BitConverter.ToUInt16(bytes, 5);
             ushort rightStickY = BitConverter.ToUInt16(bytes, 7);
 
-            //These two bytes are definitely trigger info but I'm not sure how to get anything meaningful from them
+            // These two bytes are definitely trigger info but I'm not sure how to get anything meaningful from them
             ushort triggers = BitConverter.ToUInt16(bytes, 9);
 
-            //bytes[12] contains these in the first two bits
+            // bytes[12] contains these in the first two bits
             bool lStickButton = (bytes[12] & 1) != 0;
             bool rStickButton = (bytes[12] & 2) != 0;
 
-            //Despite this, it's not fully a bitmask so we have to clear those bits to get dpad info
+            // Despite this, it's not fully a bitmask so we have to clear those bits to get dpad info
             bytes[12] = (byte)(bytes[12] & ~3);
 
-            //Create control stick objects
-            _asyncLStickState = new ControlStick(leftStickX, leftStickY, new Button(lStickButton));
-            _asyncRStickState = new ControlStick(rightStickX, rightStickY, new Button(rStickButton));
+            // Create control stick objects
+            asyncLStickState = new ControlStick(leftStickX, leftStickY, new Button(lStickButton));
+            asyncRStickState = new ControlStick(rightStickX, rightStickY, new Button(rStickButton));
 
             bool dpadUp = false;
             bool dpadDown = false;
             bool dpadLeft = false;
             bool dpadRight = false;
 
-            //bytes[12] appears to go clockwise around the dpad in increments of 4
+            // bytes[12] appears to go clockwise around the dpad in increments of 4
             switch (bytes[12] / 4)
             {
                 case 1:
@@ -213,7 +524,7 @@ namespace SharpSlugsEngine.Input
                     break;
             }
 
-            //bytes[11] contains a bitmask of all the buttons
+            // bytes[11] contains a bitmask of all the buttons
             bool a = (bytes[11] & 1) != 0;
             bool b = (bytes[11] & 2) != 0;
             bool x = (bytes[11] & 4) != 0;
@@ -223,234 +534,135 @@ namespace SharpSlugsEngine.Input
             bool back = (bytes[11] & 64) != 0;
             bool start = (bytes[11] & 128) != 0;
 
-            _asyncButtonState = new ButtonState(a, b, x, y, lb, rb, back, start, dpadLeft, dpadRight, dpadUp, dpadDown);
+            asyncButtonState = new ButtonState(a, b, x, y, lb, rb, back, start, dpadLeft, dpadRight, dpadUp, dpadDown);
         }
 
-        //More boilerplate
-        public delegate void ButtonPressed();
-
-        //Hiding the actual events with backing fields prevents setting them to null
-        private event ButtonPressed _aPressed;
-        public event ButtonPressed APressed
-        {
-            add => _aPressed += value;
-            remove => _aPressed -= value;
-        }
-
-        private event ButtonPressed _bPressed;
-        public event ButtonPressed BPressed
-        {
-            add => _bPressed += value;
-            remove => _bPressed -= value;
-        }
-
-        private event ButtonPressed _xPressed;
-        public event ButtonPressed XPressed
-        {
-            add => _xPressed += value;
-            remove => _xPressed -= value;
-        }
-
-        private event ButtonPressed _yPressed;
-        public event ButtonPressed YPressed
-        {
-            add => _yPressed += value;
-            remove => _yPressed -= value;
-        }
-
-        private event ButtonPressed _lbPressed;
-        public event ButtonPressed LBPressed
-        {
-            add => _lbPressed += value;
-            remove => _lbPressed -= value;
-        }
-
-        private event ButtonPressed _rbPressed;
-        public event ButtonPressed RBPressed
-        {
-            add => _rbPressed += value;
-            remove => _rbPressed -= value;
-        }
-
-        private event ButtonPressed _backPressed;
-        public event ButtonPressed BackPressed
-        {
-            add => _backPressed += value;
-            remove => _backPressed -= value;
-        }
-
-        private event ButtonPressed _startPressed;
-        public event ButtonPressed StartPressed
-        {
-            add => _startPressed += value;
-            remove => _startPressed -= value;
-        }
-
-        private event ButtonPressed _dpadUpPressed;
-        public event ButtonPressed DPadUpPressed
-        {
-            add => _dpadUpPressed += value;
-            remove => _dpadUpPressed -= value;
-        }
-
-        private event ButtonPressed _dpadDownPressed;
-        public event ButtonPressed DPadDownPressed
-        {
-            add => _dpadDownPressed += value;
-            remove => _dpadDownPressed -= value;
-        }
-
-        private event ButtonPressed _dpadLeftPressed;
-        public event ButtonPressed DPadLeftPressed
-        {
-            add => _dpadLeftPressed += value;
-            remove => _dpadLeftPressed -= value;
-        }
-
-        private event ButtonPressed _dpadRightPressed;
-        public event ButtonPressed DPadRightPressed
-        {
-            add => _dpadRightPressed += value;
-            remove => _dpadRightPressed -= value;
-        }
-
-        private event ButtonPressed _leftStickPressed;
-        public event ButtonPressed LeftStickPressed
-        {
-            add => _leftStickPressed += value;
-            remove => _leftStickPressed -= value;
-        }
-
-        private event ButtonPressed _rightStickPressed;
-        public event ButtonPressed RightStickPressed
-        {
-            add => _rightStickPressed += value;
-            remove => _rightStickPressed -= value;
-        }
-
-        public delegate void ControllerConnection();
-
-        private event ControllerConnection _disconnected;
-        public event ControllerConnection Disconnected
-        {
-            add => _disconnected += value;
-            remove => _disconnected -= value;
-        }
-
-        private event ControllerConnection _connected;
-        public event ControllerConnection Connected
-        {
-            add => _connected += value;
-            remove => _connected -= value;
-        }
-
+        /// <summary>
+        /// Contains all information for an <see cref="XboxController"/>s buttons
+        /// </summary>
         public struct ButtonState
         {
-            internal ButtonState(bool A, bool B, bool X, bool Y, bool LB, bool RB, bool Back, bool Start, bool DPadLeft, bool DPadRight, bool DPadUp, bool DPadDown)
+            /// <summary>
+            /// Initializes a new instance of the <see cref="ButtonState"/> struct with the given values
+            /// </summary>
+            /// <param name="a">Whether or not the A button is pressed</param>
+            /// <param name="b">Whether or not the B button is pressed</param>
+            /// <param name="x">Whether or not the X button is pressed</param>
+            /// <param name="y">Whether or not the Y button is pressed</param>
+            /// <param name="lb">Whether or not the left bumper is pressed</param>
+            /// <param name="rb">Whether or not the right bumper is pressed</param>
+            /// <param name="back">Whether or not the back button is pressed</param>
+            /// <param name="start">Whether or not the start button is pressed</param>
+            /// <param name="dpadLeft">Whether or not dpad left is pressed</param>
+            /// <param name="dpadRight">Whether or not dpad right is pressed</param>
+            /// <param name="dpadUp">Whether or not dpad up is pressed</param>
+            /// <param name="dpadDown">Whether or not dpad down is pressed</param>
+            internal ButtonState(bool a, bool b, bool x, bool y, bool lb, bool rb, bool back, bool start, bool dpadLeft, bool dpadRight, bool dpadUp, bool dpadDown)
             {
-                this.A = new Button(A);
-                this.B = new Button(B);
-                this.X = new Button(X);
-                this.Y = new Button(Y);
-                this.LB = new Button(LB);
-                this.RB = new Button(RB);
-                this.Back = new Button(Back);
-                this.Start = new Button(Start);
-                this.DPadLeft = new Button(DPadLeft);
-                this.DPadRight = new Button(DPadRight);
-                this.DPadUp = new Button(DPadUp);
-                this.DPadDown = new Button(DPadDown);
+                A = new Button(a);
+                B = new Button(b);
+                X = new Button(x);
+                Y = new Button(y);
+                LB = new Button(lb);
+                RB = new Button(rb);
+                Back = new Button(back);
+                Start = new Button(start);
+                DPadLeft = new Button(dpadLeft);
+                DPadRight = new Button(dpadRight);
+                DPadUp = new Button(dpadUp);
+                DPadDown = new Button(dpadDown);
             }
 
-            internal ButtonState(Button A, Button B, Button X, Button Y, Button LB, Button RB, Button Back, Button Start, Button DPadLeft, Button DPadRight, Button DPadUp, Button DPadDown)
+            /// <summary>
+            /// Initializes a new instance of the <see cref="ButtonState"/> struct with the given values
+            /// </summary>
+            /// <param name="a"><see cref="Button"/> containing information about A</param>
+            /// <param name="b"><see cref="Button"/> containing information about B</param>
+            /// <param name="x"><see cref="Button"/> containing information about X</param>
+            /// <param name="y"><see cref="Button"/> containing information about Y</param>
+            /// <param name="lb"><see cref="Button"/> containing information about LB</param>
+            /// <param name="rb"><see cref="Button"/> containing information about RB</param>
+            /// <param name="back"><see cref="Button"/> containing information about back</param>
+            /// <param name="start"><see cref="Button"/> containing information about start</param>
+            /// <param name="dpadLeft"><see cref="Button"/> containing information about dpad left</param>
+            /// <param name="dpadRight"><see cref="Button"/> containing information about dpad right</param>
+            /// <param name="dpadUp"><see cref="Button"/> containing information about dpad up</param>
+            /// <param name="dpadDown"><see cref="Button"/> containing information about dpad down</param>
+            internal ButtonState(Button a, Button b, Button x, Button y, Button lb, Button rb, Button back, Button start, Button dpadLeft, Button dpadRight, Button dpadUp, Button dpadDown)
             {
-                this.A = A;
-                this.B = B;
-                this.X = X;
-                this.Y = Y;
-                this.LB = LB;
-                this.RB = RB;
-                this.Back = Back;
-                this.Start = Start;
-                this.DPadLeft = DPadLeft;
-                this.DPadRight = DPadRight;
-                this.DPadUp = DPadUp;
-                this.DPadDown = DPadDown;
+                A = a;
+                B = b;
+                X = x;
+                Y = y;
+                LB = lb;
+                RB = rb;
+                Back = back;
+                Start = start;
+                DPadLeft = dpadLeft;
+                DPadRight = dpadRight;
+                DPadUp = dpadUp;
+                DPadDown = dpadDown;
             }
 
+            /// <summary>
+            /// Gets the state of the A button
+            /// </summary>
             public Button A { get; private set; }
+
+            /// <summary>
+            /// Gets the state of the B button
+            /// </summary>
             public Button B { get; private set; }
+
+            /// <summary>
+            /// Gets the state of the X button
+            /// </summary>
             public Button X { get; private set; }
+
+            /// <summary>
+            /// Gets the state of the Y button
+            /// </summary>
             public Button Y { get; private set; }
+
+            /// <summary>
+            /// Gets the state of the left bumper
+            /// </summary>
             public Button LB { get; private set; }
+
+            /// <summary>
+            /// Gets the state of the right bumper
+            /// </summary>
             public Button RB { get; private set; }
+
+            /// <summary>
+            /// Gets the state of the back button
+            /// </summary>
             public Button Back { get; private set; }
+
+            /// <summary>
+            /// Gets the state of the start button
+            /// </summary>
             public Button Start { get; private set; }
 
+            /// <summary>
+            /// Gets the state of the dpad left button
+            /// </summary>
             public Button DPadLeft { get; private set; }
+
+            /// <summary>
+            /// Gets the state of the dpad right button
+            /// </summary>
             public Button DPadRight { get; private set; }
+
+            /// <summary>
+            /// Gets the state of the dpad up button
+            /// </summary>
             public Button DPadUp { get; private set; }
+
+            /// <summary>
+            /// Gets the state of the dpad down button
+            /// </summary>
             public Button DPadDown { get; private set; }
         }
-
-        public enum ButtonType
-        {
-            A = 1,
-            B = 2,
-            X = 4,
-            Y = 8,
-            LB = 16,
-            RB = 32,
-            Back = 64,
-            Start = 128,
-            DPadLeft = 256,
-            DPadRight = 512,
-            DPadUp = 1024,
-            DPadDown = 2048,
-            LStick = 4096,
-            RStick = 8192
-        }
-    }
-
-    public struct Button
-    {
-        internal Button(bool pressed)
-        {
-            IsPressed = pressed;
-            WasPressed = false;
-        }
-
-        internal Button(bool pressed, bool wasPressed)
-        {
-            IsPressed = pressed;
-            WasPressed = wasPressed;
-        }
-
-        public bool IsPressed { get; private set; }
-        public bool WasPressed { get; private set; }
-    }
-
-    public struct ControlStick
-    {
-        internal ControlStick(ushort x, ushort y, Button buttonState)
-        {
-            //Convert left and right to floats in the range 0-1
-            float lFloat = x / (float)ushort.MaxValue;
-            float rFloat = y / (float)ushort.MaxValue;
-
-            //Scale these floats to -1 - 1
-            State = new Vector2(lFloat * 2 - 1, rFloat * 2 - 1);
-
-            Button = buttonState;
-        }
-
-        internal ControlStick(Vector2 pos, Button buttonState)
-        {
-            State = pos;
-            Button = buttonState;
-        }
-
-        public Vector2 State { get; private set; }
-        public Button Button { get; private set; }
     }
 }

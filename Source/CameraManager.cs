@@ -62,9 +62,12 @@ namespace SharpSlugsEngine
         /// <returns>The newly created <see cref="Camera"/></returns>
         public Camera Create(float x, float y, float w, float h, int drawX, int drawY, int drawW, int drawH)
         {
-            Camera cam = new Camera(this, game, x, y, w, h);
-            cam.DrawPosition = new Vector2(drawX, drawY);
-            cam.DrawSize = new Vector2(drawW, drawH);
+            Camera cam = new Camera(this, game, x, y, w, h)
+            {
+                DrawPosition = new Vector2(drawX, drawY),
+                DrawSize = new Vector2(drawW, drawH)
+            };
+
             cameras.Add(cam);
 
             if (Main == null)

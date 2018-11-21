@@ -1,14 +1,18 @@
 ﻿using System;
-using System.Drawing;
+
 namespace SharpSlugsEngine.Physics
 {
+    /// <summary>
+    /// Defines a triangle for use in physics calculations
+    /// </summary>
     public struct PTriangle
     {
-        public Vector2 VertexOne { get; private set; }
-        public Vector2 VertexTwo { get; private set; }
-        public Vector2 VertexThree { get; private set; }
-        public float Area { get; private set; }
-        
+        /// <summary>
+        /// Initializes a new instance of the <see cref="PTriangle"/> struct with the given vertices
+        /// </summary>
+        /// <param name="vert1">Placed into <see cref="VertexOne"/></param>
+        /// <param name="vert2">Placed into <see cref="VertexTwo"/></param>
+        /// <param name="vert3">Placed into <see cref="VertexThree"/></param>
         public PTriangle(Vector2 vert1, Vector2 vert2, Vector2 vert3)
         {
             VertexOne = vert1;
@@ -24,13 +28,30 @@ namespace SharpSlugsEngine.Physics
         }
 
         /// <summary>
-        /// Checks whether or not the triangle contains a given point
+        /// Gets the first vertex making up this <see cref="PTriangle"/>
         /// </summary>
-        /// <param name="point"></param>
-        /// <param name="tri1"></param>
-        /// <param name="tri2"></param>
-        /// <param name="tri3"></param>
-        /// <returns></returns>
+        public Vector2 VertexOne { get; private set; }
+
+        /// <summary>
+        /// Gets the second vertex making up this <see cref="PTriangle"/>
+        /// </summary>
+        public Vector2 VertexTwo { get; private set; }
+
+        /// <summary>
+        /// Gets the third vertex making up this <see cref="PTriangle"/>
+        /// </summary>
+        public Vector2 VertexThree { get; private set; }
+
+        /// <summary>
+        /// Gets the area of this <see cref="PTriangle"/>
+        /// </summary>
+        public float Area { get; private set; }
+
+        /// <summary>
+        /// Checks whether or not the <see cref="PTriangle"/> contains a given <see cref="Vector2"/>
+        /// </summary>
+        /// <param name="point">The <see cref="Vector2"/> to check against</param>
+        /// <returns>A bool indicating whether or not the <see cref="PTriangle"/> contains the <see cref="Vector2"/></returns>
         public bool ContainsPoint(Vector2 point)
         {
             float crossProd1 = Vector2.CrossProduct(VertexOne, point, VertexTwo);
@@ -44,8 +65,8 @@ namespace SharpSlugsEngine.Physics
         /// <summary>
         /// This function will check if any vertex of a triangle is touching this triangle
         /// </summary>
-        /// <param name="other"></param>
-        /// <returns></returns>
+        /// <param name="other">The <see cref="PTriangle"/> to check collision with</param>
+        /// <returns>A bool indicating whether or not the <see cref="PTriangle"/>s are touching</returns>
         /// https://stackoverflow.com/questions/2778240/detection-of-triangle-collision-in-2d-space
         public bool IsTouching(PTriangle other)
         {
@@ -66,6 +87,7 @@ namespace SharpSlugsEngine.Physics
             {
                 return true;
             }
+
             return false;
         }
     }
