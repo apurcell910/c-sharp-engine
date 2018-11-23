@@ -93,9 +93,8 @@ namespace Test_Game
             Content.AddImage("../../Content/GameOver.png", "GameOver");
             Content.AddImage("../../Content/Asteroid.png", "Asteroid");
             Content.AddImage("../../Content/Cursor.png", "Cursor");
-
-            ContentManager c = Content;
-            Sprites.add("cursor", new SImage(0, 0, "Cursor", ref c));
+            
+            Sprites.add("cursor", new SImage(0, 0, "Cursor", Content));
             Sprites.scale("cursor", 0.5);
             Sprites.display("cursor", true);
             

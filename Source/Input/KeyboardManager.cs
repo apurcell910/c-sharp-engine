@@ -4,87 +4,162 @@ using System.Windows.Forms;
 
 namespace SharpSlugsEngine.Input
 {
+    /// <summary>
+    /// Contains the state of a keyboard key
+    /// </summary>
+    public struct KeyState
+    {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="KeyState"/> struct with the given values
+        /// </summary>
+        /// <param name="isPressed">Whether the key is currently pressed</param>
+        /// <param name="wasPressed">Whether the key was pressed on the last frame</param>
+        internal KeyState(bool isPressed, bool wasPressed)
+        {
+            IsPressed = isPressed;
+            WasPressed = wasPressed;
+        }
+
+        /// <summary>
+        /// Gets a value indicating whether the key is pressed
+        /// </summary>
+        public bool IsPressed { get; private set; }
+
+        /// <summary>
+        /// Gets a value indicating whether the key was pressed
+        /// </summary>
+        public bool WasPressed { get; private set; }
+    }
+
+    /// <summary>
+    /// Tracks keyboard events and key states
+    /// </summary>
     public class KeyboardManager : IDisposable
     {
-        //Caching this should improve performance a bit
-        private static readonly Keys[] allKeys = (Keys[])Enum.GetValues(typeof(Keys));
+        // Caching this should improve performance a bit
+        private static readonly Keys[] AllKeys = (Keys[])Enum.GetValues(typeof(Keys));
 
-        private readonly Game _game;
+        private readonly Game game;
 
-        private readonly Dictionary<Keys, bool> _asyncKeys;
-        private readonly Dictionary<Keys, bool> _oldKeys;
-        private readonly Dictionary<Keys, bool> _currentKeys;
+        private readonly Dictionary<Keys, bool> asyncKeys;
+        private readonly Dictionary<Keys, bool> oldKeys;
+        private readonly Dictionary<Keys, bool> currentKeys;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="KeyboardManager"/> class with the given parent <see cref="Game"/>
+        /// </summary>
+        /// <param name="game">The parent <see cref="Game"/> of the new <see cref="KeyboardManager"/></param>
         internal KeyboardManager(Game game)
         {
-            _game = game;
+            this.game = game;
 
-            //Fill all dictionaries with false
-            _asyncKeys = new Dictionary<Keys, bool>();
-            foreach (Keys key in allKeys)
+            // Fill all dictionaries with false
+            asyncKeys = new Dictionary<Keys, bool>();
+            foreach (Keys key in AllKeys)
             {
-                //This check is required because the Keys enum contains duplicate values (ex. return/enter are both 13)
-                if (!_asyncKeys.ContainsKey(key))
+                // This check is required because the Keys enum contains duplicate values (ex. return/enter are both 13)
+                if (!asyncKeys.ContainsKey(key))
                 {
-                    _asyncKeys.Add(key, false);
+                    asyncKeys.Add(key, false);
                 }
             }
 
-            _oldKeys = new Dictionary<Keys, bool>(_asyncKeys);
-            _currentKeys = new Dictionary<Keys, bool>(_asyncKeys);
+            oldKeys = new Dictionary<Keys, bool>(asyncKeys);
+            currentKeys = new Dictionary<Keys, bool>(asyncKeys);
 
-            //Begin looking for input
+            // Begin looking for input
             HookForm();
         }
 
-        //Synchronize the current/old keys with the main update loop
-        internal void Update()
-        {
-            foreach (Keys key in allKeys)
-            {
-                _oldKeys[key] = _currentKeys[key];
-                _currentKeys[key] = _asyncKeys[key];
-            }
-            _singleKey?.Invoke();
-        }
+        /// <summary>
+        /// Alias for the <see cref="IsPressed(Keys)"/> and <see cref="WasPressed(Keys)"/> functions
+        /// </summary>
+        /// <param name="key">The key to check input on</param>
+        /// <returns>A <see cref="KeyState"/> containing information about the specified key</returns>
+        public KeyState this[Keys key] => new KeyState(IsPressed(key), WasPressed(key));
 
-        private void UnhookForm()
-        {
-            _game.Platform.Form.KeyDown -= RegisterKeyDown;
-            _game.Platform.Form.KeyUp -= RegisterKeyUp;
-        }
-
-        private void HookForm()
-        {
-            //Prevent duplicate hooks
-            UnhookForm();
-
-            _game.Platform.Form.KeyDown += RegisterKeyDown;
-            _game.Platform.Form.KeyUp += RegisterKeyUp;
-        }
-
-        //Update async state when keys are pressed/released
-        private void RegisterKeyDown(object sender, KeyEventArgs args) => _asyncKeys[args.KeyCode] = true;
-        private void RegisterKeyUp(object sender, KeyEventArgs args) => _asyncKeys[args.KeyCode] = false;
-
-        //Using TryGetValue on these to prevent errors from user input outside the range of the Keys enum
+        /// <summary>
+        /// Checks if a given key is pressed
+        /// </summary>
+        /// <param name="key">The key to check</param>
+        /// <returns>A value indicating whether the key is pressed</returns>
         public bool IsPressed(Keys key)
         {
-            _currentKeys.TryGetValue(key, out bool ret);
+            currentKeys.TryGetValue(key, out bool ret);
             return ret;
         }
 
+        /// <summary>
+        /// Checks if a given key was pressed
+        /// </summary>
+        /// <param name="key">The key to check</param>
+        /// <returns>A value indicating whether the key was pressed</returns>
         public bool WasPressed(Keys key)
         {
-            _oldKeys.TryGetValue(key, out bool old);
-            _currentKeys.TryGetValue(key, out bool current);
+            oldKeys.TryGetValue(key, out bool old);
+            currentKeys.TryGetValue(key, out bool current);
 
             return current && !old;
         }
-        
+
+        /// <summary>
+        /// Removes hooks so that the form doesn't keep the object alive
+        /// </summary>
+        void IDisposable.Dispose() => UnhookForm();
+
+        /// <summary>
+        /// Synchronizes the current/old keys with the main update loop
+        /// </summary>
+        internal void Update()
+        {
+            foreach (Keys key in AllKeys)
+            {
+                oldKeys[key] = currentKeys[key];
+                currentKeys[key] = asyncKeys[key];
+            }
+
+            _singleKey?.Invoke();
+        }
+
+        /// <summary>
+        /// Hooks the key events on the parent <see cref="Game"/>'s <see cref="Form"/>
+        /// </summary>
+        private void HookForm()
+        {
+            // Prevent duplicate hooks
+            UnhookForm();
+
+            game.Platform.Form.KeyDown += RegisterKeyDown;
+            game.Platform.Form.KeyUp += RegisterKeyUp;
+        }
+
+        /// <summary>
+        /// Unhooks the key events on the parent <see cref="Game"/>'s <see cref="Form"/>
+        /// </summary>
+        private void UnhookForm()
+        {
+            game.Platform.Form.KeyDown -= RegisterKeyDown;
+            game.Platform.Form.KeyUp -= RegisterKeyUp;
+        }
+
+        /// <summary>
+        /// Marks a key as pressed in the asynchronous state
+        /// </summary>
+        /// <param name="sender">The parameter is not used.</param>
+        /// <param name="args">Contains the key to set as pressed</param>
+        private void RegisterKeyDown(object sender, KeyEventArgs args) => asyncKeys[args.KeyCode] = true;
+
+        /// <summary>
+        /// Marks a key as not pressed in the asynchronous state
+        /// </summary>
+        /// <param name="sender">The parameter is not used.</param>
+        /// <param name="args">Contains the key to set as not pressed</param>
+        private void RegisterKeyUp(object sender, KeyEventArgs args) => asyncKeys[args.KeyCode] = false;
+
+        #region Timothy WIP
         public bool AlphaIsPressed()
         {
-            foreach(KeyValuePair<Keys, bool> entry in _currentKeys)
+            foreach(KeyValuePair<Keys, bool> entry in currentKeys)
             {
                 if (entry.Key <= Keys.Z && entry.Key >= Keys.A)
                     if (entry.Value == true)
@@ -96,7 +171,7 @@ namespace SharpSlugsEngine.Input
         public List<Keys> ListAlphaPressed()
         {
             List<Keys> o = new List<Keys>();
-            foreach (KeyValuePair<Keys, bool> entry in _currentKeys)
+            foreach (KeyValuePair<Keys, bool> entry in currentKeys)
             {
                 if (entry.Key <= Keys.Z && entry.Key >= Keys.A)
                     if (entry.Value == true)
@@ -107,7 +182,7 @@ namespace SharpSlugsEngine.Input
 
         public bool NumIsPressed()
         {
-            foreach (KeyValuePair<Keys, bool> entry in _currentKeys)
+            foreach (KeyValuePair<Keys, bool> entry in currentKeys)
             {
                 if ((entry.Key <= Keys.NumPad9 && entry.Key >= Keys.NumPad0)
                     || (entry.Key <= Keys.D9 && entry.Key >= Keys.D0))
@@ -120,7 +195,7 @@ namespace SharpSlugsEngine.Input
         public List<Keys> ListNumPressed()
         {
             List<Keys> o = new List<Keys>();
-            foreach (KeyValuePair<Keys, bool> entry in _currentKeys)
+            foreach (KeyValuePair<Keys, bool> entry in currentKeys)
             {
                 if ((entry.Key <= Keys.NumPad9 && entry.Key >= Keys.NumPad0)
                     || (entry.Key <= Keys.D9 && entry.Key >= Keys.D0))
@@ -134,9 +209,6 @@ namespace SharpSlugsEngine.Input
         {
             return false;
         }
-
-        //Alias for the IsPressed/WasPressed functions for if people prefer accessing as an array
-        public KeyState this[Keys key] => new KeyState(IsPressed(key), WasPressed(key));
 
         public delegate void KeyPress();
 
@@ -201,21 +273,6 @@ namespace SharpSlugsEngine.Input
         {
             SingleKey -= () => { if (AlphaIsPressed() || NumIsPressed()) e.callEvent(); };
         }
-
-
-        //Remove hooks so that the form doesn't keep the object alive
-        void IDisposable.Dispose() => UnhookForm();
-    }
-
-    public struct KeyState
-    {
-        internal KeyState(bool isPressed, bool wasPressed)
-        {
-            IsPressed = isPressed;
-            WasPressed = wasPressed;
-        }
-
-        public bool IsPressed { get; private set; }
-        public bool WasPressed { get; private set; }
+        #endregion
     }
 }

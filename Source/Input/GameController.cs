@@ -108,31 +108,31 @@ namespace SharpSlugsEngine.Input
 
             switch (device.VendorID)
             {
-                case DeviceManager.VID_MICROSOFT:
+                case DeviceManager.VIDMicrosoft:
                     switch (device.ProductID)
                     {
-                        case DeviceManager.PID_XBOX:
+                        case DeviceManager.PIDXbox:
                             Type = ControllerType.Xbox;
                             break;
-                        case DeviceManager.PID_XBOX_360:
+                        case DeviceManager.PIDXbox360:
                             Type = ControllerType.Xbox360;
                             break;
-                        case DeviceManager.PID_XBOX_ONE:
+                        case DeviceManager.PIDXboxOne:
                             Type = ControllerType.XboxOne;
                             break;
-                        case DeviceManager.PID_XBOX_ONE_S:
+                        case DeviceManager.PIDXboxOneS:
                             Type = ControllerType.XboxOneS;
                             break;
                     }
 
                     break;
-                case DeviceManager.VID_SONY:
+                case DeviceManager.VIDSony:
                     switch (device.ProductID)
                     {
-                        case DeviceManager.PID_PLAYSTATION_3:
+                        case DeviceManager.PIDPlaystation3:
                             Type = ControllerType.Playstation3;
                             break;
-                        case DeviceManager.PID_PLAYSTATION_4:
+                        case DeviceManager.PIDPlaystation4:
                             Type = ControllerType.Playstation4;
                             break;
                     }
@@ -155,7 +155,7 @@ namespace SharpSlugsEngine.Input
         /// <summary>
         /// Gets a value indicating whether <see cref="device"/> is connected
         /// </summary>
-        public bool IsConnected => device._connected;
+        public bool IsConnected => device.Connected;
 
         /// <summary>
         /// Gets the device path of <see cref="device"/>
@@ -173,7 +173,7 @@ namespace SharpSlugsEngine.Input
             }
 
             // Try to reconnect if applicable
-            if (!device._connected)
+            if (!device.Connected)
             {
                 if (device.TryReconnect())
                 {
@@ -219,7 +219,7 @@ namespace SharpSlugsEngine.Input
                 throw new NullReferenceException("_device cannot be null");
             }
 
-            if (!device._connected)
+            if (!device.Connected)
             {
                 return;
             }
