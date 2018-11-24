@@ -8,10 +8,35 @@ using System.Windows.Forms;
 
 namespace Test_Game
 {
+#pragma warning disable 0414 // "unused" fields are used by the serializer via reflection
+    public class SerializationTest
+    {
+        private string str = "abcdefghijklmnopqrstuvwxyz";
+        internal int yes = 562;
+
+        public SerializationTest reference;
+    }
+#pragma warning restore 0414
+
     static class Program
     {
         static void Main()
         {
+            SerializationTest serializationTest = new SerializationTest();
+            serializationTest.reference = new SerializationTest()
+            {
+                yes = -300
+            };
+
+            byte[] bytes = SerializationUtility.Serialize(serializationTest);
+
+            if (System.IO.File.Exists("../../Content/test"))
+            {
+                System.IO.File.Delete("../../Content/test");
+            }
+
+            System.IO.File.WriteAllBytes("../../Content/test", bytes);
+
             TestGame test =  new TestGame();
             test.Resolution = new Vector2(1280 * 0.75f, 720 * 0.75f);
             test.Run();

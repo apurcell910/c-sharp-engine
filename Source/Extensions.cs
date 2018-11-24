@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.IO;
 
 namespace SharpSlugsEngine
 {
@@ -8,6 +9,16 @@ namespace SharpSlugsEngine
     /// </summary>
     public static class Extensions
     {
+        /// <summary>
+        /// Writes the specified bytes into the <see cref="MemoryStream"/>
+        /// </summary>
+        /// <param name="self">The <see cref="MemoryStream"/> to write into</param>
+        /// <param name="buffer">The bytes to write</param>
+        public static void Write(this MemoryStream self, params byte[] buffer)
+        {
+            self.Write(buffer, 0, buffer.Length);
+        }
+
         /// <summary>
         /// Returns the index before <paramref name="i"/> in <paramref name="self"/>, wrapping if necessary
         /// </summary>

@@ -69,6 +69,7 @@
     <Compile Include="Physics\RectangleCollider.cs" />
     <Compile Include="Physics\PTriangle.cs" />
     <Compile Include="Physics\TriangleCollider.cs" />
+    <Compile Include="SerializationUtility.cs" />
     <Compile Include="Sound\Sound.cs" />
     <Compile Include="Sound\SoundCache.cs" />
     <Compile Include="Sprite\SpriteEvents.cs" />
