@@ -5,9 +5,40 @@ using SharpSlugsEngine.Physics;
 
 namespace SharpSlugsEngine
 {
+    /// <summary>
+    /// Enum to choose whether to draw in World Space or Screen Space
+    /// </summary>
+    public enum DrawType
+    {
+        Screen,
+        World
+    }
+
+    /// <summary>
+    /// Enum to tell the system where to Align text
+    /// </summary>
+    public enum TextAlign
+    {
+        TopLeft,
+        TopCenter,
+        TopRight,
+        MiddleLeft,
+        MiddleCenter,
+        MiddleRight,
+        BottomLeft,
+        BottomCenter,
+        BottomRight
+    }
+
+    /// <summary>
+    /// A manager to handle graphics
+    /// </summary>
     public class GraphicsManager
     {
-        internal static readonly Vector2 defaultScale = new Vector2(100, 56.25f);
+        internal static readonly Vector2 DefaultScale = new Vector2(100, 56.25f);
+
+        private readonly Game game;
+        private readonly Platform platform;
 
         private SolidBrush brush;
         private Pen pen;
@@ -16,17 +47,25 @@ namespace SharpSlugsEngine
         private Bitmap buffer;
         private Graphics bitmapGraphics;
 
-        private readonly Game game;
-        private readonly Platform platform;
+        /// <summary>
+        /// Gets a default scale
+        /// </summary>
+        public Vector2 WorldScale { get; private set; } = DefaultScale;
 
-        public Vector2 WorldScale { get; private set; } = defaultScale;
-
+        /// <summary>
+        /// Gets a Background Color
+        /// </summary>
         public Color BackColor
         {
             get => platform.Form.BackColor;
             set => platform.Form.BackColor = value;
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="GraphicsManager"/> class with given Game and Platform
+        /// </summary>
+        /// <param name="game">Game for which the Graphics Manger is created for</param>
+        /// <param name="platform">Platform with which Graphics will be drawn upon</param>
         internal GraphicsManager(Game game, Platform platform)
         {
             this.game = game;
@@ -38,22 +77,38 @@ namespace SharpSlugsEngine
             formGraphics = platform.Form.CreateGraphics();
         }
 
+        /// <summary>
+        /// Disposes of Graphics and Create new Graphics
+        /// </summary>
         internal void RecreateGraphics()
         {
             formGraphics.Dispose();
             formGraphics = platform.Form.CreateGraphics();
         }
 
+        /// <summary>
+        /// Scales an unscaled <see cref="Vector2"/> to World Scale
+        /// </summary>
+        /// <param name="unscaledVector">Not scaled <see cref="Vector2"/> that will be scaled to World Scale</param>
+        /// <returns>New <see cref="Vector2"/> that is now scaled to World Scale</returns>
         public Vector2 ToWorldScale(Vector2 unscaledVector)
         {
             return (unscaledVector * WorldScale) / game.Resolution;
         }
 
+        /// <summary>
+        /// Scales a World Scaled <see cref="Vector2"/> to Resolution Scale
+        /// </summary>
+        /// <param name="scaledVector">A world scaled <see cref="Vector2"/></param>
+        /// <returns>New <see cref="Vector2"/> that is now scaled to Resolution Scale</returns>
         public Vector2 ToResolutionScale(Vector2 scaledVector)
         {
             return (scaledVector / WorldScale) * game.Resolution;
         }
 
+        /// <summary>
+        /// Create Cameras and create the buffer to draw upon
+        /// </summary>
         internal void Begin()
         {
             foreach (Camera cam in GetCameras())
@@ -68,6 +123,9 @@ namespace SharpSlugsEngine
             bitmapGraphics.FillRectangle(brush, new Rectangle(0, 0, buffer.Width, buffer.Height));
         }
 
+        /// <summary>
+        /// Draw onto the buffer from the Camera or just straight onto the buffer
+        /// </summary>
         internal void End()
         {
             foreach (Camera cam in GetCameras())
@@ -81,6 +139,10 @@ namespace SharpSlugsEngine
             bitmapGraphics.Dispose();
         }
 
+        /// <summary>
+        /// Sets the color of the brush or pen
+        /// </summary>
+        /// <param name="color">The <see cref="Color"/> to set the pen/brush to</param>
         internal void SetColor(Color color)
         {
             brush.Color = color;
@@ -88,6 +150,11 @@ namespace SharpSlugsEngine
             pen = new Pen(brush);
         }
 
+        /// <summary>
+        /// Rotates a matrix about a center
+        /// </summary>
+        /// <param name="center"><see cref="PointF"/> that will be considered the center of the matrix</param>
+        /// <param name="angle">The angle to rotate about</param>
         internal void Rotate(PointF center, float angle)
         {
             Matrix m = new Matrix();
@@ -96,34 +163,44 @@ namespace SharpSlugsEngine
             m.Dispose();
         }
 
+        /// <summary>
+        /// Reset the transform of a <see cref="Bitmap"/>
+        /// </summary>
         internal void ResetRotation()
         {
             bitmapGraphics.ResetTransform();
         }
 
+        /// <summary>
+        /// Get all <see cref="Camera"/> from the Game
+        /// </summary>
+        /// <returns>Array of <see cref="Camera"/></returns>
         private Camera[] GetCameras()
         {
-            if (!game.Cameras.DisplayAll) return new Camera[] { game.Cameras.Main };
+            if (!game.Cameras.DisplayAll) return new Camera[] 
+            {
+                game.Cameras.Main
+            };
 
             return game.Cameras.All;
         }
 
-        private RectangleF WorldToCameraRect(Camera cam, RectangleF rect)
-        {
-            return new RectangleF(cam.WorldToCamera(rect.Location), cam.WorldToCamera(rect.Size));
-        }
+        // To draw rectangle at angle:
+        // https://stackoverflow.com/questions/10210134/using-a-matrix-to-rotate-rectangles-individually
 
-        private RectangleF WorldToCameraRect(Camera cam, Vector2 pos, Vector2 size)
-            => WorldToCameraRect(cam, new RectangleF(pos, size));
-
-        //Feel like I should just make these take a SpriteObj as well. Maybe for later, shouldn't be too
-        //difficult to do.
-
-        //To draw rectangle at angle:
-        //https://stackoverflow.com/questions/10210134/using-a-matrix-to-rotate-rectangles-individually
         /// <summary>
-        /// The actual DrawRectangle function. All overloads should use this to draw
+        /// Rectangle draw function to be used for all other overloads
         /// </summary>
+        /// <param name="g">The graphics to draw the rectangle on</param>
+        /// <param name="x">X component of the center of the rectangle</param>
+        /// <param name="y">Y component of the center of the rectangle</param>
+        /// <param name="w">Width of the rectangle</param>
+        /// <param name="h">Height of the rectangle</param>
+        /// <param name="color">Color to fill the rectangle</param>
+        /// <param name="fill">Whether or not to fill the rectangle</param>
+        /// <param name="angle">Angle of which to rotate the rectangle</param>
+        /// <param name="xAnchor">An anchor point for the X of the rectangle</param>
+        /// <param name="yAnchor">An anchor point for the Y of the rectangle</param>
         private void DrawRectangle(Graphics g, int x, int y, int w, int h, Color color, bool fill = true, float angle = 0, double xAnchor = 0, double yAnchor = 0)
         {
             SetColor(color);
@@ -141,6 +218,17 @@ namespace SharpSlugsEngine
             ResetRotation();
         }
 
+        /// <summary>
+        /// Overload to draw a rectangle using Vector2s instead of resolution coordinates
+        /// </summary>
+        /// <param name="pos">Center of the rectangle</param>
+        /// <param name="size">Size(width,height) of the rectangle</param>
+        /// <param name="color">Color to fill the rectangle</param>
+        /// <param name="fill">Whether or not to fill the rectangle</param>
+        /// <param name="angle">Angle of which to rotate the rectangle</param>
+        /// <param name="xAnchor">An anchor point for the X of the rectangle</param>
+        /// <param name="yAnchor">An anchor point for the Y of the rectangle</param>
+        /// <param name="type">Whether or not to draw on Camera or World</param>
         public void DrawRectangle(Vector2 pos, Vector2 size, Color color, bool fill = true, float angle = 0, double xAnchor = 0, double yAnchor = 0, DrawType type = DrawType.World)
         {
             if (type == DrawType.World)
@@ -158,21 +246,57 @@ namespace SharpSlugsEngine
             }
         }
 
+        /// <summary>
+        /// Draw the rectangle using floats instead of ints
+        /// </summary>
+        /// <param name="x">X component of the center of the rectangle</param>
+        /// <param name="y">Y component of the center of the rectangle</param>
+        /// <param name="w">Width of the rectangle</param>
+        /// <param name="h">Height of the rectangle</param>
+        /// <param name="color">Color to fill the rectangle</param>
+        /// <param name="fill">Whether or not to fill the rectangle</param>
+        /// <param name="angle">Angle of which to rotate the rectangle</param>
+        /// <param name="xAnchor">An anchor point for the X of the rectangle</param>
+        /// <param name="yAnchor">An anchor point for the Y of the rectangle</param>
+        /// <param name="type">Whether or not to draw on Camera or World</param>
         public void DrawRectangle(float x, float y, float w, float h, Color color, bool fill = true, float angle = 0, double xAnchor = 0, double yAnchor = 0, DrawType type = DrawType.World)
             => DrawRectangle(new Vector2(x, y), new Vector2(w, h), color, fill, angle, xAnchor, yAnchor, type);
 
+        /// <summary>
+        /// Draw a rectangle by passing a rectangle
+        /// </summary>
+        /// <param name="rect">The rectangle to draw</param>
+        /// <param name="color">The color for the rectangle</param>
+        /// <param name="fill">Whether or not to fill the rectangle</param>
+        /// <param name="angle">Angle of which to rotate the rectangle</param>
+        /// <param name="xAnchor">An anchor point for the X of the rectangle</param>
+        /// <param name="yAnchor">An anchor point for the Y of the rectangle</param>
+        /// <param name="type">Whether or not to draw on Camera or World</param>
         public void DrawRectangle(RectangleF rect, Color color, bool fill = true, float angle = 0, double xAnchor = 0, double yAnchor = 0, DrawType type = DrawType.World)
             => DrawRectangle(rect.X, rect.Y, rect.Width, rect.Height, color, fill, angle, xAnchor, yAnchor, type);
 
         /// <summary>
-        /// The actual DrawLine function. All overloads should use this to draw
+        /// Line draw function to be used for all other overloads
         /// </summary>
+        /// <param name="g">Graphics to draw line to</param>
+        /// <param name="x1">First X</param>
+        /// <param name="y1">First Y</param>
+        /// <param name="x2">Second X</param>
+        /// <param name="y2">Second Y</param>
+        /// <param name="color">Color of the line</param>
         private void DrawLine(Graphics g, int x1, int y1, int x2, int y2, Color color)
         {
             SetColor(color);
             g.DrawLine(pen, x1, y1, x2, y2);
         }
 
+        /// <summary>
+        /// Use Vector2 to draw line
+        /// </summary>
+        /// <param name="v1">Coordinate for one point of the line</param>
+        /// <param name="v2">Coordinate for the second point of the line</param>
+        /// <param name="color">Color of the line</param>
+        /// <param name="type">Whether to draw on World Space or Screen Space</param>
         public void DrawLine(Vector2 v1, Vector2 v2, Color color, DrawType type = DrawType.World)
         {
             if (type == DrawType.World)
@@ -189,12 +313,31 @@ namespace SharpSlugsEngine
             }
         }
 
+        /// <summary>
+        /// Draw a line with floats instead of Vector2
+        /// </summary>
+        /// <param name="x1">First X</param>
+        /// <param name="y1">First Y</param>
+        /// <param name="x2">Second X</param>
+        /// <param name="y2">Second Y</param>
+        /// <param name="color">Color of the line</param>
+        /// <param name="type">Whether to draw to Screen Space or Resolution Space</param>
         public void DrawLine(float x1, float y1, float x2, float y2, Color color, DrawType type = DrawType.World)
             => DrawLine(new Vector2(x1, y1), new Vector2(x2, y2), color, type);
 
         /// <summary>
-        /// The actual DrawEllipse function. All overloads should use this to draw
+        /// Ellipse draw function to be used for all other overloads
         /// </summary>
+        /// <param name="g">Graphics to draw Ellipse onto</param>
+        /// <param name="x">X component of the Center</param>
+        /// <param name="y">Y component of the Center</param>
+        /// <param name="w">Width of the Ellipse</param>
+        /// <param name="h">Height of the Ellipse</param>
+        /// <param name="color">Color of the Ellipse</param>
+        /// <param name="fill">Whether or not to fill the Ellipse</param>
+        /// <param name="r">Angle to rotate the Ellipse around</param>
+        /// <param name="xAnchor">Anchor for X of the Ellipse</param>
+        /// <param name="yAnchor">Anchor for Y of the Ellipse</param>
         private void DrawEllipse(Graphics g, int x, int y, int w, int h, Color color, bool fill = true, float r = 0, double xAnchor = 0.5f, double yAnchor = 0.5f)
         {
             SetColor(color);
@@ -212,6 +355,17 @@ namespace SharpSlugsEngine
             ResetRotation();
         }
 
+        /// <summary>
+        /// Draw an Ellipse using Vector2
+        /// </summary>
+        /// <param name="pos">(X,Y) coordinate for the Center of Ellipse</param>
+        /// <param name="size">Width and Height of the Ellipse</param>
+        /// <param name="color">Color of the Ellipse</param>
+        /// <param name="fill">Whether or not to fill the Ellipse</param>
+        /// <param name="r">Angle to rotate the Ellipse around</param>
+        /// <param name="xAnchor">Anchor for X of the Ellipse</param>
+        /// <param name="yAnchor">Anchor for Y of the Ellipse</param>
+        /// <param name="type">Draw on World or Resoultion space</param>
         public void DrawEllipse(Vector2 pos, Vector2 size, Color color, bool fill = true, float r = 0, double xAnchor = 0f, double yAnchor = 0f, DrawType type = DrawType.World)
         {
             if (type == DrawType.World)
@@ -229,9 +383,30 @@ namespace SharpSlugsEngine
             }
         }
 
+        /// <summary>
+        /// Draw Ellipse using floats instead of Vector2
+        /// </summary>
+        /// <param name="x">X component of the Center</param>
+        /// <param name="y">Y component of the Center</param>
+        /// <param name="w">Width of the Ellipse</param>
+        /// <param name="h">Height of the Ellipse</param>
+        /// <param name="color">Color of the Ellipse</param>
+        /// <param name="fill">Whether or not to fill the Ellipse</param>
+        /// <param name="r">Angle to rotate the Ellipse around</param>
+        /// <param name="xAnchor">Anchor for X of the Ellipse</param>
+        /// <param name="yAnchor">Anchor for Y of the Ellipse</param>
+        /// <param name="type">Whether to draw to World or Resoultion space</param>
         public void DrawEllipse(float x, float y, float w, float h, Color color, bool fill = true, float r = 0, double xAnchor = 0f, double yAnchor = 0f, DrawType type = DrawType.World)
             => DrawEllipse(new Vector2(x, y), new Vector2(w, h), color, fill, r, xAnchor, yAnchor, type);
 
+        /// <summary>
+        /// Draw a circle using a Vector2
+        /// </summary>
+        /// <param name="pos">Center of the Circle</param>
+        /// <param name="r">Radius of the Circle</param>
+        /// <param name="color">Color of the Circle</param>
+        /// <param name="fill">Whether to fill the Circle or not</param>
+        /// <param name="type">Whether to draw to World or Resolution space</param>
         public void DrawCircle(Vector2 pos, float r, Color color, bool fill = true, DrawType type = DrawType.World)
         {
             Vector2 size = new Vector2(r * 2, r * 2);
@@ -240,12 +415,32 @@ namespace SharpSlugsEngine
             DrawEllipse(pos, size, color, fill, r, 0.5f, 0.5f, type);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="x">X component of center of Circle</param>
+        /// <param name="y">Y component of center of Circle</param>
+        /// <param name="r">Radius of the Circle</param>
+        /// <param name="color">Color of the Circle</param>
+        /// <param name="fill">Whether to fill the Circle or not</param>
+        /// <param name="type">Whether to draw to World or Resolution space</param>
         public void DrawCircle(float x, float y, float r, Color color, bool fill = true, DrawType type = DrawType.World)
             => DrawCircle(new Vector2(x, y), r, color, fill, type);
 
         /// <summary>
-        /// The actual DrawBMP function. All overloads should use this to draw
+        /// 
         /// </summary>
+        /// <param name="g"></param>
+        /// <param name="bmp"></param>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="w"></param>
+        /// <param name="h"></param>
+        /// <param name="r"></param>
+        /// <param name="ix"></param>
+        /// <param name="iy"></param>
+        /// <param name="iw"></param>
+        /// <param name="ih"></param>
         private void DrawBMP(Graphics g, Bitmap bmp, int x, int y, int w, int h, float r, int ix, int iy, int iw, int ih)
         {
             Rotate(new PointF(x + w / 2f, y + h / 2f), r);
@@ -426,24 +621,5 @@ namespace SharpSlugsEngine
         {
             WorldScale = scaleFactor;
         }
-    }
-
-    public enum DrawType
-    {
-        Screen,
-        World
-    }
-
-    public enum TextAlign
-    {
-        TopLeft,
-        TopCenter,
-        TopRight,
-        MiddleLeft,
-        MiddleCenter,
-        MiddleRight,
-        BottomLeft,
-        BottomCenter,
-        BottomRight
     }
 }

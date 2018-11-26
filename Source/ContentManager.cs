@@ -1,14 +1,17 @@
 ﻿using System;
-using System.IO;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using SharpSlugsEngine.Sound;
 
 namespace SharpSlugsEngine
 {
+    /// <summary>
+    /// A class that handles external files for use within the game and has helper functions to use those assets
+    /// </summary>
     public class ContentManager
     {
-        private Game _game;
+        private Game game;
 
         private List<string> paths;
         private Dictionary<string, Bitmap> images;
@@ -16,9 +19,13 @@ namespace SharpSlugsEngine
         private Dictionary<string, SoundCache> sounds;
         private Dictionary<string, FontCache> fonts;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ContentManager"/> class with given game
+        /// </summary>
+        /// <param name="game">The current game for which the Content Manager belongs to</param>
         internal ContentManager(Game game)
         {
-            _game = game;
+            this.game = game;
 
             paths = new List<string>();
             images = new Dictionary<string, Bitmap>();
@@ -26,6 +33,12 @@ namespace SharpSlugsEngine
             fonts = new Dictionary<string, FontCache>();
         }
 
+        /// <summary>
+        /// Adds an external image to the Content Manager
+        /// </summary>
+        /// <param name="filePath">Path to the image which is to be added to the Content Manager</param>
+        /// <param name="fileName">An optional name for the new image</param>
+        /// <param name="scale">A scaling factor for the image to change its size</param>
         public void AddImage(string filePath, string fileName = "image", int scale = 1)
         {
             Bitmap bmp = new Bitmap(filePath);
@@ -34,12 +47,11 @@ namespace SharpSlugsEngine
             return;
         }
 
-        private void AddImage(string fileName, Bitmap bmp)
-        {
-            images.Add(fileName, bmp);
-            return;
-        }
-
+        /// <summary>
+        /// Add a font to the Content Manager from an external path
+        /// </summary>
+        /// <param name="filePath">File path which leads to a font file</param>
+        /// <param name="fileName">Name of the file that should be opened</param>
         public void AddFont(string filePath, string fileName)
         {
             if (string.IsNullOrEmpty(filePath) || string.IsNullOrEmpty(fileName))
@@ -65,19 +77,33 @@ namespace SharpSlugsEngine
                     fonts.Add(fileName, new FontCache(collection.Families[0]));
                 }
             }
-            catch { }
+            catch
+            {
+            }
         }
 
-        public Font GetFont(string name, int emSize = 32)
+        /// <summary>
+        /// Pull a font from the Content Manager
+        /// </summary>
+        /// <param name="name">Name of the font</param>
+        /// <param name="fontSize">Size of the font</param>
+        /// <returns>Return a font</returns>
+        public Font GetFont(string name, int fontSize = 32)
         {
             if (fonts.TryGetValue(name, out FontCache f))
             {
-                return f.Get(emSize);
+                return f.Get(fontSize);
             }
 
             return null;
         }
 
+        /// <summary>
+        /// Add an external sound source to the Content Manager
+        /// </summary>
+        /// <param name="filePath">File path which should lead to a sound file</param>
+        /// <param name="fileName">Name of the file to be added</param>
+        /// <param name="cacheSize">Size of the sound cache</param>
         public void AddSound(string filePath, string fileName, int cacheSize = 5)
         {
             if (string.IsNullOrEmpty(filePath) || string.IsNullOrEmpty(fileName))
@@ -107,11 +133,18 @@ namespace SharpSlugsEngine
                     return;
                 }
 
-                sounds.Add(fileName, new SoundCache(_game, path, cacheSize));
+                sounds.Add(fileName, new SoundCache(game, path, cacheSize));
             }
-            catch (Exception) { }
+            catch (Exception)
+            {
+            }
         }
 
+        /// <summary>
+        /// Get a cached sound from the Content Manager
+        /// </summary>
+        /// <param name="name">Name of the sound to be pulled from the Content Manager</param>
+        /// <returns>Return the sound pulled from Content Manager</returns>
         public Sound.Sound GetSound(string name)
         {
             if (sounds.TryGetValue(name, out SoundCache cache))
@@ -122,53 +155,86 @@ namespace SharpSlugsEngine
             return null;
         }
 
+        /// <summary>
+        /// Scale an image with a given scale
+        /// </summary>
+        /// <param name="bmp">Bitmap to be scaled</param>
+        /// <param name="scale">Integer scale to be used to scale image</param>
+        /// <returns>Return the scaled image</returns>
         public Bitmap ScaleImage(Bitmap bmp, int scale)
         {
-            Bitmap ret = new Bitmap(bmp, (int)bmp.Width / scale, ((int)bmp.Height / scale));
+            Bitmap ret = new Bitmap(bmp, (int)bmp.Width / scale, (int)bmp.Height / scale);
             return ret;
         }
 
+        /// <summary>
+        /// Scale an array of images all with a given scale
+        /// </summary>
+        /// <param name="bmp">Bitmap array to be scaled</param>
+        /// <param name="scale">Integer scale to be used for scaling</param>
+        /// <returns>The new scaled Bitmap array</returns>
         public Bitmap[] ScaleImage(Bitmap[] bmp, int scale)
         {
             Bitmap[] ret = new Bitmap[bmp.Length];
-            for(int i = 0; i < bmp.Length; i++)
+            for (int i = 0; i < bmp.Length; i++)
             {
-                ret[i] = new Bitmap(bmp[i], (bmp[i].Width / scale), (bmp[i].Height / scale));
+                ret[i] = new Bitmap(bmp[i], bmp[i].Width / scale, bmp[i].Height / scale);
             }
+
             return ret;
         }
 
+        /// <summary>
+        /// Pull an image from the Content Manager
+        /// </summary>
+        /// <param name="name">Name of the image in the Content Manager</param>
+        /// <returns>Bitmap image from Content Manager</returns>
         public Bitmap GetImage(string name)
         {
             images.TryGetValue(name, out Bitmap value);
             return value;
         }
 
+        /// <summary>
+        /// Check if a certain image is within the Content Manager
+        /// </summary>
+        /// <param name="name">Checks to see if a given image is in the Content Manager</param>
+        /// <returns>True if image is found, false otherwise</returns>
         public bool InManager(string name)
         {
             return images.TryGetValue(name, out Bitmap value);
         }
 
-        public void printNames()
+        /// <summary>
+        /// Print the names of all images within the Content Manager
+        /// </summary>
+        public void PrintNames()
         {
-            foreach(string key in images.Keys)
+            foreach (string key in images.Keys)
             {
                 Console.WriteLine(key);
             }
         }
 
+        /// <summary>
+        /// Split an external image into an array of images and store them in the Content Manager
+        /// </summary>
+        /// <param name="filePath">File path to the image to be split</param>
+        /// <param name="numCuts">Number of divisions the image should be cut to</param>
+        /// <param name="fileNames">Optional names for the new set of images</param>
+        /// <returns>An array of Bitmap images</returns>
         public Bitmap[] SplitImage(string filePath, int numCuts, string fileNames = "file")
         {
             Bitmap orig = new Bitmap(filePath);
             Bitmap[] bmp = new Bitmap[numCuts];
 
-            Rectangle cloneRect = new Rectangle(0, 0, orig.Width / (numCuts/2), orig.Height / (numCuts/2));
+            Rectangle cloneRect = new Rectangle(0, 0, orig.Width / (numCuts / 2), orig.Height / (numCuts / 2));
             System.Drawing.Imaging.PixelFormat format = orig.PixelFormat;
             int tracker = 0;
-            float cutFactor = numCuts/2;
-            for(int i = 0; i < cutFactor; i++)
+            float cutFactor = numCuts / 2;
+            for (int i = 0; i < cutFactor; i++)
             {
-                for(int j = 0; j < cutFactor; j++)
+                for (int j = 0; j < cutFactor; j++)
                 {
                     cloneRect = new Rectangle((int)(orig.Width * (i / cutFactor)), (int)(orig.Height * (j / cutFactor)), (int)(orig.Width / cutFactor), (int)(orig.Height / cutFactor));
                     bmp[tracker] = orig.Clone(cloneRect, format);
@@ -176,9 +242,17 @@ namespace SharpSlugsEngine
                     AddImage(string.Concat(fileNames, tracker.ToString()), bmp[i]);
                 }
             }
+
             return bmp;
         }
 
+        /// <summary>
+        /// Split an already existing image into multiple and store them within the Content Manager
+        /// </summary>
+        /// <param name="bmp">Bitmap image to be split</param>
+        /// <param name="numCuts">Number of divisions the image should be cut to</param>
+        /// <param name="fileNames">Optional names for the new Bitmap array</param>
+        /// <returns>Bitmap array of split images</returns>
         public Bitmap[] SplitImage(Bitmap bmp, int numCuts, string fileNames = "file")
         {
             Bitmap[] copy = new Bitmap[numCuts];
@@ -196,29 +270,53 @@ namespace SharpSlugsEngine
                     AddImage(string.Concat(fileNames, tracker.ToString()), copy[i]);
                 }
             }
+
             return copy;
         }
 
+        /// <summary>
+        /// Add an already existing Bitmap to the Content Manager
+        /// </summary>
+        /// <param name="fileName">Name of the image to be added to the Content Manager</param>
+        /// <param name="bmp">Already existing bitmap to be added to Content Manager</param>
+        private void AddImage(string fileName, Bitmap bmp)
+        {
+            images.Add(fileName, bmp);
+            return;
+        }
+
+        /// <summary>
+        /// Cache for Fonts
+        /// </summary>
         private struct FontCache
         {
-            public FontFamily family;
-            public Dictionary<int, Font> fonts;
+            public FontFamily Family;
+            public Dictionary<int, Font> Fonts;
 
+            /// <summary>
+            /// Initializes a new instance of the <see cref="FontCache"/> struct
+            /// </summary>
+            /// <param name="fam">Family of font</param>
             public FontCache(FontFamily fam)
             {
-                family = fam;
-                fonts = new Dictionary<int, Font>();
+                Family = fam;
+                Fonts = new Dictionary<int, Font>();
             }
 
+            /// <summary>
+            /// Pull a font from the Content Manager
+            /// </summary>
+            /// <param name="i">Get the font from the Content Manager</param>
+            /// <returns>The font from the given index</returns>
             public Font Get(int i)
             {
-                if (fonts.TryGetValue(i, out Font f))
+                if (Fonts.TryGetValue(i, out Font f))
                 {
                     return f;
                 }
 
-                f = new Font(family, i);
-                fonts.Add(i, f);
+                f = new Font(Family, i);
+                Fonts.Add(i, f);
                 return f;
             }
         }
