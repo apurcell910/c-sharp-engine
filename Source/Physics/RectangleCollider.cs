@@ -1,15 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace SharpSlugsEngine.Physics
+﻿namespace SharpSlugsEngine.Physics
 {
-    class RectangleCollider : Collider
+    /// <summary>
+    /// Class to provide colliders for rectangular objects.
+    /// </summary>
+    public class RectangleCollider : Collider
     {
-        public RectangleCollider(int x, int y, int w, int h) {
-
+        /// <summary>
+        /// Initializes a new instance of the <see cref="RectangleCollider"/> class.
+        /// </summary>
+        /// <param name="x">X value of upper left hand corner.</param>
+        /// <param name="y">Y value of upper left hand corner.</param>
+        /// <param name="w">Width of rectangle.</param>
+        /// <param name="h">Height of rectangle.</param>
+        public RectangleCollider(int x, int y, int w, int h)
+        {
             VerticesInternal = new Vector2[]
             {
                 new Vector2(x, y),
