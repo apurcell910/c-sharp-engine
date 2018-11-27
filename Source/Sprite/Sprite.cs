@@ -1,12 +1,12 @@
 ﻿using System;
-using System.Collections;
-using System.Drawing;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace SharpSlugsEngine {
+namespace SharpSlugsEngine
+{
+    /// <summary>
+    /// Overridable sprite class. Not meant to be used on it's own, is instead intended to
+    /// be overridden by the user as needed for additional kinds of sprites.
+    /// </summary>
     public class Sprite
     {
         public int x, y, w, h;
@@ -20,13 +20,23 @@ namespace SharpSlugsEngine {
         public bool disp;
         public Physics.Collider collider;
         public List<string> collisions;
+
+        /// <summary>
+        /// Overridable Draw() function that is looped.
+        /// </summary>
+        /// <param name="graphics">Graphics manager of the sprite.</param>
         public virtual void Draw(GraphicsManager graphics) { }
+
+        /// <summary>
+        /// Overridable Update() function that is looped.
+        /// </summary>
         public virtual void Update() { }
 
         /// <summary>
         /// For any sprite that will never be used again, "kills" it.
         /// </summary>
-        public void kill() {
+        public void Kill()
+        {
             alive = false;
             disp = false;
         }
@@ -34,33 +44,60 @@ namespace SharpSlugsEngine {
         /// <summary>
         /// "Reincarnates" a dead sprite, must separately set display to true.
         /// </summary>
-        public void reincarnate() {
+        public void Reincarnate() 
+        {
             alive = true;
         }
 
-        public void display(bool disp) {
+        /// <summary>
+        /// Sets the display value of the sprite
+        /// </summary>
+        /// <param name="disp">True to display, false to hide.</param>
+        public void Display(bool disp) 
+        {
             this.disp = disp;
         }
 
-        public void move(int x, int y) {
+        /// <summary>
+        /// Moves the sprite
+        /// </summary>
+        /// <param name="x">Value to move the x value by.</param>
+        /// <param name="y">Value to move the y value by.</param>
+        public void Move(int x, int y) 
+        {
             this.x += x;
             this.y += y;
             collider.Position = new Vector2(this.x, this.y);
         }
 
-        public void moveto(int x, int y)
+        /// <summary>
+        /// Moves the sprite to a specific location
+        /// </summary>
+        /// <param name="x">New value of x.</param>
+        /// <param name="y">New value of y.</param>
+        public void MoveTo(int x, int y)
         {
             this.x = x;
             this.y = y;
             collider.Position = new Vector2(x, y);
         }
 
-        public void moveX(int x) {
+        /// <summary>
+        /// Moves the sprite vertically
+        /// </summary>
+        /// <param name="x">Amount to move the sprite horizontally by.</param>
+        public void MoveX(int x) 
+        {
             this.x += x;
             collider.Position = new Vector2(this.x, collider.Position.Y);
         }
 
-        public void moveY(int y) {
+        /// <summary>
+        /// Moves the sprite vertically.
+        /// </summary>
+        /// <param name="y">Amount to move the sprite vertically by.</param>
+        public void MoveY(int y) 
+        {
             this.y += y;
             collider.Position = new Vector2(collider.Position.X, this.y);
         }
@@ -68,9 +105,9 @@ namespace SharpSlugsEngine {
         /// <summary>
         /// Sets the sprite rotation to r
         /// </summary>
-        /// <param name="key">Sprite to edit</param>
         /// <param name="r">How many degrees to rotate the sprite by.</param>
-        public void setRotation(float r) {
+        public void SetRotation(float r) 
+        {
             this.angle = r;
             this.collider.Rotation = this.angle;
         }
@@ -78,9 +115,9 @@ namespace SharpSlugsEngine {
         /// <summary>
         /// Rotate the sprite by r (degrees or radians?)
         /// </summary>
-        /// <param name="key">Sprite to edit</param>
         /// <param name="r">How many degrees to rotate the sprite by.</param>
-        public void rotate(float r) {
+        public void Rotate(float r) 
+        {
             this.angle += r;
             this.collider.Rotation = this.angle;
         }
@@ -88,9 +125,9 @@ namespace SharpSlugsEngine {
         /// <summary>
         /// Scale the x value of the sprite
         /// </summary>
-        /// <param name="key">Sprite to edit</param>
         /// <param name="scale">How much to scale it by(decimal to make it smaller)</param>
-        public void scaleX(double scale) {
+        public void ScaleX(double scale) 
+        {
             w = (int)Math.Round(w * scale);
             collider.Scale = new Vector2(w, h);
         }
@@ -98,9 +135,9 @@ namespace SharpSlugsEngine {
         /// <summary>
         /// Scale the Y value of the sprite
         /// </summary>
-        /// <param name="key">Sprite to edit</param>
         /// <param name="scale">How much to scale it by(decimal to make it smaller)</param>
-        public void scaleY(double scale) {
+        public void ScaleY(double scale) 
+        {
             h = (int)Math.Round(scale * h);
             collider.Scale = new Vector2(w, h);
         }
@@ -108,60 +145,115 @@ namespace SharpSlugsEngine {
         /// <summary>
         /// Scale entire sprite
         /// </summary>
-        /// <param name="key">Sprite to edit</param>
         /// <param name="scale">How much to scale it by(decimal to make it smaller)</param>
-        public void scale(double scale) {
+        public void Scale(double scale) 
+        {
             w = (int)Math.Round(w * scale);
             h = (int)Math.Round(scale * h);
             collider.Scale = new Vector2(w, h);
         }
 
-        public void setAnchor(double anchor) {
+        /// <summary>
+        /// Sets the anchor of the sprite. Mainly for rotation right now.
+        /// </summary>
+        /// <param name="anchor">Value from 0.0 to 1.0, in terms of percentage to set anchor</param>
+        public void SetAnchor(double anchor) 
+        {
             xAnchor = anchor;
             yAnchor = anchor;
         }
 
-        public void setAnchorX(double anchor) {
+        /// <summary>
+        /// Sets the x anchor of the sprite.
+        /// </summary>
+        /// <param name="anchor">Value from 0.0 to 1.0, in terms of percentage to set anchor</param>
+        public void SetAnchorX(double anchor) 
+        {
             xAnchor = anchor;
         }
 
-        public void setAnchorY(double anchor) {
+        /// <summary>
+        /// Sets the y anchor of the sprite.
+        /// </summary>
+        /// <param name="anchor">Value from 0.0 to 1.0, in terms of percentage to set anchor</param>
+        public void SetAnchorY(double anchor) 
+        {
             yAnchor = anchor;
         }
 
-        public void setVelocityX(int x) {
+        /// <summary>
+        /// Sets the vertical velocity of the sprite.
+        /// </summary>
+        /// <param name="x">Amount to set the vertical velocity to.</param>
+        public void SetVelocityX(int x) 
+        {
             velocityX = x;
             collider.Velocity = new Vector2(x, collider.Velocity.Y);
         }
 
-        public void setVelocityY(int y) {
+        /// <summary>
+        /// Sets the horizontal velocity of the sprite.
+        /// </summary>
+        /// <param name="y">Amount to set the horizontal velocity to.</param>
+        public void SetVelocityY(int y) 
+        {
             velocityY = y;
             collider.Velocity = new Vector2(collider.Velocity.X, y);
         }
 
-        public void addVelocityX(int x) {
+        /// <summary>
+        /// Adds to the vertical velocity of the sprite.
+        /// </summary>
+        /// <param name="x">Amount to add to the vertical velocity.</param>
+        public void AddVelocityX(int x) 
+        {
             velocityX += x;
             collider.Velocity = new Vector2(velocityX, collider.Velocity.Y);
         }
 
-        public void addVelocityY(int y) {
+        /// <summary>
+        /// Adds to the horizontal velocity of the sprite.
+        /// </summary>
+        /// <param name="y">Amount to add to the horizontal velocity.</param>
+        public void AddVelocityY(int y) 
+        {
             velocityY += y;
             collider.Velocity = new Vector2(collider.Velocity.X, velocityY);
         }
 
-        public void setGravityX(int x) {
+        /// <summary>
+        /// Sets the vertical gravity of the sprite.
+        /// </summary>
+        /// <param name="x">Amount to set the vertical gravity to.</param>
+        public void SetGravityX(int x) 
+        {
             gravityX = x;
         }
 
-        public void setGravityY(int y) {
+        /// <summary>
+        /// Sets the horizontal gravity of the sprite.
+        /// </summary>
+        /// <param name="y">Amount to set the horizontal gravity to.</param>
+        public void SetGravityY(int y) 
+        {
             gravityY = y;
         }
 
-        public void setCollider(Physics.Collider collider) {
+        /// <summary>
+        /// Sets the collider of the sprite.
+        /// </summary>
+        /// <param name="collider">Collider to set.</param>
+        public void SetCollider(Physics.Collider collider) 
+        {
             this.collider = collider;
         }
 
-        public void addCollision(string collision) {
+        /// <summary>
+        /// Adds other sprite as collision for this sprite.
+        /// </summary>
+        /// <param name="collision">Name of other sprite to check for collision.</param>
+        public void AddCollision(string collision) 
+        {
             this.collisions.Add(collision);
         }
     }

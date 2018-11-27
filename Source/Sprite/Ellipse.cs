@@ -1,16 +1,26 @@
-﻿using System;
-using System.Drawing;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Drawing;
 
-namespace SharpSlugsEngine {
-    public class Ellipse : Sprite {
+namespace SharpSlugsEngine
+{
+    /// <summary>
+    /// Ellipse sprite class. One color.
+    /// </summary>
+    public class Ellipse : Sprite
+    {
         public Color color;
         public bool fill;
 
-        public Ellipse(int x, int y, int w, int h, Color color, bool fill = true) {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Ellipse"/> class.
+        /// </summary>
+        /// <param name="x">Upper left hand corner x position.</param>
+        /// <param name="y">Upper left hand corner y position.</param>
+        /// <param name="w">Width of ellipse.</param>
+        /// <param name="h">Height of ellipse.</param>
+        /// <param name="color">Color of ellipse.</param>
+        /// <param name="fill">Whether or not to fill the ellipse.</param>
+        public Ellipse(int x, int y, int w, int h, Color color, bool fill = true)
+        {
             this.x = x;
             this.y = y;
             this.w = w;
@@ -24,7 +34,12 @@ namespace SharpSlugsEngine {
             collider = new Physics.EllipseCollider(x + (w / 2), y + (h / 2), w, h);
         }
 
-        public override void Draw(GraphicsManager graphics) {
+        /// <summary>
+        /// Draw function for the ellipse.
+        /// </summary>
+        /// <param name="graphics">Graphics manager to use.</param>
+        public override void Draw(GraphicsManager graphics)
+        {
             graphics.DrawEllipse(x, y, w, h, color, fill, angle, xAnchor, yAnchor);
         }
     }

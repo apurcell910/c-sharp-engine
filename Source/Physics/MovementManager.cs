@@ -11,9 +11,9 @@ namespace SharpSlugsEngine.Physics {
         public void updateSprites(ref Dictionary<string, Sprite> sprites) {
             foreach (KeyValuePair<string, Sprite> obj in sprites) {
                 if (obj.Value.alive) {
-                    obj.Value.addVelocityX(obj.Value.gravityX);
-                    obj.Value.addVelocityY(obj.Value.gravityY);
-                    obj.Value.move(obj.Value.velocityX, obj.Value.velocityY);
+                    obj.Value.AddVelocityX(obj.Value.gravityX);
+                    obj.Value.AddVelocityY(obj.Value.gravityY);
+                    obj.Value.Move(obj.Value.velocityX, obj.Value.velocityY);
 
                     if (obj.Value.collisions != null)
                     {
@@ -25,33 +25,33 @@ namespace SharpSlugsEngine.Physics {
                                 {
                                     while (obj.Value.collider.IsTouching(sprites[collision].collider))
                                     {
-                                        obj.Value.moveX(-1);
+                                        obj.Value.MoveX(-1);
                                     }
-                                    obj.Value.setVelocityX(0);
+                                    obj.Value.SetVelocityX(0);
                                 }
                                 else
                                 {
                                     while (obj.Value.collider.IsTouching(sprites[collision].collider))
                                     {
-                                        obj.Value.moveX(1);
+                                        obj.Value.MoveX(1);
                                     }
-                                    obj.Value.setVelocityX(0);
+                                    obj.Value.SetVelocityX(0);
                                 }
                                 if (obj.Value.velocityY > 0)
                                 {
                                     while (obj.Value.collider.IsTouching(sprites[collision].collider))
                                     {
-                                        obj.Value.moveY(-1);
+                                        obj.Value.MoveY(-1);
                                     }
-                                    obj.Value.setVelocityY(0);
+                                    obj.Value.SetVelocityY(0);
                                 }
                                 else
                                 {
                                     while (obj.Value.collider.IsTouching(sprites[collision].collider))
                                     {
-                                        obj.Value.moveY(1);
+                                        obj.Value.MoveY(1);
                                     }
-                                    obj.Value.setVelocityY(0);
+                                    obj.Value.SetVelocityY(0);
                                 }
                             }
                         }

@@ -1,16 +1,26 @@
-﻿using System;
-using System.Drawing;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Drawing;
 
-namespace SharpSlugsEngine{
-    public class Rect : Sprite {
+namespace SharpSlugsEngine
+{
+    /// <summary>
+    /// Rectangle Sprite, single color.
+    /// </summary>
+    public class Rect : Sprite
+    {
         public Color color;
         public bool fill;
 
-        public Rect(int x, int y, int w, int h, Color color, bool fill = true) {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Rect"/> class.
+        /// </summary>
+        /// <param name="x">X position of new rectangle.</param>
+        /// <param name="y">Y position of new rectangle.</param>
+        /// <param name="w">Width of new rectangle.</param>
+        /// <param name="h">Height of new rectangle.</param>
+        /// <param name="color">Color of rectangle.</param>
+        /// <param name="fill">Whether or not to fill the rectangle. True by default</param>
+        public Rect(int x, int y, int w, int h, Color color, bool fill = true)
+        {
             this.x = x;
             this.y = y;
             this.w = w;
@@ -24,7 +34,12 @@ namespace SharpSlugsEngine{
             collider = new Physics.RectangleCollider(x, y, w, h);
         }
 
-        public override void Draw(GraphicsManager graphics) {
+        /// <summary>
+        /// Draws the rectangle.
+        /// </summary>
+        /// <param name="graphics">Graphics Manager to use.</param>
+        public override void Draw(GraphicsManager graphics)
+        {
             graphics.DrawRectangle(x, y, w, h, color, fill, angle, xAnchor, yAnchor);
         }
     }
