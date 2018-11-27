@@ -25,7 +25,7 @@ namespace SharpSlugsEngine
         /// </summary>
         public void Update() 
         {
-            movement.updateSprites(ref sprites);
+            movement.UpdateSprites(ref sprites);
             foreach (KeyValuePair<string, Sprite> obj in sprites) 
             {
                 if (obj.Value.alive)
