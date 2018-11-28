@@ -9,9 +9,8 @@ Sharp Slugs Engine Documentation
 Contents:
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 4
    
-   ExampleDoc
    Camera
    CameraManager
    ContentManager
@@ -19,8 +18,6 @@ Contents:
    Game
    GameTime
    GraphicsManager
-   IUpdatable
-   IDrawable
    Vector2
    
    Input/DeviceManager
@@ -31,15 +28,8 @@ Contents:
    Input/MouseManager
    Input/XboxController
    
-   Physics/Collider
-   Physics/EllipseCollider
-   Physics/MovementManager
-   Physics/PTriangle
-   Physics/PolygonCollider
-   Physics/RectangleCollider
-   Physics/TriangleCollider
-   Physics/PEllipse
-   Physics/PRectangle
+   Interfaces
+   Physics
    
    Sound/Sound
    Sound/SoundCache
@@ -51,11 +41,3 @@ Contents:
    Sprite/Sprite
    Sprite/SpriteEvents
    Sprite/SpriteList
-   
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
-

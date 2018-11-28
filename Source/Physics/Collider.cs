@@ -133,7 +133,7 @@ namespace SharpSlugsEngine.Physics
             get => velocityInternal;
             set
             {
-                if (!isPhysicsObjectInternal && !float.IsNaN(value.X) && !float.IsNaN(value.Y) && !float.IsInfinity(value.X) && !float.IsInfinity(value.Y))
+                if (isPhysicsObjectInternal && !float.IsNaN(value.X) && !float.IsNaN(value.Y) && !float.IsInfinity(value.X) && !float.IsInfinity(value.Y))
                 {
                     velocityInternal = value;
                 }
@@ -190,7 +190,7 @@ namespace SharpSlugsEngine.Physics
         /// <summary>
         /// Gets or sets the current scale multiplier of this collider
         /// </summary>
-        public Vector2 Scale
+        public Vector2 Scale // TODO: Not implemented
         {
             get => scaleInternal;
             set
@@ -309,6 +309,12 @@ namespace SharpSlugsEngine.Physics
         public Vector2 GetCenter()
         {
             Vector2 centerPoint = Vector2.Zero;
+            
+            if (VerticesInternal == null || VerticesInternal.Length == 0)
+            {
+				return centerPoint;
+			}
+            
             foreach (Vector2 vert in VerticesInternal)
             {
                 centerPoint += vert;
