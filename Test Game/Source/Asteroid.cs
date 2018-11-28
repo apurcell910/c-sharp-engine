@@ -70,6 +70,7 @@ namespace Test_Game
             topLeftOffset = rect.Location;
             hpWidth = rect.Width;
 
+            poly.IsPhysicsObject = true;
             poly.Position = pos;
             poly.Velocity = velocity;
 

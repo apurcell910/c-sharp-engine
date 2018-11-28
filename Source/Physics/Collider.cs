@@ -312,8 +312,8 @@ namespace SharpSlugsEngine.Physics
             
             if (VerticesInternal == null || VerticesInternal.Length == 0)
             {
-				return centerPoint;
-			}
+                return centerPoint;
+            }
             
             foreach (Vector2 vert in VerticesInternal)
             {
