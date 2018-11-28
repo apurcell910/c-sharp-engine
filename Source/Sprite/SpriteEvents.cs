@@ -4,81 +4,144 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SharpSlugsEngine.Sprites //naming namespace Sprite breaks Sprite.cs
+namespace SharpSlugsEngine.Sprites // naming namespace Sprite breaks Sprite.cs
 {
+    /// <summary>
+    /// Contains a list of actions to modify sprites every update cycle.
+    /// </summary>
     public class SpriteEvents
     {
-        public Dictionary<string, SEvent> events = new Dictionary<string, SEvent>();
-        public SpriteList sprites;
+        public Dictionary<string, SEvent> Events = new Dictionary<string, SEvent>();
+        public SpriteList Sprites;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SpriteEvents"/> class
+        /// </summary>
+        /// <param name="list">Current list of sprites</param>
         public SpriteEvents(SpriteList list)
         {
-            sprites = list;
+            Sprites = list;
         }
 
-        public void add(string S, SEvent E)
+        /// <summary>
+        /// Adds an event to the list
+        /// </summary>
+        /// <param name="s">Name of event to be added</param>
+        /// <param name="e">Event to be deleted</param>
+        public void Add(string s, SEvent e)
         {
-            events.Add(S, E);
+            Events.Add(s, e);
         }
 
-        public void delete(string S)
+        /// <summary>
+        /// Removes an event from the list
+        /// </summary>
+        /// <param name="s">Name of event to be deleted</param>
+        public void Delete(string s)
         {
-            events.Remove(S);
+            Events.Remove(s);
         }
 
-        public void enable(string S)
+        /// <summary>
+        /// Enables an event on the list
+        /// </summary>
+        /// <param name="s">Name of event to enable</param>
+        public void Enable(string s)
         {
-            events[S].enable();
+            Events[s].Enable();
         }
 
-        public void disable(string S)
+        /// <summary>
+        /// Disables an event on the list
+        /// </summary>
+        /// <param name="s">Name of event to disable</param>
+        public void Disable(string s)
         {
-            events[S].disable();
+            Events[s].Disable();
         }
 
-        public void swap(string S)
+        /// <summary>
+        /// Swaps the state (enabled or disabled) of the event
+        /// </summary>
+        /// <param name="s">Name of the event to toggle</param>
+        public void Swap(string s)
         {
-            events[S].swap();
-        }
-
-        public void Update()
-        {
-            foreach (KeyValuePair<string, SEvent> eve in events)
-                if (eve.Value.Target.alive && eve.Value.On)
-                    eve.Value.call();
+            Events[s].Swap();
         }
         
+        /// <summary>
+        /// During the update cycle, calls each enabled event
+        /// </summary>
+        public void Update()
+        {
+            foreach (KeyValuePair<string, SEvent> eve in Events)
+            {
+                if (eve.Value.Target.alive && eve.Value.On)
+                {
+                    eve.Value.Call();
+                }
+            }
+        }
     }
 
+    /// <summary>
+    /// Event storing code snippets
+    /// </summary>
     public class SEvent
     {
         public Sprite Target;
         public bool On;
-        public delegate void SpriteAction();
-        public event SpriteAction change;
-
-        public SEvent(Sprite target) {
+        
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SEvent"/> class.
+        /// </summary>
+        /// <param name="target">Sprite source of the event</param>
+        public SEvent(Sprite target)
+        {
             Target = target;
             On = true;
         }
 
-        public void call() {
-            change?.Invoke();
-        }
+        /// <summary>
+        /// Generic delegate.
+        /// </summary>
+        public delegate void SpriteAction();
 
-        public void enable()
+        /// <summary>
+        /// Store code snippet here.
+        /// </summary>
+        public event SpriteAction Change;
+
+        /// <summary>
+        /// Calls the code in the event
+        /// </summary>
+        public void Call()
+        {
+            Change?.Invoke();
+        }
+        
+        /// <summary>
+        /// Enables the event.
+        /// </summary>
+        public void Enable()
         {
             On = false;
         }
 
-        public void disable()
+        /// <summary>
+        /// Disables the event
+        /// </summary>
+        public void Disable()
         {
             On = true;
         }
 
-        public void swap()
+        /// <summary>
+        /// Toggles the event's enable/disable state.
+        /// </summary>
+        public void Swap()
         {
             On = !On;
         }
-
     }
 }

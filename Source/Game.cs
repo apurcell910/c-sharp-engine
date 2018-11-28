@@ -8,7 +8,7 @@ using SharpSlugsEngine.Sprites;
 namespace SharpSlugsEngine
 {
     /// <summary>
-    /// Provides functionality to create a game. Must be overriden to be used.
+    /// Provides functionality to create a game. Must be overridden to be used.
     /// </summary>
     public abstract class Game
     {
@@ -116,7 +116,7 @@ namespace SharpSlugsEngine
 
         /// <summary>
         /// Gets or sets the framerate the game will attempt to reach (But not exceed). Set to -1 for no target.
-        /// Overriden by <see cref="Vsync"/> if applicable.
+        /// Overridden by <see cref="Vsync"/> if applicable.
         /// </summary>
         public int TargetFramerate { get; protected set; }
 
@@ -342,7 +342,7 @@ namespace SharpSlugsEngine
         }
 
         /// <summary>
-        /// Calculates the targetted seconds per frame
+        /// Calculates the targeted seconds per frame
         /// </summary>
         internal void CheckValues() // Use initialized values to fill out rest of needed values.
         {

@@ -1,30 +1,33 @@
 ﻿using System;
-using System.Windows.Forms;
-using System.Drawing;
 using System.Collections.Generic;
+using System.Drawing;
+using System.Windows.Forms;
 
 namespace SharpSlugsEngine
 {
     public class Event
     {
-
-        public Event() { }
-
-        public delegate void test1(Keys key, Vector2 Location);
-
-        public event test1 Test;
-
-        public virtual void callEvent()
+        public Event()
         {
-            Test?.Invoke(Keys.Clear, Vector2.Zero);
         }
-        public virtual void callEvent(Keys key)
+
+        public delegate void Actions(Keys key, Vector2 Location);
+
+        public event Actions Snippets;
+
+        public virtual void CallEvent()
         {
-            Test?.Invoke(key, Vector2.Zero);
+            Snippets?.Invoke(Keys.Clear, Vector2.Zero);
         }
-        public virtual void callEvent(Vector2 Location)
+
+        public virtual void CallEvent(Keys key)
         {
-            Test?.Invoke(Keys.Clear, Location);
+            Snippets?.Invoke(key, Vector2.Zero);
+        }
+
+        public virtual void CallEvent(Vector2 location)
+        {
+            Snippets?.Invoke(Keys.Clear, location);
         }
     }
 }
