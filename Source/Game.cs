@@ -60,7 +60,7 @@ namespace SharpSlugsEngine
             Content = new ContentManager(this);
 
             // Create sprites
-            Sprites = new SpriteList(Graphics);
+            Sprites = new SpriteList(Graphics, this);
 
             Actions = new SpriteEvents(Sprites);
 
@@ -287,7 +287,7 @@ namespace SharpSlugsEngine
 
             Update(updateTime);
             Actions.Update();
-            Sprites.Update(); // Should I add updateTime to this? Not sure how it is worked in.
+            Sprites.Update(updateTime);
 
             drawTime.deltaTime = globalClock.Elapsed - deltaDraw;
             if (targetSpf != TimeSpan.Zero)

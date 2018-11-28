@@ -9,6 +9,7 @@ namespace SharpSlugsEngine
     /// </summary>
     public class Sprite
     {
+        public Game game;
         public int x, y, w, h;
         public int velocityX = 0;
         public int velocityY = 0;
@@ -30,7 +31,7 @@ namespace SharpSlugsEngine
         /// <summary>
         /// Overridable Update() function that is looped.
         /// </summary>
-        public virtual void Update() { }
+        public virtual void Update(GameTime gameTime) { }
 
         /// <summary>
         /// For any sprite that will never be used again, "kills" it.

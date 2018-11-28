@@ -7,6 +7,7 @@ namespace SharpSlugsEngine
     /// </summary>
     public class SpriteList 
     {
+        private Game game;
         private Dictionary<string, Sprite> sprites = new Dictionary<string, Sprite>();
         private GraphicsManager graphics;
         private Physics.MovementManager movement = new Physics.MovementManager();
@@ -15,22 +16,23 @@ namespace SharpSlugsEngine
         /// Initializes a new instance of the <see cref="SpriteList" /> class.
         /// </summary>
         /// <param name="graphics">Graphics manager to use</param>
-        public SpriteList(GraphicsManager graphics) 
+        public SpriteList(GraphicsManager graphics, Game game) 
         {
             this.graphics = graphics;
+            this.game = game;
         }
 
         /// <summary>
         /// Function to update the sprites. Not called by user.
         /// </summary>
-        public void Update() 
+        public void Update(GameTime gameTime) 
         {
             movement.UpdateSprites(ref sprites);
             foreach (KeyValuePair<string, Sprite> obj in sprites) 
             {
                 if (obj.Value.alive)
                 {
-                    obj.Value.Update();
+                    obj.Value.Update(gameTime);
                 }
             }
         }
@@ -56,6 +58,7 @@ namespace SharpSlugsEngine
         /// <param name="sprite">Sprite object to add. Can be a user-created object.</param>
         public void Add(string key, Sprite sprite)
         {
+            sprite.game = game;
             sprites.Add(key, sprite);
         }
 
