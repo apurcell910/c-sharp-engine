@@ -14,7 +14,7 @@ colliders, use
 :doc:`TriangleCollider <TriangleCollider>`,
 :doc:`RectangleCollider <RectangleCollider>`,
 :doc:`EllipseCollider <EllipseCollider>`, or
-:doc:`PolygonCollider <PolygonCollider>`,
+:doc:`PolygonCollider <PolygonCollider>`
 
 Events
 ^^^^^^
