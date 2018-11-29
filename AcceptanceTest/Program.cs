@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using SharpSlugsEngine;
 using SharpSlugsEngine.Input;
 using SharpSlugsEngine.Sound;
-
+using System.Windows.Forms;
 namespace AcceptanceTest {
     class Program {
         static void Main() {
@@ -22,8 +22,8 @@ namespace AcceptanceTest {
 
         protected override void LoadContent() {
             Content.AddImage("putFilePathHere", "tank");
-            Sprites.Add("Player1", new PlayerTank("tank", 100, 700));
-            Sprites.Add("Player2", new PlayerTank("tank", 1100, 700));
+            Sprites.Add("Player1", new PlayerTank("tank", 100, 700, true));
+            Sprites.Add("Player2", new PlayerTank("tank", 1100, 700, false));
             //Tim add rectangle(s) for map
         }
 
@@ -40,14 +40,26 @@ namespace AcceptanceTest {
     class PlayerTank : SImage {
         double fireAngle;
         int health;
-        public PlayerTank(string image, int x, int y) : base(x, y, 40, 20, image) {
+        ActionSet action;
+        public PlayerTank(string image, int x, int y, bool playerOne) : base(x, y, 40, 20, image) {
             fireAngle = 0;
             health = 100;
+            action = new ActionSet(game);
+            action.setPlayerControls(playerOne);
         }
+
         public override void Update(GameTime gameTime) {
             base.Update(gameTime);
-            //Harpreet put controls here
+
+            if (action.right.IsPressed) this.SetVelocityX(2);
+            if(action.left.IsPressed) this.SetVelocityX(-2);
+
+            if(fireAngle < 120 && action.up.IsPressed) this.fireAngle += 1;
+            if(fireAngle > 45 && action.down.IsPressed) this.fireAngle -= 1;
+
+            if (action.shoot.IsPressed) fireBullet();
         }
+
         public void fireBullet() {
             this.game.Sprites.Add(GetBulletName(), new Bullet(x, y, fireAngle));
         }
@@ -70,6 +82,59 @@ namespace AcceptanceTest {
             base.Update(gameTime);
             if (this.y > 720) {
                 this.Kill();
+            }
+        }
+    }
+
+    class ActionSet
+    {
+        public InputAction left { get; private set; }
+        public InputAction right { get; private set; }
+        public InputAction up { get; private set; }
+        public InputAction down { get; private set; }
+        public InputAction shoot { get; private set; }
+
+        public ActionSet(Game game)
+        {
+            left = new InputAction(game);
+            right = new InputAction(game);
+            up = new InputAction(game);
+            down = new InputAction(game);
+            shoot = new InputAction(game);
+
+            game.Controllers.ControllerAdded += (newController) =>
+            {
+                left.AddDevice(newController);
+                right.AddDevice(newController);
+                up.AddDevice(newController);
+                down.AddDevice(newController);
+                shoot.AddDevice(newController);
+            };
+        }
+
+        public void setPlayerControls(bool playerOne)
+        {
+            if(playerOne)
+            {
+                left.AddKey(Keys.Left);
+                right.AddKey(Keys.Right);
+                up.AddKey(Keys.Up);
+                down.AddKey(Keys.Down);
+
+                left.AddKey(Keys.D);
+                right.AddKey(Keys.A);
+                up.AddKey(Keys.W);
+                down.AddKey(Keys.S);
+
+                shoot.AddKey(Keys.Space);
+            } else
+            {
+                left.AddXboxButtons(XboxController.ButtonType.DPadLeft);
+                right.AddXboxButtons(XboxController.ButtonType.DPadRight);
+                up.AddXboxButtons(XboxController.ButtonType.DPadUp);
+                down.AddXboxButtons(XboxController.ButtonType.DPadDown);
+
+                shoot.AddXboxButtons(XboxController.ButtonType.Y);
             }
         }
     }
