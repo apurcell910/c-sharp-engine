@@ -69,6 +69,7 @@ namespace SharpSlugsEngine.Input
         internal const int PIDXbox360 = 0x28E;
         internal const int PIDXboxOne = 0x2D1;
         internal const int PIDXboxOneS = 0x2EA;
+        internal const int PIDXboxOneSAlt = 0x2FF;
 
         internal const int PIDPlaystation3 = 0x268;
         internal const int PIDPlaystation4 = 0x5C4;
@@ -162,6 +163,7 @@ namespace SharpSlugsEngine.Input
                                     case PIDXbox360:
                                     case PIDXboxOne:
                                     case PIDXboxOneS:
+                                    case PIDXboxOneSAlt:
                                         newController = new XboxController(device);
                                         break;
                                 }

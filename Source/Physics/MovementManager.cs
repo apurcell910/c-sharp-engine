@@ -20,7 +20,7 @@ namespace SharpSlugsEngine.Physics
         /// Updates all of the sprites according to velocity and gravity.
         /// </summary>
         /// <param name="sprites">Reference to dictionary of the various sprites.</param>
-        public void UpdateSprites(ref Dictionary<string, Sprite> sprites)
+        public void UpdateSprites(ref Dictionary<string, Sprite> sprites, GameTime gameTime)
         {
             foreach (KeyValuePair<string, Sprite> obj in sprites)
             {
@@ -28,7 +28,7 @@ namespace SharpSlugsEngine.Physics
                 {
                     obj.Value.AddVelocityX(obj.Value.gravityX);
                     obj.Value.AddVelocityY(obj.Value.gravityY);
-                    obj.Value.Move(obj.Value.velocityX, obj.Value.velocityY);
+                    obj.Value.Move(obj.Value.velocityX * gameTime.deltaTime.TotalSeconds, obj.Value.velocityY * gameTime.deltaTime.TotalSeconds);
 
                     if (obj.Value.collisions != null)
                     {
@@ -36,7 +36,7 @@ namespace SharpSlugsEngine.Physics
                         {
                             if (obj.Value.collider.IsTouching(sprites[collision].collider))
                             {
-                                if (obj.Value.velocityX > 0)
+                                if (obj.Value.velocityX < 0)
                                 {
                                     while (obj.Value.collider.IsTouching(sprites[collision].collider))
                                     {

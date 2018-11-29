@@ -12,9 +12,14 @@
         /// <param name="y">Center y point of ellipse.</param>
         /// <param name="w">Width of ellipse.</param>
         /// <param name="h">Height of ellipse.</param>
-        public EllipseCollider(int x, int y, int w, int h)
+        public EllipseCollider(double x, double y, double w, double h)
         {
-            TrianglesInternal = new PEllipse(new Vector2(x, y), h, w).Triangles.ToArray();
+            TrianglesInternal = new PEllipse(new Vector2((float)x, (float)y), (float)h, (float)w).Triangles.ToArray();
+
+            VerticesInternal = new Vector2[TrianglesInternal.Length];
+            for (int i = 0; i < VerticesInternal.Length; i++) {
+                VerticesInternal[i] = TrianglesInternal[i].VertexTwo;
+            }
         }
     }
 }

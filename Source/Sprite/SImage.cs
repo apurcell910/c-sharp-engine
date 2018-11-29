@@ -20,8 +20,9 @@
         /// <param name="iy">Poriton of image to draw, upper right corner y position.</param>
         /// <param name="iw">Portion of image to draw, width of subimage.</param>
         /// <param name="ih">Portion of image to draw, height of subimage.</param>
-        public SImage(int x, int y, int w, int h, string image, int ix = 0, int iy = 0, int iw = 0, int ih = 0)
+        public SImage(Game game, double x, double y, double w, double h, string image, int ix = 0, int iy = 0, int iw = 0, int ih = 0)
         {
+            this.game = game;
             this.x = x;
             this.y = y;
             this.image = image;
@@ -35,7 +36,9 @@
             alive = true;
             angle = 0;
             xAnchor = yAnchor = 0;
-            collider = new Physics.RectangleCollider(x, y, w, h);
+            collider = new Physics.RectangleCollider(0, 0, w, h);
+
+            collider.Position = new Vector2((float)x, (float)y);
         }
 
         /// <summary>
@@ -46,11 +49,11 @@
         {
             if (ix == 0 && iy == 0 && iw == 0 && ih == 0)
             {
-                graphics.DrawBMP(image, x, y, w, h, angle);
+                graphics.DrawBMP(image, (float)x, (float)y, (float)w, (float)h, angle);
             }
             else
             {
-                graphics.DrawBMP(image, x, y, w, h, ix, iy, iw, ih, angle);
+                graphics.DrawBMP(image, (float)x, (float)y, (float)w, (float)h, ix, iy, iw, ih, angle);
             }
         }
     }

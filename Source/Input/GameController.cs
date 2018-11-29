@@ -121,6 +121,7 @@ namespace SharpSlugsEngine.Input
                             Type = ControllerType.XboxOne;
                             break;
                         case DeviceManager.PIDXboxOneS:
+                        case DeviceManager.PIDXboxOneSAlt:
                             Type = ControllerType.XboxOneS;
                             break;
                     }

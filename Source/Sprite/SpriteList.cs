@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace SharpSlugsEngine 
 {
@@ -8,7 +9,7 @@ namespace SharpSlugsEngine
     public class SpriteList
     {
         private Game game;
-        private Dictionary<string, Sprite> sprites = new Dictionary<string, Sprite>();
+        public Dictionary<string, Sprite> sprites = new Dictionary<string, Sprite>();
         private GraphicsManager graphics;
         private Physics.MovementManager movement = new Physics.MovementManager();
 
@@ -27,12 +28,12 @@ namespace SharpSlugsEngine
         /// </summary>
         public void Update(GameTime gameTime)
         {
-            movement.UpdateSprites(ref sprites);
-            foreach (KeyValuePair<string, Sprite> obj in sprites)
+            movement.UpdateSprites(ref sprites, gameTime);
+            foreach (Sprite obj in sprites.Values.ToList())
             {
-                if (obj.Value.alive)
+                if (obj.alive)
                 {
-                    obj.Value.Update(gameTime);
+                    obj.Update(gameTime);
                 }
             }
         }
@@ -58,7 +59,6 @@ namespace SharpSlugsEngine
         /// <param name="sprite">Sprite object to add. Can be a user-created object.</param>
         public void Add(string key, Sprite sprite)
         {
-            sprite.game = game;
             sprites.Add(key, sprite);
         }
 
@@ -165,7 +165,7 @@ namespace SharpSlugsEngine
         /// <returns>Vector of width and height of the sprite</returns>
         public Vector2 GetSize(string key)
         {
-            return new Vector2(sprites[key].w, sprites[key].h);
+            return new Vector2((float)sprites[key].w, (float)sprites[key].h);
         }
 
         /// <summary>
@@ -242,7 +242,7 @@ namespace SharpSlugsEngine
         /// </summary>
         /// <param name="key">Sprite to edit</param>
         /// <param name="x">Value of velocity to set</param>
-        public void SetVelocityX(string key, int x)
+        public void SetVelocityX(string key, double x)
         {
             sprites[key].SetVelocityX(x);
         }
@@ -252,7 +252,7 @@ namespace SharpSlugsEngine
         /// </summary>
         /// <param name="key">Sprite to edit</param>
         /// <param name="y">Value of horizontal velocity</param>
-        public void SetVelocityY(string key, int y)
+        public void SetVelocityY(string key, double y)
         {
             sprites[key].SetVelocityY(y);
         }
@@ -262,7 +262,7 @@ namespace SharpSlugsEngine
         /// </summary>
         /// <param name="key">Sprite to edit</param>
         /// <param name="x">Value of gravity to set</param>
-        public void SetGravityX(string key, int x)
+        public void SetGravityX(string key, double x)
         {
             sprites[key].SetGravityX(x);
         }
@@ -272,7 +272,7 @@ namespace SharpSlugsEngine
         /// </summary>
         /// <param name="key">Sprite to edit</param>
         /// <param name="y">Value of gravity to set</param>
-        public void SetGravityY(string key, int y)
+        public void SetGravityY(string key, double y)
         {
             sprites[key].SetGravityY(y);
         }
@@ -295,6 +295,10 @@ namespace SharpSlugsEngine
         public void AddCollision(string key, string other)
         {
             sprites[key].AddCollision(other);
+        }
+
+        public Sprite getSprite(string key) {
+            return sprites[key];
         }
     }
 }

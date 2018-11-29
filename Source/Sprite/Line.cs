@@ -15,8 +15,9 @@ namespace SharpSlugsEngine
         /// <param name="p1">First point of the line.</param>
         /// <param name="p2">Second point of the line.</param>
         /// <param name="color">Color of the line.</param>
-        public Line(Point p1, Point p2, Color color)
+        public Line(Game game, Point p1, Point p2, Color color)
         {
+            this.game = game;
             this.x = p1.X;
             this.y = p1.Y;
             this.w = p2.X - p1.X;
@@ -36,8 +37,9 @@ namespace SharpSlugsEngine
         /// <param name="x2">X of second point.</param>
         /// <param name="y2">Y of second point.</param>
         /// <param name="color">Color of the line.</param>
-        public Line(int x1, int y1, int x2, int y2, Color color)
+        public Line(Game game, int x1, int y1, int x2, int y2, Color color)
         {
+            this.game = game;
             this.x = x1;
             this.y = y1;
             this.w = x2 - x1;
@@ -55,7 +57,7 @@ namespace SharpSlugsEngine
         /// <param name="graphics">Graphics manager to use.</param>
         public override void Draw(GraphicsManager graphics)
         {
-            graphics.DrawLine(x, y, x + w, y + h, color);
+            graphics.DrawLine((float)x, (float)y, (float)(x + w), (float)(y + h), color);
         }
     }
 }

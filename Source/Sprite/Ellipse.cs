@@ -19,8 +19,9 @@ namespace SharpSlugsEngine
         /// <param name="h">Height of ellipse.</param>
         /// <param name="color">Color of ellipse.</param>
         /// <param name="fill">Whether or not to fill the ellipse.</param>
-        public Ellipse(int x, int y, int w, int h, Color color, bool fill = true)
+        public Ellipse(Game game, double x, double y, double w, double h, Color color, bool fill = true)
         {
+            this.game = game;
             this.x = x;
             this.y = y;
             this.w = w;
@@ -31,7 +32,7 @@ namespace SharpSlugsEngine
             alive = true;
             angle = 0;
             xAnchor = yAnchor = 0;
-            collider = new Physics.EllipseCollider(x + (w / 2), y + (h / 2), w, h);
+            collider = new Physics.EllipseCollider(0, 0, w, h);
         }
 
         /// <summary>
@@ -40,7 +41,7 @@ namespace SharpSlugsEngine
         /// <param name="graphics">Graphics manager to use.</param>
         public override void Draw(GraphicsManager graphics)
         {
-            graphics.DrawEllipse(x, y, w, h, color, fill, angle, xAnchor, yAnchor);
+            graphics.DrawEllipse((float)x, (float)y, (float)w, (float)h, color, fill, angle, xAnchor, yAnchor);
         }
     }
 }

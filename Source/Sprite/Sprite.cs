@@ -10,17 +10,17 @@ namespace SharpSlugsEngine
     public class Sprite
     {
         public Game game;
-        public int x, y, w, h;
-        public int velocityX = 0;
-        public int velocityY = 0;
-        public int gravityX = 0;
-        public int gravityY = 0;
+        public double x, y, w, h;
+        public double velocityX = 0;
+        public double velocityY = 0;
+        public double gravityX = 0;
+        public double gravityY = 0;
         public float angle;
         public double xAnchor, yAnchor;
         public bool alive;
         public bool disp;
         public Physics.Collider collider;
-        public List<string> collisions;
+        public List<string> collisions = new List<string>();
 
         /// <summary>
         /// Overridable Draw() function that is looped.
@@ -64,11 +64,11 @@ namespace SharpSlugsEngine
         /// </summary>
         /// <param name="x">Value to move the x value by.</param>
         /// <param name="y">Value to move the y value by.</param>
-        public void Move(int x, int y) 
+        public void Move(double x, double y) 
         {
             this.x += x;
             this.y += y;
-            collider.Position = new Vector2(this.x, this.y);
+            collider.Position = new Vector2((float)this.x, (float)this.y);
         }
 
         /// <summary>
@@ -90,7 +90,7 @@ namespace SharpSlugsEngine
         public void MoveX(int x) 
         {
             this.x += x;
-            collider.Position = new Vector2(this.x, collider.Position.Y);
+            collider.Position = new Vector2((float)this.x, collider.Position.Y);
         }
 
         /// <summary>
@@ -100,7 +100,7 @@ namespace SharpSlugsEngine
         public void MoveY(int y) 
         {
             this.y += y;
-            collider.Position = new Vector2(collider.Position.X, this.y);
+            collider.Position = new Vector2(collider.Position.X, (float)this.y);
         }
 
         /// <summary>
@@ -130,7 +130,7 @@ namespace SharpSlugsEngine
         public void ScaleX(double scale) 
         {
             w = (int)Math.Round(w * scale);
-            collider.Scale = new Vector2(w, h);
+            collider.Scale = new Vector2((float)w, (float)h);
         }
 
         /// <summary>
@@ -140,7 +140,7 @@ namespace SharpSlugsEngine
         public void ScaleY(double scale) 
         {
             h = (int)Math.Round(scale * h);
-            collider.Scale = new Vector2(w, h);
+            collider.Scale = new Vector2((float)w, (float)h);
         }
 
         /// <summary>
@@ -151,7 +151,7 @@ namespace SharpSlugsEngine
         {
             w = (int)Math.Round(w * scale);
             h = (int)Math.Round(scale * h);
-            collider.Scale = new Vector2(w, h);
+            collider.Scale = new Vector2((float)w, (float)h);
         }
 
         /// <summary>
@@ -186,47 +186,47 @@ namespace SharpSlugsEngine
         /// Sets the vertical velocity of the sprite.
         /// </summary>
         /// <param name="x">Amount to set the vertical velocity to.</param>
-        public void SetVelocityX(int x) 
+        public void SetVelocityX(double x) 
         {
             velocityX = x;
-            collider.Velocity = new Vector2(x, collider.Velocity.Y);
+            collider.Velocity = new Vector2((float)x, collider.Velocity.Y);
         }
 
         /// <summary>
         /// Sets the horizontal velocity of the sprite.
         /// </summary>
         /// <param name="y">Amount to set the horizontal velocity to.</param>
-        public void SetVelocityY(int y) 
+        public void SetVelocityY(double y) 
         {
             velocityY = y;
-            collider.Velocity = new Vector2(collider.Velocity.X, y);
+            collider.Velocity = new Vector2(collider.Velocity.X, (float)velocityY);
         }
 
         /// <summary>
         /// Adds to the vertical velocity of the sprite.
         /// </summary>
         /// <param name="x">Amount to add to the vertical velocity.</param>
-        public void AddVelocityX(int x) 
+        public void AddVelocityX(double x) 
         {
             velocityX += x;
-            collider.Velocity = new Vector2(velocityX, collider.Velocity.Y);
+            collider.Velocity = new Vector2((float)velocityX, collider.Velocity.Y);
         }
 
         /// <summary>
         /// Adds to the horizontal velocity of the sprite.
         /// </summary>
         /// <param name="y">Amount to add to the horizontal velocity.</param>
-        public void AddVelocityY(int y) 
+        public void AddVelocityY(double y) 
         {
             velocityY += y;
-            collider.Velocity = new Vector2(collider.Velocity.X, velocityY);
+            collider.Velocity = new Vector2(collider.Velocity.X, (float)velocityY);
         }
 
         /// <summary>
         /// Sets the vertical gravity of the sprite.
         /// </summary>
         /// <param name="x">Amount to set the vertical gravity to.</param>
-        public void SetGravityX(int x) 
+        public void SetGravityX(double x) 
         {
             gravityX = x;
         }
@@ -235,7 +235,7 @@ namespace SharpSlugsEngine
         /// Sets the horizontal gravity of the sprite.
         /// </summary>
         /// <param name="y">Amount to set the horizontal gravity to.</param>
-        public void SetGravityY(int y) 
+        public void SetGravityY(double y) 
         {
             gravityY = y;
         }

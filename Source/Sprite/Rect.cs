@@ -19,7 +19,7 @@ namespace SharpSlugsEngine
         /// <param name="h">Height of new rectangle.</param>
         /// <param name="color">Color of rectangle.</param>
         /// <param name="fill">Whether or not to fill the rectangle. True by default</param>
-        public Rect(int x, int y, int w, int h, Color color, bool fill = true)
+        public Rect(double x, double y, double w, double h, Color color, bool fill = true)
         {
             this.x = x;
             this.y = y;
@@ -31,7 +31,7 @@ namespace SharpSlugsEngine
             alive = true;
             angle = 0;
             xAnchor = yAnchor = 0;
-            collider = new Physics.RectangleCollider(x, y, w, h);
+            collider = new Physics.RectangleCollider(0, 0, w, h);
         }
 
         /// <summary>
@@ -40,7 +40,7 @@ namespace SharpSlugsEngine
         /// <param name="graphics">Graphics Manager to use.</param>
         public override void Draw(GraphicsManager graphics)
         {
-            graphics.DrawRectangle(x, y, w, h, color, fill, angle, xAnchor, yAnchor);
+            graphics.DrawRectangle((float)x, (float)y, (float)w, (float)h, color, fill, angle, xAnchor, yAnchor);
         }
     }
 }

@@ -12,14 +12,14 @@
         /// <param name="y">Y value of upper left hand corner.</param>
         /// <param name="w">Width of rectangle.</param>
         /// <param name="h">Height of rectangle.</param>
-        public RectangleCollider(int x, int y, int w, int h)
+        public RectangleCollider(double x, double y, double w, double h)
         {
             VerticesInternal = new Vector2[]
             {
-                new Vector2(x, y),
-                new Vector2(x + w, y),
-                new Vector2(x + w, y + h),
-                new Vector2(x, y + h)
+                new Vector2((float)x, (float)y),
+                new Vector2((float)(x + w), (float)y),
+                new Vector2((float)(x + w), (float)(y + h)),
+                new Vector2((float)x, (float)(y + h))
             };
             
             PRectangle rectangle = new PRectangle(Vertices[0], Vertices[1], Vertices[2], Vertices[3]);
@@ -29,6 +29,11 @@
                 rectangle.TriOne,
                 rectangle.TriTwo
             };
+
+            System.Console.WriteLine(VerticesInternal[0]);
+            System.Console.WriteLine(VerticesInternal[1]);
+            System.Console.WriteLine(VerticesInternal[2]);
+            System.Console.WriteLine(VerticesInternal[3]);
         }
     }
 }

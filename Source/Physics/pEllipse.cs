@@ -52,6 +52,7 @@ namespace SharpSlugsEngine.Physics
             {
                 Triangles.Add(new PTriangle(center, center + new Vector2(findEllipseX(nextAngle, width, height), findEllipseY(nextAngle, width, height)),
                         center + new Vector2(findEllipseX(nextAngle + genericAngle, width, height), findEllipseY(nextAngle + genericAngle, width, height))));
+
                 nextAngle += genericAngle;
             }
 

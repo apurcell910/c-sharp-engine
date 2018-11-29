@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using SharpSlugsEngine;
 using SharpSlugsEngine.Input;
 using SharpSlugsEngine.Sound;
+using SharpSlugsEngine.Physics;
 using System.Windows.Forms;
 namespace AcceptanceTest {
     class Program {
@@ -28,9 +29,14 @@ namespace AcceptanceTest {
         protected override void LoadContent() {
             Content.AddImage("../../images/redTank.png", "tank1");
             Content.AddImage("../../images/blueTank.png", "tank2");
-            Sprites.Add("Player1", new PlayerTank("tank1", 100, 695, true));
-            Sprites.Add("Player2", new PlayerTank("tank2", 1100, 695, false));
+            Content.AddFont("../../images/heav.ttf", "Heavy Data");
+
+            Sprites.Add("Player1", new PlayerTank(this, "tank1", 100, 695, true));
+            Sprites.Add("Player2", new PlayerTank(this, "tank2", 1100, 695, false));
             Sprites.Add("Ground", new Rect(0, 715, 1280, 5, Color.Brown));
+            Sprites.Add("Wall", new Rect(640, 500, 10, 220, Color.Brown));
+            Sprites.Display("Wall", true);
+            Sprites.Display("Ground", true);
         }
 
         protected override void Update(GameTime gameTime) {
@@ -70,31 +76,68 @@ namespace AcceptanceTest {
 
     class PlayerTank : SImage {
         double fireAngle;
+        double fireCooldown;
         int health;
+        bool playerOne;
         ActionSet action;
-        public PlayerTank(string image, int x, int y, bool playerOne) : base(x, y, 40, 20, image) {
-            fireAngle = 0;
+
+        public PlayerTank(Game game, string image, double x, double y, bool playerOne) : base(game, x, y, 40, 20, image) {
+            if (playerOne) {
+                fireAngle = -45;
+            } else {
+                fireAngle = -225;
+            }
             health = 100;
             action = new ActionSet(game);
             action.setPlayerControls(playerOne);
+            this.Display(true);
+            this.playerOne = playerOne;
         }
 
         public override void Update(GameTime gameTime) {
             base.Update(gameTime);
 
-            if (action.right.IsPressed) this.SetVelocityX(2);
-            if (action.left.IsPressed) this.SetVelocityX(-2);
+            this.SetVelocityX(0);
 
-            if(fireAngle < 120 && action.up.IsPressed) this.fireAngle += 1;
-            if(fireAngle > 45 && action.down.IsPressed) this.fireAngle -= 1;
+            if (action.right.IsPressed) this.SetVelocityX((int)(75));
+            if (action.left.IsPressed) this.SetVelocityX((int)(-75));
 
-            if (action.shoot.IsPressed) fireBullet();
+            if (this.collider.IsTouching(game.Sprites.getSprite("Wall").collider)) {
+                this.SetVelocityX(0);
+                if (playerOne) {
+                    MoveX(-1);
+                } else {
+                    MoveX(1);
+                }
+            }
+
+            if (playerOne) {
+                if (fireAngle > -120 && action.up.IsPressed) this.fireAngle -= 50 * gameTime.deltaTime.TotalSeconds;
+                if (fireAngle < 0 && action.down.IsPressed) this.fireAngle += 50 * gameTime.deltaTime.TotalSeconds;
+            } else {
+                if (fireAngle > -300 && action.down.IsPressed) this.fireAngle -= 50 * gameTime.deltaTime.TotalSeconds;
+                if (fireAngle < -120 && action.up.IsPressed) this.fireAngle += 50 * gameTime.deltaTime.TotalSeconds;
+            }
+            if (fireCooldown > 0) {
+                fireCooldown -= gameTime.deltaTime.TotalSeconds;
+            }
+
+            if (action.shoot.IsPressed && fireCooldown <= 0) {
+                fireBullet(playerOne);
+                fireCooldown = 1.5;
+            }
 
             if (health <= 0) this.Kill();
         }
 
-        public void fireBullet() {
-            this.game.Sprites.Add(GetBulletName(), new Bullet(x, y, fireAngle));
+        public override void Draw(GraphicsManager graphics) {
+            base.Draw(graphics);
+            graphics.DrawPolygon(collider.Vertices, Color.Red, false);
+        }
+
+        public void fireBullet(bool playerOne) {
+            string bullet = GetBulletName();
+            this.game.Sprites.Add(bullet, new Bullet(this.game, x, y, fireAngle, playerOne));
         }
 
         private static string bullet = "bullet";
@@ -105,17 +148,46 @@ namespace AcceptanceTest {
     }
 
     class Bullet : Ellipse {
-        public Bullet(int x, int y, double fireAngle) : base(x, y, 5, 5, Color.Black) {
-            this.SetGravityY(100);
-            Vector2 velocity = Vector2.Down.Rotate(Vector2.Zero, (float)fireAngle) * 50;
+        bool playerOne;
+        public Bullet(Game game, double x, double y, double fireAngle, bool playerOne) : base(game, x, y, 5, 5, Color.Black) {
+            this.SetGravityY(2);
+            Vector2 velocity;
+            float bulletSpeed = 225;
+            if (playerOne) {
+                velocity = Vector2.Right.Rotate(Vector2.Zero, (float)fireAngle) * bulletSpeed;
+            } else {
+                velocity = Vector2.Right.Rotate(Vector2.Zero, (float)fireAngle) * bulletSpeed;
+            }
+            
             this.SetVelocityX((int)velocity.X);
             this.SetVelocityY((int)velocity.Y);
+            this.Display(true);
+            this.playerOne = playerOne;
         }
         public override void Update(GameTime gameTime) {
             base.Update(gameTime);
-            if (this.y > 715) {
+            if (this.y > game.Graphics.WorldScale.Y) {
                 this.Kill();
             }
+            if (playerOne) {
+                if (this.collider.IsTouching(game.Sprites.getSprite("Player2").collider)) {
+                    game.Sprites.sprites["Player2"].Kill();
+                    this.Kill();
+                }
+            } else {
+                if (this.collider.IsTouching(game.Sprites.getSprite("Player1").collider)) {
+                    game.Sprites.sprites["Player1"].Kill();
+                    this.Kill();
+                }
+            }
+            if (this.collider.IsTouching(game.Sprites.getSprite("Wall").collider)) {
+                this.SetVelocityX(0);
+            }
+        }
+
+        public override void Draw(GraphicsManager graphics) {
+            base.Draw(graphics);
+            //game.Graphics.DrawPolygon(collider.Vertices, Color.Red, true);
         }
     }
 
@@ -142,6 +214,7 @@ namespace AcceptanceTest {
                 up.AddDevice(newController);
                 down.AddDevice(newController);
                 shoot.AddDevice(newController);
+                Console.WriteLine("Controller added");
             };
         }
 
