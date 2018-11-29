@@ -54,7 +54,9 @@ namespace SharpSlugsEngine.Input
         }
 
         private event MouseClick _leftClick;
+
         private event MouseClick _rightClick;
+
         private event MouseClick _middleClick;
 
         /// <summary>

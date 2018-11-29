@@ -163,7 +163,7 @@ namespace SharpSlugsEngine.Input
         /// <returns>True if an alphabetical key is pressed, False otherwise</returns>
         public bool AlphaIsPressed()
         {
-            foreach(KeyValuePair<Keys, bool> entry in currentKeys)
+            foreach (KeyValuePair<Keys, bool> entry in currentKeys)
             {
                 if (entry.Key <= Keys.Z && entry.Key >= Keys.A)
                 {
@@ -208,16 +208,21 @@ namespace SharpSlugsEngine.Input
             {
                 if ((entry.Key <= Keys.NumPad9 && entry.Key >= Keys.NumPad0)
                     || (entry.Key <= Keys.D9 && entry.Key >= Keys.D0))
+                {
                     if (entry.Value == true)
+                    {
                         return true;
+                    }
+                }
             }
+
             return false;
         }
 
         /// <summary>
-        /// Returns a list of numberical <see cref="Keys"/> pressed
+        /// Returns a list of numerical <see cref="Keys"/> pressed
         /// </summary>
-        /// <returns></returns>
+        /// <returns>List of numerical keys pressed</returns>
         public List<Keys> ListNumPressed()
         {
             List<Keys> o = new List<Keys>();
@@ -225,9 +230,14 @@ namespace SharpSlugsEngine.Input
             {
                 if ((entry.Key <= Keys.NumPad9 && entry.Key >= Keys.NumPad0)
                     || (entry.Key <= Keys.D9 && entry.Key >= Keys.D0))
+                {
                     if (entry.Value == true)
+                    {
                         o.Add(entry.Key);
+                    }
+                }
             }
+
             return o;
         }
 
@@ -239,6 +249,7 @@ namespace SharpSlugsEngine.Input
         public delegate void KeyPress();
 
         private event KeyPress _singleKey;
+
         public event KeyPress SingleKey
         {
             add => _singleKey += value;
@@ -247,57 +258,123 @@ namespace SharpSlugsEngine.Input
 
         public void AddKeybind(Keys key, Event e)
         {
-            SingleKey += () => { if (IsPressed(key)) e.CallEvent(); };
+            SingleKey += () => 
+            {
+                if (IsPressed(key))
+                {
+                    e.CallEvent();
+                }
+            };
         }
 
         public void RemoveKeybind(Keys key, Event e)
         {
-            SingleKey -= () => { if (IsPressed(key)) e.CallEvent(); };
+            SingleKey -= () => 
+            {
+                if (IsPressed(key))
+                {
+                    e.CallEvent();
+                }
+            };
         }
 
         public void AddMultiBind(List<Keys> l, Event e)
         {
-            SingleKey += () => {; };
+            SingleKey += () => 
+            {
+                if (l.TrueForAll(c => IsPressed(c)))
+                {
+                    e.CallEvent();
+                }
+            };
         }
 
         public void AddAlphaBind(Event e)
         {
-            SingleKey += () => { if (AlphaIsPressed()) e.CallEvent(); };
+            SingleKey += () => 
+            {
+                if (AlphaIsPressed())
+                {
+                    e.CallEvent();
+                }
+            };
         }
 
         public void RemoveAlphaBind(Event e)
         {
-            SingleKey -= () => { if (AlphaIsPressed()) e.CallEvent(); };
+            SingleKey -= () => 
+            {
+                if (AlphaIsPressed())
+                {
+                    e.CallEvent();
+                }
+            };
         }
 
         public void AddMassAlphaBind(Event e)
         {
-            SingleKey += () => { foreach (Keys key in ListAlphaPressed()) { e.CallEvent(key); } };
+            SingleKey += () => 
+            {
+                foreach (Keys key in ListAlphaPressed())
+                {
+                    e.CallEvent(key);
+                }
+            };
         }
 
         public void RemoveMassAlphaBind(Event e)
         {
-            SingleKey -= () => { foreach (Keys key in ListAlphaPressed()) { e.CallEvent(key); } };
+            SingleKey -= () => 
+            {
+                foreach (Keys key in ListAlphaPressed())
+                {
+                    e.CallEvent(key);
+                }
+            };
         }
 
         public void AddNumBind(Event e)
         {
-            SingleKey += () => { if (NumIsPressed()) e.CallEvent(); };
+            SingleKey += () =>
+            {
+                if (NumIsPressed())
+                {
+                    e.CallEvent();
+                }
+            };
         }
 
         public void RemoveNumBind(Event e)
         {
-            SingleKey -= () => { if (NumIsPressed()) e.CallEvent(); };
+            SingleKey -= () => 
+            {
+                if (NumIsPressed())
+                {
+                    e.CallEvent();
+                }
+            };
         }
 
         public void AddAlphaNumBind(Event e)
         {
-            SingleKey += () => { if (AlphaIsPressed() || NumIsPressed()) e.CallEvent(); };
+            SingleKey += () => 
+            {
+                if (AlphaIsPressed() || NumIsPressed())
+                {
+                    e.CallEvent();
+                }
+            };
         }
 
         public void RemoveAlphaNumBind(Event e)
         {
-            SingleKey -= () => { if (AlphaIsPressed() || NumIsPressed()) e.CallEvent(); };
+            SingleKey -= () => 
+            {
+                if (AlphaIsPressed() || NumIsPressed())
+                {
+                    e.CallEvent();
+                }
+            };
         }
         #endregion
     }
