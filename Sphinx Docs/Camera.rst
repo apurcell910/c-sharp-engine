@@ -194,7 +194,8 @@ Returns a string containing information about the Camera's world and screen posi
 :csharp:`void Dispose()`
 
 Disposes the Camera's internal buffers and removes it from the parent
-:doc:`CameraManager <CameraManager>`.
+:doc:`CameraManager <CameraManager>`. Equivalent to calling
+:ref:`CameraManager.RemoveCamera <CameraManagerRemoveCamera>`
 
 .. code-block:: csharp
    

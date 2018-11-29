@@ -201,7 +201,13 @@ namespace SharpSlugsEngine
         {
             // Call setup functions
             Initialize();
-            Cameras.Main = Cameras.Create(0, 0, Graphics.WorldScale.X, Graphics.WorldScale.Y);
+
+            // Create a camera if the designer hasn't
+            if (Cameras.Main == null)
+            {
+                Cameras.Main = Cameras.Create(0, 0, Graphics.WorldScale.X, Graphics.WorldScale.Y);
+            }
+
             LoadContent();
             
             CheckValues();
@@ -217,7 +223,7 @@ namespace SharpSlugsEngine
         /// <param name="updatable">The <see cref="IUpdatable"/> to begin calling <see cref="IUpdatable.Update(GameTime)"/> on</param>
         public void AddUpdatable(IUpdatable updatable)
         {
-            if (!updatable.Alive)
+            if (updatable == null || !updatable.Alive)
             {
                 return;
             }
@@ -234,6 +240,11 @@ namespace SharpSlugsEngine
         /// <param name="updatable">The <see cref="IUpdatable"/> to stop calling <see cref="IUpdatable.Update(GameTime)"/> on</param>
         public void RemoveUpdatable(IUpdatable updatable)
         {
+            if (updatable == null)
+            {
+                return;
+            }
+
             if (!removedUpdatables.Contains(updatable))
             {
                 removedUpdatables.Add(updatable);
@@ -246,7 +257,7 @@ namespace SharpSlugsEngine
         /// <param name="drawable">The <see cref="IDrawable"/> to begin calling <see cref="IDrawable.Draw(GameTime)"/> on</param>
         public void AddDrawable(IDrawable drawable)
         {
-            if (!drawable.Alive)
+            if (drawable == null || !drawable.Alive)
             {
                 return;
             }
@@ -263,6 +274,11 @@ namespace SharpSlugsEngine
         /// <param name="drawable">The <see cref="IDrawable"/> to stop calling <see cref="IDrawable.Draw(GameTime)"/> on</param>
         public void RemoveDrawable(IDrawable drawable)
         {
+            if (drawable == null)
+            {
+                return;
+            }
+
             if (!removedDrawables.Contains(drawable))
             {
                 removedDrawables.Add(drawable);

@@ -98,6 +98,7 @@ namespace SharpSlugsEngine
         {
             if (cam != null && cameras.Contains(cam))
             {
+                cameras.Remove(cam);
                 cam.Dispose();
 
                 if (cam == mainInternal)
