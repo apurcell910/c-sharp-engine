@@ -186,10 +186,7 @@ namespace SharpSlugsEngine
         /// <returns>The converted world coordinates.</returns>
         public Vector2 CameraToWorld(Vector2 cameraCoord, bool ignorePos = false)
         {
-            cameraCoord /= Size / game.Graphics.WorldScale;
-            cameraCoord *= Size;
-            cameraCoord /= DrawSize;
-            cameraCoord /= game.Graphics.WorldScale / Size;
+            cameraCoord *= Size / DrawSize;
             if (!ignorePos)
             {
                 cameraCoord += Position;
@@ -211,11 +208,8 @@ namespace SharpSlugsEngine
                 worldCoord -= Position;
             }
 
-            worldCoord *= game.Graphics.WorldScale / Size;
-
-            worldCoord = (worldCoord / Size) * DrawSize;
-
-            return worldCoord * (Size / game.Graphics.WorldScale);
+            worldCoord *= DrawSize / Size;
+            return worldCoord;
         }
 
         /// <summary>

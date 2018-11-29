@@ -115,13 +115,13 @@ namespace SharpSlugsEngine
         public bool Vsync { get; protected set; }
 
         /// <summary>
-        /// Gets or sets the framerate the game will attempt to reach (But not exceed). Set to -1 for no target.
+        /// Gets or sets the frame rate the game will attempt to reach (But not exceed). Set to -1 for no target.
         /// Overridden by <see cref="Vsync"/> if applicable.
         /// </summary>
         public int TargetFramerate { get; protected set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether the GameTime passed to Update and Draw will always assume the target framerate is being met.
+        /// Gets or sets a value indicating whether the GameTime passed to Update and Draw will always assume the target frame rate is being met.
         /// <see cref="TargetFramerate"/> must be set for this to take effect.
         /// </summary>
         public bool FixedTimestep { get; protected set; }
@@ -217,6 +217,11 @@ namespace SharpSlugsEngine
         /// <param name="updatable">The <see cref="IUpdatable"/> to begin calling <see cref="IUpdatable.Update(GameTime)"/> on</param>
         public void AddUpdatable(IUpdatable updatable)
         {
+            if (!updatable.Alive)
+            {
+                return;
+            }
+
             if (!newUpdatables.Contains(updatable))
             {
                 newUpdatables.Add(updatable);
@@ -241,6 +246,11 @@ namespace SharpSlugsEngine
         /// <param name="drawable">The <see cref="IDrawable"/> to begin calling <see cref="IDrawable.Draw(GameTime)"/> on</param>
         public void AddDrawable(IDrawable drawable)
         {
+            if (!drawable.Alive)
+            {
+                return;
+            }
+
             if (!newDrawables.Contains(drawable))
             {
                 newDrawables.Add(drawable);
