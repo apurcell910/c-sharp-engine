@@ -30,6 +30,7 @@ scale.
    
    // Grab an image called "test.png" name it "test" and scale it by half
    content.AddImage("test.png", "test", 0.5)
+
 ----
 
 .. _ContentManagerAddFont:
@@ -47,6 +48,7 @@ be stored in the font cache.
    
    // Grab a certain font from a filePath and stored in the cache with the fileName
    content.AddFont("consolas.ttf", "new_font");
+
 ----
 
 .. _ContentManagerGetFont:
@@ -62,6 +64,7 @@ optional argument fontSize and defaulted at 32.
 	// Create a ContentManager by passing a game reference
    ContentManager content = new ContentManager(game);
    Font new_font = content.GetFont("new_font");
+
 ----
 
 .. _ContentManagerAddSound:
@@ -80,7 +83,8 @@ is the amount of sounds to load defaulted at once.
    
    // Add a file "music.mp3" and name it "main_theme" 
    // and allow allow it to load once
-   content.AddSound("music.mp3", "main_theme", 1)
+   content.AddSound("music.mp3", "main_theme", 1);
+
 ----
 
 .. _ContentManagerGetSound:
@@ -98,6 +102,7 @@ given name "name".
    // Create a new sound and set it to a sound pulled from the
    // Content Manager
    Sound main_theme = Content.GetSound("main_theme");
+
 ----
    
 .. _ContentManagerScaleImageBitmap:
@@ -115,6 +120,7 @@ Returns the newly scaled Bitmap.
    // Scale an bitmap by half
    Bitmap bmp = new Bitmap("test.bmp");
    Bitmap scale_test = ScaleImage(bmp, 2);
+
 ----
 
 .. _ContentManagerScaleImageBitmapArray:
@@ -139,6 +145,7 @@ Returns newly scaled Bitmap array.
    
    // Scale all images in bmp by half
    Bitmap test[num_images] = ScaleImage(bmp, 2);
+
 ----
 
 .. _ContentManagerGetImage:
@@ -158,6 +165,7 @@ in the Content Manager.
    // GetImage function to pull it from the Content Manager
    content.AddImage("test.png", "test");
    Bitmap bmp = content.GetImage("test");
+
 ----
 
 .. _ContentManagerInManager:
@@ -180,6 +188,7 @@ and false otherwise.
    {
 		Console.WriteLine("Image was found");
    }
+
 ----
 
 .. _ContentManagerPrintNames:
@@ -201,10 +210,11 @@ within the Content Manager.
    
    content.PrintNames();
    
-   //This will print the following
+   // This will print the following
    // test1
    // test2
    // test3
+
 ----
 
 .. _ContentManagerSplitImageString:
@@ -223,6 +233,7 @@ new image in the return Bitmap array. The new array is also stored in the Conten
    
    // This will create an array of 8 Bitmap named with each index named test1, test2 ... test8
    Bitmap test[] = content.SplitImage("test.png", 4, "test");
+
 ----
 
 .. _ContentManagerSplitImageBitmap:

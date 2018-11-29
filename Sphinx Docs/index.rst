@@ -20,24 +20,8 @@ Contents:
    GraphicsManager
    Vector2
    
-   Input/DeviceManager
-   Input/GameController
-   Input/InputAction
-   Input/InputDevice
-   Input/KeyboardManager
-   Input/MouseManager
-   Input/XboxController
-   
+   Input
    Interfaces
    Physics
-   
-   Sound/Sound
-   Sound/SoundCache
-   
-   Sprite/Ellipse
-   Sprite/Line
-   Sprite/Rect
-   Sprite/SImage
-   Sprite/Sprite
-   Sprite/SpriteEvents
-   Sprite/SpriteList
+   Sound
+   Sprite

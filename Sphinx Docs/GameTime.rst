@@ -7,5 +7,3 @@ GameTime
 
 .. role csharp(code)
    :language: csharp
-
-:ref:`ContentManager.GetImage <ContentManagerGetImage>`
