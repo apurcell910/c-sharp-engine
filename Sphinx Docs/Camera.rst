@@ -128,7 +128,7 @@ Methods
 
 Converts a pixel position on the Camera into world coordinates. If ignorePos is true,
 the Camera's position will not be used in the scaling of the given
-:ref:`Vector2 <../Vector2>`. This is useful for scaling sizes rather than positions.
+:doc:`Vector2 <../Vector2>`. This is useful for scaling sizes rather than positions.
 
 .. code-block:: csharp
    
@@ -151,7 +151,7 @@ the Camera's position will not be used in the scaling of the given
 
 Converts a world coordinate position into a pixel position on the Camera. If ignorePos
 is true, the Camera's position will not be used in the scaling of the given
-:ref:`Vector2 <../Vector2>`. This is useful for scaling sizes rather than positions.
+:doc:`Vector2 <../Vector2>`. This is useful for scaling sizes rather than positions.
 
 .. code-block:: csharp
    

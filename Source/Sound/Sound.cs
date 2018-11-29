@@ -6,7 +6,7 @@ namespace SharpSlugsEngine.Sound
     /// <summary>
     /// The state in the loading process of a <see cref="Sound"/> object
     /// </summary>
-    public enum SoundState
+    internal enum SoundState
     {
         Loading,
         Loaded,
@@ -47,21 +47,21 @@ namespace SharpSlugsEngine.Sound
         public delegate void SoundEvent(Sound sound);
 
         /// <summary>
-        /// Called when the Sound either finishes loading or fails to load. Check <see cref="LoadState"/> to see which.
-        /// </summary>
-        public event SoundEvent SoundLoaded
-        {
-            add => SoundLoadedInternal += value;
-            remove => SoundLoadedInternal -= value;
-        }
-
-        /// <summary>
         /// Called when the Sound completes playing
         /// </summary>
         public event SoundEvent PlaybackFinished
         {
             add => PlaybackFinishedInternal += value;
             remove => PlaybackFinishedInternal -= value;
+        }
+
+        /// <summary>
+        /// Called when the Sound either finishes loading or fails to load. Check <see cref="LoadState"/> to see which.
+        /// </summary>
+        internal event SoundEvent SoundLoaded
+        {
+            add => SoundLoadedInternal += value;
+            remove => SoundLoadedInternal -= value;
         }
 
         /// <summary>
@@ -142,16 +142,16 @@ namespace SharpSlugsEngine.Sound
         /// The length of the Sound in seconds
         /// </summary>
         public float Duration => (float)player.NaturalDuration.TimeSpan.TotalSeconds;
-
-        /// <summary>
-        /// Gets the state of the Sound
-        /// </summary>
-        public SoundState LoadState { get; private set; } = SoundState.Loading;
         
         /// <summary>
         /// Gets a value indicating whether the <see cref="Game"/> should continue updating this object
         /// </summary>
         bool IUpdatable.Alive => aliveInternal;
+
+        /// <summary>
+        /// Gets the state of the Sound
+        /// </summary>
+        internal SoundState LoadState { get; private set; } = SoundState.Loading;
 
         /// <summary>
         /// Pause the Sound
@@ -170,13 +170,10 @@ namespace SharpSlugsEngine.Sound
         }
 
         /// <summary>
-        /// Play the Sound from <paramref name="position"/>
+        /// Play the Sound
         /// </summary>
-        /// <param name="position">The position to play the <see cref="Sound"/> from</param>
-        public void Play(float position = 0f)
+        public void Play()
         {
-            player.Stop();
-            Position = position;
             player.Play();
         }
 

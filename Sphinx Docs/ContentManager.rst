@@ -56,8 +56,9 @@ be stored in the font cache.
 :csharp:`Font GetFont(string name, int fontSize)`
 
 Returns a font from the font cache using the font's name
-that was set in :ref:`GetFont`. Font size can be set using
-optional argument fontSize and defaulted at 32.
+that was set in :ref:`AddFont <ContentManagerAddFont>`.
+Font size can be set using optional argument fontSize and
+defaulted at 32.
 
 .. code-block:: csharp
    
@@ -82,7 +83,7 @@ is the amount of sounds to load defaulted at once.
    ContentManager content = new ContentManager(game);
    
    // Add a file "music.mp3" and name it "main_theme" 
-   // and allow allow it to load once
+   // and allow it to load once
    content.AddSound("music.mp3", "main_theme", 1);
 
 ----

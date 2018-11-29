@@ -88,6 +88,8 @@ namespace SharpSlugsEngine.Sound
             if (sound.LoadState == SoundState.Loaded && unavailable.Contains(sound))
             {
                 sound.Stop();
+                sound.Loop = false;
+                sound.DisposeOnFinished = false;
                 sound.Position = 0;
                 sound.Muted = false;
                 sound.Volume = 100;
