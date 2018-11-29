@@ -11,28 +11,58 @@ using System.Windows.Forms;
 namespace AcceptanceTest {
     class Program {
         static void Main() {
-
+            AceptanceTestGame game = new AceptanceTestGame();
+            game.Resolution = new Vector2(1280 * 0.75f, 1280 * 0.75f);
+            game.Run();
         }
     }
     class AceptanceTestGame : Game {
+        private bool gameOver;
+        private int winner;
         protected override void Initialize() {
             Graphics.BackColor = Color.Gray;
             Graphics.SetWorldScale(new Vector2(1280, 720));
+            gameOver = false;
         }
 
         protected override void LoadContent() {
             Content.AddImage("putFilePathHere", "tank");
-            Sprites.Add("Player1", new PlayerTank("tank", 100, 700, true));
-            Sprites.Add("Player2", new PlayerTank("tank", 1100, 700, false));
-            //Tim add rectangle(s) for map
+            Sprites.Add("Player1", new PlayerTank("tank", 100, 695, true));
+            Sprites.Add("Player2", new PlayerTank("tank", 1100, 695, false));
+            Sprites.Add("Ground", new Rect(0, 715, 1280, 5, Color.Brown));
         }
 
         protected override void Update(GameTime gameTime) {
-            //Tim add check for health <= 0;
+            if (gameOver)
+            {
+                //Maybe start new game on some button press?
+                return;
+            }
+
+            if (!Sprites.IsAlive("Player1"))
+            {
+                winner = 2;
+                Sprites.Kill("Player2");
+                gameOver = true;
+                return;
+            }
+
+            if (!Sprites.IsAlive("Player2"))
+            {
+                winner = 1;
+                Sprites.Kill("Player1");
+                gameOver = true;
+                return;
+            }
+
+
         }
 
         protected override void Draw(GameTime gameTime) {
-            throw new NotImplementedException();
+            if (gameOver)
+            {
+                Graphics.DrawText("Player " + winner + " Wins", Content.GetFont("Heavy Data", 128), Color.White, Resolution, Resolution, 0, TextAlign.BottomRight, DrawType.Screen);
+            }
         }
 
     }
@@ -52,12 +82,14 @@ namespace AcceptanceTest {
             base.Update(gameTime);
 
             if (action.right.IsPressed) this.SetVelocityX(2);
-            if(action.left.IsPressed) this.SetVelocityX(-2);
+            if (action.left.IsPressed) this.SetVelocityX(-2);
 
             if(fireAngle < 120 && action.up.IsPressed) this.fireAngle += 1;
             if(fireAngle > 45 && action.down.IsPressed) this.fireAngle -= 1;
 
             if (action.shoot.IsPressed) fireBullet();
+
+            if (health <= 0) this.Kill();
         }
 
         public void fireBullet() {
@@ -80,7 +112,7 @@ namespace AcceptanceTest {
         }
         public override void Update(GameTime gameTime) {
             base.Update(gameTime);
-            if (this.y > 720) {
+            if (this.y > 715) {
                 this.Kill();
             }
         }

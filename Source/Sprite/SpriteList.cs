@@ -5,7 +5,7 @@ namespace SharpSlugsEngine
     /// <summary>
     /// Contains the sprites used within the game world itself, automatically called to update and draw each draw/update cycle.
     /// </summary>
-    public class SpriteList 
+    public class SpriteList
     {
         private Game game;
         private Dictionary<string, Sprite> sprites = new Dictionary<string, Sprite>();
@@ -16,7 +16,7 @@ namespace SharpSlugsEngine
         /// Initializes a new instance of the <see cref="SpriteList" /> class.
         /// </summary>
         /// <param name="graphics">Graphics manager to use</param>
-        public SpriteList(GraphicsManager graphics, Game game) 
+        public SpriteList(GraphicsManager graphics, Game game)
         {
             this.graphics = graphics;
             this.game = game;
@@ -25,10 +25,10 @@ namespace SharpSlugsEngine
         /// <summary>
         /// Function to update the sprites. Not called by user.
         /// </summary>
-        public void Update(GameTime gameTime) 
+        public void Update(GameTime gameTime)
         {
             movement.UpdateSprites(ref sprites);
-            foreach (KeyValuePair<string, Sprite> obj in sprites) 
+            foreach (KeyValuePair<string, Sprite> obj in sprites)
             {
                 if (obj.Value.alive)
                 {
@@ -40,9 +40,9 @@ namespace SharpSlugsEngine
         /// <summary>
         /// Function to draw the sprites. Not called by user.
         /// </summary>
-        public void Draw() 
+        public void Draw()
         {
-            foreach (KeyValuePair<string, Sprite> obj in sprites) 
+            foreach (KeyValuePair<string, Sprite> obj in sprites)
             {
                 if (obj.Value.disp && obj.Value.alive)
                 {
@@ -215,6 +215,16 @@ namespace SharpSlugsEngine
         public void Kill(string key)
         {
             sprites[key].Kill();
+        }
+
+        /// <summary>
+        /// Checks if sprite is still alive.
+        /// </summary>
+        /// <param name="key">Sprite to check</param>
+        /// <returns>True if sprite is alive, false if not</returns>
+        public bool IsAlive(string key)
+        {
+            return sprites[key].alive;
         }
 
         /// <summary>

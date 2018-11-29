@@ -157,6 +157,10 @@ namespace SharpSlugsEngine.Input
         private void RegisterKeyUp(object sender, KeyEventArgs args) => asyncKeys[args.KeyCode] = false;
 
         #region Timothy WIP
+        /// <summary>
+        /// Checks if any alphabetical key is pressed
+        /// </summary>
+        /// <returns>True if an alphabetical key is pressed, False otherwise</returns>
         public bool AlphaIsPressed()
         {
             foreach(KeyValuePair<Keys, bool> entry in currentKeys)
@@ -173,18 +177,31 @@ namespace SharpSlugsEngine.Input
             return false;
         }
 
+        /// <summary>
+        /// Returns a list of alphabetical <see cref="Keys"/> pressed
+        /// </summary>
+        /// <returns>List of alphabetical <see cref="Keys"/> pressed</returns>
         public List<Keys> ListAlphaPressed()
         {
             List<Keys> o = new List<Keys>();
             foreach (KeyValuePair<Keys, bool> entry in currentKeys)
             {
                 if (entry.Key <= Keys.Z && entry.Key >= Keys.A)
+                {
                     if (entry.Value == true)
+                    { 
                         o.Add(entry.Key);
+                    }
+                }
             }
+
             return o;
         }
 
+        /// <summary>
+        /// checks if any numerical keys are pressed
+        /// </summary>
+        /// <returns>true if a numerical key is pressed, false otherwise</returns>
         public bool NumIsPressed()
         {
             foreach (KeyValuePair<Keys, bool> entry in currentKeys)
@@ -197,6 +214,10 @@ namespace SharpSlugsEngine.Input
             return false;
         }
 
+        /// <summary>
+        /// Returns a list of numberical <see cref="Keys"/> pressed
+        /// </summary>
+        /// <returns></returns>
         public List<Keys> ListNumPressed()
         {
             List<Keys> o = new List<Keys>();
