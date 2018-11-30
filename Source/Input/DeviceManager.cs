@@ -130,7 +130,7 @@ namespace SharpSlugsEngine.Input
         /// Searches for new <see cref="GameController"/> connections, as well as updating existing ones
         /// </summary>
         /// <param name="time">Struct containing the elapsed time since the last <see cref="Update(GameTime)"/></param>
-        public void Update(GameTime time)
+        internal void Update(GameTime time)
         {
             // Check for controllers infrequently, takes too much CPU power
             if ((time.totalTime - lastCheck).TotalSeconds >= 1f)

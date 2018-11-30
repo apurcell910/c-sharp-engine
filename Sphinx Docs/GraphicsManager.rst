@@ -25,13 +25,8 @@ rather than draw using pixel coordinates on the screen.
 
 -----
 
-.. _GraphicsManagerBackColor
+.. _GraphicsManagerBackColor:
 
 :csharp:`Color BackColor`
 
 Gets the background color and sets the background color.
-
------
-
-
-
