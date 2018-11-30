@@ -30,6 +30,7 @@ rather than draw using pixel coordinates on the screen.
 :csharp:`Color BackColor{ get; set; }`
 
 Gets the background color and sets the background color.
+<<<<<<< HEAD
 
 -----
 

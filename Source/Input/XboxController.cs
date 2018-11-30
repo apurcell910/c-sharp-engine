@@ -82,7 +82,7 @@ namespace SharpSlugsEngine.Input
         }
 
         /// <summary>
-        /// Called when the left bumber is pressed
+        /// Called when the left bumper is pressed
         /// </summary>
         public event ButtonPressed LBPressed
         {
@@ -538,7 +538,7 @@ namespace SharpSlugsEngine.Input
         }
 
         /// <summary>
-        /// Contains all information for an <see cref="XboxController"/>s buttons
+        /// Contains all information for an <see cref="XboxController"/>'s buttons
         /// </summary>
         public struct ButtonState
         {

@@ -12,10 +12,12 @@ namespace SharpSlugsEngine.Input
         /// <summary>
         /// Initializes a new instance of the <see cref="KeyState"/> struct with the given values
         /// </summary>
+        /// <param name="key">The key this KeyState represents</param>
         /// <param name="isPressed">Whether the key is currently pressed</param>
         /// <param name="wasPressed">Whether the key was pressed on the last frame</param>
-        internal KeyState(bool isPressed, bool wasPressed)
+        internal KeyState(Keys key, bool isPressed, bool wasPressed)
         {
+            Key = key;
             IsPressed = isPressed;
             WasPressed = wasPressed;
         }
@@ -29,6 +31,11 @@ namespace SharpSlugsEngine.Input
         /// Gets a value indicating whether the key was pressed
         /// </summary>
         public bool WasPressed { get; private set; }
+
+        /// <summary>
+        /// Gets the key that this <see cref="KeyState"/> represents
+        /// </summary>
+        public Keys Key { get; private set; }
     }
 
     /// <summary>
@@ -76,7 +83,7 @@ namespace SharpSlugsEngine.Input
         /// </summary>
         /// <param name="key">The key to check input on</param>
         /// <returns>A <see cref="KeyState"/> containing information about the specified key</returns>
-        public KeyState this[Keys key] => new KeyState(IsPressed(key), WasPressed(key));
+        public KeyState this[Keys key] => new KeyState(key, IsPressed(key), WasPressed(key));
 
         /// <summary>
         /// Checks if a given key is pressed

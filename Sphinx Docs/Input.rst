@@ -10,4 +10,5 @@ Input
    Input/InputAction
    Input/KeyboardManager
    Input/MouseManager
+   Input/Structs
    Input/XboxController
