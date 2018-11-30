@@ -199,7 +199,7 @@ namespace SharpSlugsEngine.Sound
         /// <param name="gameTime">Delta time information used to calculate when 2 seconds have passed</param>
         void IUpdatable.Update(GameTime gameTime)
         {
-            aliveTime += (float)gameTime.deltaTime.TotalSeconds;
+            aliveTime += (float)gameTime.DeltaTime.TotalSeconds;
 
             if (aliveTime >= 2)
             {

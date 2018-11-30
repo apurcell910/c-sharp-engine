@@ -293,9 +293,9 @@ namespace SharpSlugsEngine
             GameTime updateTime = new GameTime();
             GameTime drawTime = new GameTime();
 
-            updateTime.deltaTime = globalClock.Elapsed - deltaUpdate;
+            updateTime.DeltaTime = globalClock.Elapsed - deltaUpdate;
             deltaUpdate = globalClock.Elapsed;
-            updateTime.totalTime = globalClock.Elapsed;
+            updateTime.TotalTime = globalClock.Elapsed;
 
             Controllers.Update(updateTime);
             Keyboard.Update();
@@ -315,15 +315,15 @@ namespace SharpSlugsEngine
             Actions.Update();
             Sprites.Update(updateTime);
 
-            drawTime.deltaTime = globalClock.Elapsed - deltaDraw;
+            drawTime.DeltaTime = globalClock.Elapsed - deltaDraw;
             if (targetSpf != TimeSpan.Zero)
             {
                 // TODO: FIX THIS TIMOHTY
                 // if the targetUpdate is within 1/4 of a second of time passed
-                if (targetSpf.TotalMilliseconds >= drawTime.deltaTime.TotalMilliseconds)
+                if (targetSpf.TotalMilliseconds >= drawTime.DeltaTime.TotalMilliseconds)
                 {
                     deltaDraw = globalClock.Elapsed;
-                    drawTime.totalTime = globalClock.Elapsed;
+                    drawTime.TotalTime = globalClock.Elapsed;
 
                     Graphics.Begin();
                     Sprites.Draw();
@@ -347,7 +347,7 @@ namespace SharpSlugsEngine
             else
             {
                 deltaDraw = globalClock.Elapsed;
-                drawTime.totalTime = globalClock.Elapsed;
+                drawTime.TotalTime = globalClock.Elapsed;
 
                 Graphics.Begin();
                 Sprites.Draw();

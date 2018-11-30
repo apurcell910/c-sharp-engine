@@ -28,7 +28,7 @@ namespace SharpSlugsEngine.Physics
                 {
                     obj.Value.AddVelocityX(obj.Value.gravityX);
                     obj.Value.AddVelocityY(obj.Value.gravityY);
-                    obj.Value.Move(obj.Value.velocityX * gameTime.deltaTime.TotalSeconds, obj.Value.velocityY * gameTime.deltaTime.TotalSeconds);
+                    obj.Value.Move(obj.Value.velocityX * gameTime.DeltaTime.TotalSeconds, obj.Value.velocityY * gameTime.DeltaTime.TotalSeconds);
 
                     if (obj.Value.collisions != null)
                     {

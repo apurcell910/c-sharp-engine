@@ -133,7 +133,7 @@ namespace SharpSlugsEngine.Input
         public void Update(GameTime time)
         {
             // Check for controllers infrequently, takes too much CPU power
-            if ((time.totalTime - lastCheck).TotalSeconds >= 1f)
+            if ((time.TotalTime - lastCheck).TotalSeconds >= 1f)
             {
                 Devices = GetDevices();
                 List<GameController> gameControllers = new List<GameController>();
@@ -205,7 +205,7 @@ namespace SharpSlugsEngine.Input
 
                 controllersInternal = gameControllers.ToArray();
                 xboxControllersInternal = controllersInternal.Where(controller => controller is XboxController).Select(controller => controller as XboxController).ToArray();
-                lastCheck = time.totalTime;
+                lastCheck = time.TotalTime;
             }
 
             foreach (GameController controller in controllersInternal)
