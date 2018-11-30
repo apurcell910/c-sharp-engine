@@ -26,9 +26,10 @@ namespace AcceptanceTest {
         }
 
         protected override void LoadContent() {
-            Content.AddImage("putFilePathHere", "tank");
-            Sprites.Add("Player1", new PlayerTank("tank", 100, 695, true));
-            Sprites.Add("Player2", new PlayerTank("tank", 1100, 695, false));
+            Content.AddImage("../../images/redTank.png", "tank1");
+            Content.AddImage("../../images/blueTank.png", "tank2");
+            Sprites.Add("Player1", new PlayerTank("tank1", 100, 695, true));
+            Sprites.Add("Player2", new PlayerTank("tank2", 1100, 695, false));
             Sprites.Add("Ground", new Rect(0, 715, 1280, 5, Color.Brown));
         }
 
