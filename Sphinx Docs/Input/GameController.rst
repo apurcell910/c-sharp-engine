@@ -34,6 +34,9 @@ Enums
 
 .. _GameControllerControllerType:
 
+ControllerType
+--------------
+
 .. code-block:: csharp
    
    enum ControllerType
