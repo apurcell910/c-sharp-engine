@@ -112,14 +112,14 @@ namespace AcceptanceTest {
             }
 
             if (playerOne) {
-                if (fireAngle > -120 && action.up.IsPressed) this.fireAngle -= 50 * gameTime.deltaTime.TotalSeconds;
-                if (fireAngle < 0 && action.down.IsPressed) this.fireAngle += 50 * gameTime.deltaTime.TotalSeconds;
+                if (fireAngle > -120 && action.up.IsPressed) this.fireAngle -= 50 * gameTime.DeltaTime.TotalSeconds;
+                if (fireAngle < 0 && action.down.IsPressed) this.fireAngle += 50 * gameTime.DeltaTime.TotalSeconds;
             } else {
-                if (fireAngle > -300 && action.down.IsPressed) this.fireAngle -= 50 * gameTime.deltaTime.TotalSeconds;
-                if (fireAngle < -120 && action.up.IsPressed) this.fireAngle += 50 * gameTime.deltaTime.TotalSeconds;
+                if (fireAngle > -300 && action.down.IsPressed) this.fireAngle -= 50 * gameTime.DeltaTime.TotalSeconds;
+                if (fireAngle < -120 && action.up.IsPressed) this.fireAngle += 50 * gameTime.DeltaTime.TotalSeconds;
             }
             if (fireCooldown > 0) {
-                fireCooldown -= gameTime.deltaTime.TotalSeconds;
+                fireCooldown -= gameTime.DeltaTime.TotalSeconds;
             }
 
             if (action.shoot.IsPressed && fireCooldown <= 0) {

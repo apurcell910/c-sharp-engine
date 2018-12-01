@@ -29,11 +29,6 @@
                 rectangle.TriOne,
                 rectangle.TriTwo
             };
-
-            System.Console.WriteLine(VerticesInternal[0]);
-            System.Console.WriteLine(VerticesInternal[1]);
-            System.Console.WriteLine(VerticesInternal[2]);
-            System.Console.WriteLine(VerticesInternal[3]);
         }
     }
 }

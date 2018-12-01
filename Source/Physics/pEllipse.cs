@@ -8,9 +8,6 @@ namespace SharpSlugsEngine.Physics
     /// </summary>
     public struct PEllipse
     {
-        public Vector2 Center;
-        public List<PTriangle> Triangles;
-
         /// <summary>
         /// Initializes a new instance of the <see cref="PEllipse"/> struct
         /// </summary>
@@ -43,6 +40,16 @@ namespace SharpSlugsEngine.Physics
         /// Gets the area of the Ellipse
         /// </summary>
         public float Area { get; private set; }
+
+        /// <summary>
+        /// Gets center of the PEllipse
+        /// </summary>
+        public Vector2 Center { get; private set; }
+
+        /// <summary>
+        /// Gets list of triangles the Ellipse is made of
+        /// </summary>
+        public List<PTriangle> Triangles { get; private set; }
 
         /// <summary>
         /// Finds the X component of the edge of an ellipse given angle, width, and height

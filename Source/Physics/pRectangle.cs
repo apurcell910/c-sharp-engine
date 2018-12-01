@@ -11,9 +11,6 @@ namespace SharpSlugsEngine.Physics
     /// </summary>
     public struct PRectangle
     {
-        public PTriangle TriOne;
-        public PTriangle TriTwo;
-
         /// <summary>
         /// Initializes a new instance of the <see cref="PRectangle"/> struct using 4 verticies
         /// </summary>
@@ -44,6 +41,16 @@ namespace SharpSlugsEngine.Physics
         /// Gets an area for the Rectangle
         /// </summary>
         public float Area { get; private set; }
+
+        /// <summary>
+        /// Gets a Triangle for the PRectangle
+        /// </summary>
+        public PTriangle TriOne { get; private set; }
+
+        /// <summary>
+        /// Gets a Triangle for the PRectangle
+        /// </summary>
+        public PTriangle TriTwo { get; private set; }
 
         /// <summary>
         /// Checks if a certain point exists within the Rect
