@@ -441,4 +441,3 @@ TextAlign is used by the :ref:`DrawText<GraphicsManagerDrawText>`. This Enum tel
 the function to use TopLeft, TopCenter, TopRight, MiddleLeft, MiddleCenter, MiddleRight,
 BottomLeft, BottomCenter, BottomRight alignment. 
 
------

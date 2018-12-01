@@ -178,7 +178,7 @@ namespace Test_Game
             }
 
             //Move the player
-            playerPos += moveVec * 250 * (float)gameTime.deltaTime.TotalSeconds;
+            playerPos += moveVec * 250 * (float)gameTime.DeltaTime.TotalSeconds;
 
             //Keep the player on the screen
             if (playerPos.X < shipSize.X / 2f) playerPos = new Vector2(shipSize.X / 2f, playerPos.Y);
@@ -203,8 +203,8 @@ namespace Test_Game
             bullets.RemoveAll(bullet => bullet.Dead);
             asteroids.RemoveAll(asteroid => asteroid.Dead);
 
-            bulletCooldown -= (float)gameTime.deltaTime.TotalSeconds;
-            asteroidCooldown -= (float)gameTime.deltaTime.TotalSeconds;
+            bulletCooldown -= (float)gameTime.DeltaTime.TotalSeconds;
+            asteroidCooldown -= (float)gameTime.DeltaTime.TotalSeconds;
 
             if (shooting && bulletCooldown <= 0f)
             {

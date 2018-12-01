@@ -7,7 +7,14 @@ namespace SharpSlugsEngine
     /// </summary>
     public struct GameTime
     {
-        public TimeSpan DeltaTime;
-        public TimeSpan TotalTime;
+        /// <summary>
+        /// Gets the DeltaTime, time since last frame
+        /// </summary>
+        public TimeSpan DeltaTime { get; private set; }
+
+        /// <summary>
+        /// Gets the TotalTime since the game started
+        /// </summary>
+        public TimeSpan TotalTime { get; private set; }
     }
 }

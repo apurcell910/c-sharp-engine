@@ -23,7 +23,7 @@ Field/Properties
 
 .. _PEllipseArea:
 
-:csharp:`float Area {get; }`
+:csharp:`float Area { get; }`
 
 Returns area of the PEllipse.
 
@@ -43,7 +43,5 @@ Center of the PEllipse.
 
 List of all triangles that the PEllipse is 
 made out of.
-
------
 
 

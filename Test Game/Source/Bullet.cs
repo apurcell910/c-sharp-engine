@@ -29,7 +29,7 @@ namespace Test_Game
         {
             if (Dead) return;
 
-            Position = Position + Velocity * (float)gameTime.deltaTime.TotalSeconds;
+            Position = Position + Velocity * (float)gameTime.DeltaTime.TotalSeconds;
 
             if (Position.X < 0 || Position.X > _game.Graphics.WorldScale.X || Position.Y < 0 || Position.Y > _game.Graphics.WorldScale.Y)
             {

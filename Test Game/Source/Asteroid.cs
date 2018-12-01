@@ -82,14 +82,14 @@ namespace Test_Game
         {
             if (Dead) return;
 
-            poly.Position = poly.Position + poly.Velocity * (float)gameTime.deltaTime.TotalSeconds;
+            poly.Position = poly.Position + poly.Velocity * (float)gameTime.DeltaTime.TotalSeconds;
 
             if (poly.Position.X < -100 || poly.Position.X > _game.Graphics.WorldScale.X + 100 || poly.Position.Y < -100 || poly.Position.Y > _game.Graphics.WorldScale.Y + 100)
             {
                 Dead = true;
             }
 
-            poly.Rotation += rotSpeed * (float)gameTime.deltaTime.TotalSeconds * 5;
+            poly.Rotation += rotSpeed * (float)gameTime.DeltaTime.TotalSeconds * 5;
         }
 
         public bool CheckCollision(Vector2 loc)
