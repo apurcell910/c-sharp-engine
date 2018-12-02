@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.Serialization;
 using System.Text;
 
 namespace SharpSlugsEngine
@@ -24,6 +25,19 @@ namespace SharpSlugsEngine
         public static byte[] Serialize(object obj, bool cacheFields = true)
         {
             return Serialize(obj, cacheFields, 0);
+        }
+
+        /// <summary>
+        /// Deserializes a byte array into an object.
+        /// </summary>
+        /// <typeparam name="T">The Type of the object to deserialize into.</typeparam>
+        /// <param name="bytes">The byte array to deserialize</param>
+        /// <param name="cacheFields">Whether or not to cache information about the object type for future calls</param>
+        /// <returns>The deserialized object</returns>
+        public static T Deserialize<T>(byte[] bytes, bool cacheFields = true)
+        {
+            int bytePos = 0;
+            return (T)Deserialize(typeof(T), bytes, ref bytePos, cacheFields);
         }
 
         /// <summary>
@@ -70,6 +84,177 @@ namespace SharpSlugsEngine
         }
 
         /// <summary>
+        /// Deserializes a string object from a byte array
+        /// </summary>
+        /// <param name="bytes">The byte array to deserialize from</param>
+        /// <param name="bytePos">The position in the byte array to deserialize from</param>
+        /// <returns>The deserialized object</returns>
+        private static string GetStringFromBytes(byte[] bytes, ref int bytePos)
+        {
+            int strLen = GetIntFromBytes(bytes, ref bytePos);
+            if (bytes.Length - bytePos < strLen)
+            {
+                throw new ArgumentException("Unexpected end of array in deserialization");
+            }
+
+            bytePos += strLen;
+            return Encoding.ASCII.GetString(bytes, bytePos - strLen, strLen);
+        }
+
+        /// <summary>
+        /// Deserializes an int object from a byte array
+        /// </summary>
+        /// <param name="bytes">The byte array to deserialize from</param>
+        /// <param name="bytePos">The position in the byte array to deserialize from</param>
+        /// <returns>The deserialized object</returns>
+        private static int GetIntFromBytes(byte[] bytes, ref int bytePos)
+        {
+            if (bytes.Length - bytePos < 4)
+            {
+                throw new ArgumentException("Unexpected end of array in deserialization");
+            }
+
+            bytePos += 4;
+            return BitConverter.ToInt32(bytes, bytePos - 4);
+        }
+
+        /// <summary>
+        /// Deserializes a short object from a byte array
+        /// </summary>
+        /// <param name="bytes">The byte array to deserialize from</param>
+        /// <param name="bytePos">The position in the byte array to deserialize from</param>
+        /// <returns>The deserialized object</returns>
+        private static short GetShortFromBytes(byte[] bytes, ref int bytePos)
+        {
+            if (bytes.Length - bytePos < 2)
+            {
+                throw new ArgumentException("Unexpected end of array in deserialization");
+            }
+
+            bytePos += 2;
+            return BitConverter.ToInt16(bytes, bytePos - 2);
+        }
+
+        /// <summary>
+        /// Deserializes a ushort object from a byte array
+        /// </summary>
+        /// <param name="bytes">The byte array to deserialize from</param>
+        /// <param name="bytePos">The position in the byte array to deserialize from</param>
+        /// <returns>The deserialized object</returns>
+        private static ushort GetUShortFromBytes(byte[] bytes, ref int bytePos)
+        {
+            if (bytes.Length - bytePos < 2)
+            {
+                throw new ArgumentException("Unexpected end of array in deserialization");
+            }
+
+            bytePos += 2;
+            return BitConverter.ToUInt16(bytes, bytePos - 2);
+        }
+
+        /// <summary>
+        /// Deserializes an unsigned integer object from a byte array
+        /// </summary>
+        /// <param name="bytes">The byte array to deserialize from</param>
+        /// <param name="bytePos">The position in the byte array to deserialize from</param>
+        /// <returns>The deserialized object</returns>
+        private static uint GetUIntFromBytes(byte[] bytes, ref int bytePos)
+        {
+            if (bytes.Length - bytePos < 4)
+            {
+                throw new ArgumentException("Unexpected end of array in deserialization");
+            }
+
+            bytePos += 4;
+            return BitConverter.ToUInt32(bytes, bytePos - 4);
+        }
+
+        /// <summary>
+        /// Deserializes a long object from a byte array
+        /// </summary>
+        /// <param name="bytes">The byte array to deserialize from</param>
+        /// <param name="bytePos">The position in the byte array to deserialize from</param>
+        /// <returns>The deserialized object</returns>
+        private static long GetLongFromBytes(byte[] bytes, ref int bytePos)
+        {
+            if (bytes.Length - bytePos < 8)
+            {
+                throw new ArgumentException("Unexpected end of array in deserialization");
+            }
+
+            bytePos += 8;
+            return BitConverter.ToInt64(bytes, bytePos - 8);
+        }
+
+        /// <summary>
+        /// Deserializes an unsigned long object from a byte array
+        /// </summary>
+        /// <param name="bytes">The byte array to deserialize from</param>
+        /// <param name="bytePos">The position in the byte array to deserialize from</param>
+        /// <returns>The deserialized object</returns>
+        private static ulong GetULongFromBytes(byte[] bytes, ref int bytePos)
+        {
+            if (bytes.Length - bytePos < 8)
+            {
+                throw new ArgumentException("Unexpected end of array in deserialization");
+            }
+
+            bytePos += 8;
+            return BitConverter.ToUInt64(bytes, bytePos - 8);
+        }
+
+        /// <summary>
+        /// Deserializes a character object from a byte array
+        /// </summary>
+        /// <param name="bytes">The byte array to deserialize from</param>
+        /// <param name="bytePos">The position in the byte array to deserialize from</param>
+        /// <returns>The deserialized object</returns>
+        private static char GetCharFromBytes(byte[] bytes, ref int bytePos)
+        {
+            if (bytes.Length - bytePos < 2)
+            {
+                throw new ArgumentException("Unexpected end of array in deserialization");
+            }
+
+            bytePos += 2;
+            return BitConverter.ToChar(bytes, bytePos - 2);
+        }
+
+        /// <summary>
+        /// Deserializes a double object from a byte array
+        /// </summary>
+        /// <param name="bytes">The byte array to deserialize from</param>
+        /// <param name="bytePos">The position in the byte array to deserialize from</param>
+        /// <returns>The deserialized object</returns>
+        private static double GetDoubleFromBytes(byte[] bytes, ref int bytePos)
+        {
+            if (bytes.Length - bytePos < 8)
+            {
+                throw new ArgumentException("Unexpected end of array in deserialization");
+            }
+
+            bytePos += 8;
+            return BitConverter.ToDouble(bytes, bytePos - 8);
+        }
+
+        /// <summary>
+        /// Deserializes a float object from a byte array
+        /// </summary>
+        /// <param name="bytes">The byte array to deserialize from</param>
+        /// <param name="bytePos">The position in the byte array to deserialize from</param>
+        /// <returns>The deserialized object</returns>
+        private static float GetFloatFromBytes(byte[] bytes, ref int bytePos)
+        {
+            if (bytes.Length - bytePos < 4)
+            {
+                throw new ArgumentException("Unexpected end of array in deserialization");
+            }
+
+            bytePos += 4;
+            return BitConverter.ToSingle(bytes, bytePos - 4);
+        }
+
+        /// <summary>
         /// Serializes an object into a byte array
         /// </summary>
         /// <param name="obj">The object to serialize</param>
@@ -81,7 +266,7 @@ namespace SharpSlugsEngine
             // Special case for null and max depth
             if (obj == null || currentDepth >= 10)
             {
-                return new byte[] { 0 };
+                return BitConverter.GetBytes(-1);
             }
 
             if (!IsSerializable(obj))
@@ -90,6 +275,23 @@ namespace SharpSlugsEngine
             }
 
             Type objType = obj.GetType();
+
+            // Special case for arrays
+            if (objType.IsArray)
+            {
+                using (MemoryStream stream = new MemoryStream())
+                {
+                    Array objArray = (Array)obj;
+                    stream.Write(BitConverter.GetBytes(objArray.Length));
+
+                    for (int i = 0; i < objArray.Length; i++)
+                    {
+                        stream.Write(Serialize(objArray.GetValue(i), cacheFields, currentDepth++));
+                    }
+
+                    return stream.ToArray();
+                }
+            }
 
             // Special cases for primitives
             if (objType == typeof(bool))
@@ -194,6 +396,199 @@ namespace SharpSlugsEngine
                 }
 
                 return stream.ToArray();
+            }
+        }
+
+        /// <summary>
+        /// Deserializes a byte array into an object.
+        /// </summary>
+        /// <param name="returnType">The Type of the object to deserialize into.</param>
+        /// <param name="bytes">The byte array to deserialize</param>
+        /// <param name="bytePos">The current position in the byte array</param>
+        /// <param name="cacheFields">Whether or not to cache information about the object type for future calls</param>
+        /// <param name="objType">Optionally skip calculation of object type from bytes</param>
+        /// <returns>The deserialized object</returns>
+        private static object Deserialize(Type returnType, byte[] bytes, ref int bytePos, bool cacheFields, Type objType = null)
+        {
+            if (returnType == null)
+            {
+                throw new ArgumentNullException("Parameter \"returnType\" may not be null.");
+            }
+
+            if (bytes == null || bytes.Length == 0)
+            {
+                throw new ArgumentNullException("Parameter \"bytes\" may not be null or empty.");
+            }
+
+            if (objType == null)
+            {
+                int nullCheck = GetIntFromBytes(bytes, ref bytePos);
+                if (nullCheck == -1)
+                {
+                    if (returnType.IsValueType)
+                    {
+                        return Activator.CreateInstance(returnType);
+                    }
+
+                    return null;
+                }
+
+                bytePos -= 4;
+
+                objType = Type.GetType(GetStringFromBytes(bytes, ref bytePos));
+            }
+
+            if (!objType.IsAssignableFrom(returnType))
+            {
+                throw new ArgumentException($"Given type \"{returnType.Name}\" does not match type \"{objType.Name}\" in serialized bytes.");
+            }
+
+            if (!CachedFields.TryGetValue(returnType, out FieldInfo[] fields))
+            {
+                // Get every instance field in this object, including private fields and base types
+                fields = returnType.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.FlattenHierarchy);
+
+                if (cacheFields)
+                {
+                    CachedFields[returnType] = fields;
+                }
+            }
+
+            if (returnType == typeof(string) || returnType.IsPrimitive)
+            {
+                return GetValueOfField(returnType, bytes, ref bytePos, cacheFields);
+            }
+
+            object returnObj = FormatterServices.GetUninitializedObject(returnType);
+
+            int fieldCount = GetIntFromBytes(bytes, ref bytePos);
+            while (fieldCount > 0)
+            {
+                string fieldName = GetStringFromBytes(bytes, ref bytePos);
+                
+                FieldInfo field = fields.Where(f => f.Name == fieldName).FirstOrDefault();
+                
+                if (field == null)
+                {
+                    throw new ArgumentException($"Given type \"{returnType}\" does not contain a field named \"{fieldName}\".");
+                }
+
+                field.SetValue(returnObj, GetValueOfField(field.FieldType, bytes, ref bytePos, cacheFields));
+
+                fieldCount--;
+            }
+
+            return returnObj;
+        }
+
+        /// <summary>
+        /// Gets the value of the current field in the byte array
+        /// </summary>
+        /// <param name="fieldType">The type of the field</param>
+        /// <param name="bytes">The bytes to get the field from</param>
+        /// <param name="bytePos">The current position in the byte array</param>
+        /// <param name="cacheFields">Whether or not to cache fields in potential Deserialize calls</param>
+        /// <returns>The field value</returns>
+        private static object GetValueOfField(Type fieldType, byte[] bytes, ref int bytePos, bool cacheFields)
+        {
+            if (fieldType.IsArray)
+            {
+                int arrayLength = GetIntFromBytes(bytes, ref bytePos);
+
+                if (arrayLength == -1)
+                {
+                    return null;
+                }
+                else
+                {
+                    Array array = (Array)Activator.CreateInstance(fieldType, arrayLength);
+                    Type arrayType = array.GetType().GetElementType();
+
+                    for (int i = 0; i < arrayLength; i++)
+                    {
+                        if (arrayType == typeof(string) || arrayType.IsPrimitive)
+                        {
+                            array.SetValue(Deserialize(arrayType, bytes, ref bytePos, cacheFields, arrayType), i);
+                        }
+                        else
+                        {
+                            array.SetValue(Deserialize(arrayType, bytes, ref bytePos, cacheFields), i);
+                        }
+                    }
+
+                    return array;
+                }
+            }
+            else if (fieldType == typeof(bool))
+            {
+                if (bytePos >= bytes.Length)
+                {
+                    throw new ArgumentException("Unexpected end of array in deserialization");
+                }
+
+                return bytes[bytePos++] == 1;
+            }
+            else if (fieldType == typeof(byte))
+            {
+                if (bytePos >= bytes.Length)
+                {
+                    throw new ArgumentException("Unexpected end of array in deserialization");
+                }
+
+                return bytes[bytePos++];
+            }
+            else if (fieldType == typeof(sbyte))
+            {
+                if (bytePos >= bytes.Length)
+                {
+                    throw new ArgumentException("Unexpected end of array in deserialization");
+                }
+
+                return (sbyte)(bytes[bytePos++] - 128);
+            }
+            else if (fieldType == typeof(short))
+            {
+                return GetShortFromBytes(bytes, ref bytePos);
+            }
+            else if (fieldType == typeof(ushort))
+            {
+                return GetUShortFromBytes(bytes, ref bytePos);
+            }
+            else if (fieldType == typeof(int))
+            {
+                return GetIntFromBytes(bytes, ref bytePos);
+            }
+            else if (fieldType == typeof(uint))
+            {
+                return GetUIntFromBytes(bytes, ref bytePos);
+            }
+            else if (fieldType == typeof(long))
+            {
+                return GetLongFromBytes(bytes, ref bytePos);
+            }
+            else if (fieldType == typeof(ulong))
+            {
+                return GetULongFromBytes(bytes, ref bytePos);
+            }
+            else if (fieldType == typeof(char))
+            {
+                return GetCharFromBytes(bytes, ref bytePos);
+            }
+            else if (fieldType == typeof(double))
+            {
+                return GetDoubleFromBytes(bytes, ref bytePos);
+            }
+            else if (fieldType == typeof(float))
+            {
+                return GetFloatFromBytes(bytes, ref bytePos);
+            }
+            else if (fieldType == typeof(string))
+            {
+                return GetStringFromBytes(bytes, ref bytePos);
+            }
+            else
+            {
+                return Deserialize(fieldType, bytes, ref bytePos, cacheFields);
             }
         }
     }

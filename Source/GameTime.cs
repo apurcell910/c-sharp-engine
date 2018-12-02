@@ -10,11 +10,11 @@ namespace SharpSlugsEngine
         /// <summary>
         /// Gets the DeltaTime, time since last frame
         /// </summary>
-        public TimeSpan DeltaTime { get; private set; }
+        public TimeSpan DeltaTime { get; internal set; }
 
         /// <summary>
         /// Gets the TotalTime since the game started
         /// </summary>
-        public TimeSpan TotalTime { get; private set; }
+        public TimeSpan TotalTime { get; internal set; }
     }
 }

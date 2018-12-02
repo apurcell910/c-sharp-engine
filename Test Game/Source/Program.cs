@@ -15,6 +15,30 @@ namespace Test_Game
         internal int yes = 562;
 
         public SerializationTest reference;
+
+        protected SerializationTest2[] strings = new SerializationTest2[]
+        {
+            new SerializationTest2(),
+            new SerializationTest2(),
+            new SerializationTest2(),
+            new SerializationTest2(),
+            new SerializationTest2()
+        };
+
+        public override string ToString()
+        {
+            return str + "\n" + yes.ToString() + "\n" + reference + "\n" + strings[0] + "\n" + strings[1] + "\n" + strings[2] + "\n" + strings[3] + "\n" + strings[4];
+        }
+    }
+
+    public class SerializationTest2
+    {
+        private int oakes = 400;
+
+        public override string ToString()
+        {
+            return oakes.ToString();
+        }
     }
 #pragma warning restore 0414
 
@@ -36,6 +60,10 @@ namespace Test_Game
             }
 
             System.IO.File.WriteAllBytes("../../Content/test", bytes);
+
+            SerializationTest deserialized = SerializationUtility.Deserialize<SerializationTest>(bytes);
+
+            Console.WriteLine(deserialized);
 
             TestGame test =  new TestGame();
             test.Resolution = new Vector2(1280 * 0.75f, 720 * 0.75f);
