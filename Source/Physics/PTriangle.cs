@@ -58,8 +58,8 @@ namespace SharpSlugsEngine.Physics
             float crossProd2 = Vector2.CrossProduct(VertexTwo, point, VertexThree);
             float crossProd3 = Vector2.CrossProduct(VertexThree, point, VertexOne);
 
-            return (crossProd1 > 0 && crossProd2 > 0 && crossProd3 > 0)
-                || (crossProd1 < 0 && crossProd2 < 0 && crossProd3 < 0);
+            return (crossProd1 >= 0 && crossProd2 >= 0 && crossProd3 >= 0)
+                || (crossProd1 <= 0 && crossProd2 <= 0 && crossProd3 <= 0);
         }
         
         /// <summary>
