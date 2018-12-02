@@ -19,8 +19,9 @@ namespace SharpSlugsEngine
         /// <param name="h">Height of new rectangle.</param>
         /// <param name="color">Color of rectangle.</param>
         /// <param name="fill">Whether or not to fill the rectangle. True by default</param>
-        public Rect(double x, double y, double w, double h, Color color, bool fill = true)
+        public Rect(Game game, double x, double y, double w, double h, Color color, bool fill = true)
         {
+            this.game = game;
             this.x = x;
             this.y = y;
             this.w = w;
