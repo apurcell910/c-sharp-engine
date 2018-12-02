@@ -82,7 +82,7 @@ namespace SharpSlugsEngine
         /// <param name="key">The name of the sprite to move</param>
         /// <param name="x">How much to change the x value by. A negative value moves the sprite to the left.</param>
         /// <param name="y">How much to change the y value by. A negative value moves the sprite up.</param>
-        public void Move(string key, int x, int y)
+        public void Move(string key, double x, double y)
         {
             this.sprites[key].Move(x, y);
         }
@@ -93,7 +93,7 @@ namespace SharpSlugsEngine
         /// <param name="key">Sprite to edit</param>
         /// <param name="x">New x position of sprite</param>
         /// <param name="y">New y position of sprite</param>
-        public void MoveTo(string key, int x, int y)
+        public void MoveTo(string key, double x, double y)
         {
             this.sprites[key].MoveTo(x, y);
         }
@@ -103,7 +103,7 @@ namespace SharpSlugsEngine
         /// </summary>
         /// <param name="key">Sprite to edit</param>
         /// <param name="x">How much to move the sprite by.</param>
-        public void MoveX(string key, int x)
+        public void MoveX(string key, double x)
         {
             this.sprites[key].MoveX(x);
         }
@@ -113,7 +113,7 @@ namespace SharpSlugsEngine
         /// </summary>
         /// <param name="key">Sprite to edit</param>
         /// <param name="y">How far to move the sprite</param>
-        public void MoveY(string key, int y)
+        public void MoveY(string key, double y)
         {
             this.sprites[key].MoveY(y);
         }
@@ -159,16 +159,6 @@ namespace SharpSlugsEngine
         }
 
         /// <summary>
-        /// Returns the size of a sprite
-        /// </summary>
-        /// <param name="key">Sprite to request size of</param>
-        /// <returns>Vector of width and height of the sprite</returns>
-        public Vector2 GetSize(string key)
-        {
-            return new Vector2((float)sprites[key].w, (float)sprites[key].h);
-        }
-
-        /// <summary>
         /// Scale entire sprite
         /// </summary>
         /// <param name="key">Sprite to edit</param>
@@ -176,6 +166,16 @@ namespace SharpSlugsEngine
         public void Scale(string key, double scale)
         {
             sprites[key].Scale(scale);
+        }
+
+        /// <summary>
+        /// Returns the size of a sprite
+        /// </summary>
+        /// <param name="key">Sprite to request size of</param>
+        /// <returns>Vector of width and height of the sprite</returns>
+        public Vector2 GetSize(string key)
+        {
+            return new Vector2((float)sprites[key].w, (float)sprites[key].h);
         }
 
         /// <summary>
@@ -297,7 +297,13 @@ namespace SharpSlugsEngine
             sprites[key].AddCollision(other);
         }
 
-        public Sprite getSprite(string key) {
+        /// <summary>
+        /// Returns a copy of the sprite
+        /// </summary>
+        /// <param name="key">Sprite to return</param>
+        /// <returns>A copy of the sprite</returns>
+        public Sprite GetSprite(string key)
+        {
             return sprites[key];
         }
     }

@@ -7,7 +7,7 @@ namespace SharpSlugsEngine
     /// Overridable sprite class. Not meant to be used on it's own, is instead intended to
     /// be overridden by the user as needed for additional kinds of sprites.
     /// </summary>
-    public class Sprite
+    public abstract class Sprite
     {
         public Game game;
         public double x, y, w, h;
@@ -76,18 +76,18 @@ namespace SharpSlugsEngine
         /// </summary>
         /// <param name="x">New value of x.</param>
         /// <param name="y">New value of y.</param>
-        public void MoveTo(int x, int y)
+        public void MoveTo(double x, double y)
         {
             this.x = x;
             this.y = y;
-            collider.Position = new Vector2(x, y);
+            collider.Position = new Vector2((float)x, (float)y);
         }
 
         /// <summary>
         /// Moves the sprite vertically
         /// </summary>
         /// <param name="x">Amount to move the sprite horizontally by.</param>
-        public void MoveX(int x) 
+        public void MoveX(double x) 
         {
             this.x += x;
             collider.Position = new Vector2((float)this.x, collider.Position.Y);
@@ -97,7 +97,7 @@ namespace SharpSlugsEngine
         /// Moves the sprite vertically.
         /// </summary>
         /// <param name="y">Amount to move the sprite vertically by.</param>
-        public void MoveY(int y) 
+        public void MoveY(double y) 
         {
             this.y += y;
             collider.Position = new Vector2(collider.Position.X, (float)this.y);
