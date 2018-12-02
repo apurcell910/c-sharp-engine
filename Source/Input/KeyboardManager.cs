@@ -79,6 +79,25 @@ namespace SharpSlugsEngine.Input
         }
 
         /// <summary>
+        /// Delegate for keyboard events
+        /// </summary>
+        public delegate void KeyPress();
+
+        /// <summary>
+        /// Chunks of code are added here to form an event list
+        /// </summary>
+        public event KeyPress SingleKey
+        {
+            add => _singleKey += value;
+            remove => _singleKey -= value;
+        }
+
+        /// <summary>
+        /// Private event list used by SingleKey
+        /// </summary>
+        private event KeyPress _singleKey;
+
+        /// <summary>
         /// Alias for the <see cref="IsPressed(Keys)"/> and <see cref="WasPressed(Keys)"/> functions
         /// </summary>
         /// <param name="key">The key to check input on</param>
@@ -107,6 +126,272 @@ namespace SharpSlugsEngine.Input
             currentKeys.TryGetValue(key, out bool current);
 
             return current && !old;
+        }
+
+        /// <summary>
+        /// Checks if any alphabetical key is pressed
+        /// </summary>
+        /// <returns>True if an alphabetical key is pressed, False otherwise</returns>
+        public bool AlphaIsPressed()
+        {
+            foreach (KeyValuePair<Keys, bool> entry in currentKeys)
+            {
+                if (entry.Key <= Keys.Z && entry.Key >= Keys.A)
+                {
+                    if (entry.Value == true)
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Returns a list of alphabetical <see cref="Keys"/> pressed
+        /// </summary>
+        /// <returns>List of alphabetical <see cref="Keys"/> pressed</returns>
+        public List<Keys> ListAlphaPressed()
+        {
+            List<Keys> o = new List<Keys>();
+            foreach (KeyValuePair<Keys, bool> entry in currentKeys)
+            {
+                if (entry.Key <= Keys.Z && entry.Key >= Keys.A)
+                {
+                    if (entry.Value == true)
+                    {
+                        o.Add(entry.Key);
+                    }
+                }
+            }
+
+            return o;
+        }
+
+        /// <summary>
+        /// checks if any numerical keys are pressed
+        /// </summary>
+        /// <returns>true if a numerical key is pressed, false otherwise</returns>
+        public bool NumIsPressed()
+        {
+            foreach (KeyValuePair<Keys, bool> entry in currentKeys)
+            {
+                if ((entry.Key <= Keys.NumPad9 && entry.Key >= Keys.NumPad0)
+                    || (entry.Key <= Keys.D9 && entry.Key >= Keys.D0))
+                {
+                    if (entry.Value == true)
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Returns a list of numerical <see cref="Keys"/> pressed
+        /// </summary>
+        /// <returns>List of numerical keys pressed</returns>
+        public List<Keys> ListNumPressed()
+        {
+            List<Keys> o = new List<Keys>();
+            foreach (KeyValuePair<Keys, bool> entry in currentKeys)
+            {
+                if ((entry.Key <= Keys.NumPad9 && entry.Key >= Keys.NumPad0)
+                    || (entry.Key <= Keys.D9 && entry.Key >= Keys.D0))
+                {
+                    if (entry.Value == true)
+                    {
+                        o.Add(entry.Key);
+                    }
+                }
+            }
+
+            return o;
+        }
+
+        /// <summary>
+        /// Checks if an arrow key is pressed
+        /// </summary>
+        /// <warning> currently unimplemented</warning>
+        /// <returns>True if arrow key is pressed, false else</returns>
+        public bool ArrowIsPressed() ////Todo Timothy
+        {
+            return false;
+        }
+
+        /// <summary>
+        /// Adds an event to activate on a key press.
+        /// </summary>
+        /// <param name="key">Key to link event to</param>
+        /// <param name="e">Event to add</param>
+        public void AddKeybind(Keys key, Event e)
+        {
+            SingleKey += () =>
+            {
+                if (IsPressed(key))
+                {
+                    e.CallEvent();
+                }
+            };
+        }
+
+        /// <summary>
+        /// Removes an event to activate on a key press.
+        /// </summary>
+        /// <param name="key">Key to link event to</param>
+        /// <param name="e">Event to remove</param>
+        public void RemoveKeybind(Keys key, Event e)
+        {
+            SingleKey -= () =>
+            {
+                if (IsPressed(key))
+                {
+                    e.CallEvent();
+                }
+            };
+        }
+
+        /// <summary>
+        /// Adds an event to activate on a list of key presses.
+        /// </summary>
+        /// <param name="l">List of keys for trigger</param>
+        /// <param name="e">Event to add</param>
+        public void AddMultiBind(List<Keys> l, Event e)
+        {
+            SingleKey += () =>
+            {
+                if (l.TrueForAll(c => IsPressed(c)))
+                {
+                    e.CallEvent();
+                }
+            };
+        }
+
+        /// <summary>
+        /// Adds an event to activate on Alphabetical key presses.
+        /// </summary>
+        /// <param name="e">Event to add</param>
+        public void AddAlphaBind(Event e)
+        {
+            SingleKey += () =>
+            {
+                if (AlphaIsPressed())
+                {
+                    e.CallEvent();
+                }
+            };
+        }
+
+        /// <summary>
+        /// Removes an event from activating on Alphabetical key presses.
+        /// </summary>
+        /// <Warning> Currently does not work. </Warning>
+        /// <param name="e">Event to remove</param>
+        public void RemoveAlphaBind(Event e)
+        {
+            SingleKey -= () =>
+            {
+                if (AlphaIsPressed())
+                {
+                    e.CallEvent();
+                }
+            };
+        }
+
+        /// <summary>
+        /// Adds an event to activate on each Alphabetical key presses.
+        /// </summary>
+        /// <param name="e">Event to add</param>
+        public void AddMassAlphaBind(Event e)
+        {
+            SingleKey += () =>
+            {
+                foreach (Keys key in ListAlphaPressed())
+                {
+                    e.CallEvent(key);
+                }
+            };
+        }
+
+        /// <summary>
+        /// Removes an event from activating on each key presses.
+        /// </summary>
+        /// <Warning> Currently does not work. </Warning>       
+        /// <param name="e">Event to remove</param>
+        public void RemoveMassAlphaBind(Event e)
+        {
+            SingleKey -= () =>
+            {
+                foreach (Keys key in ListAlphaPressed())
+                {
+                    e.CallEvent(key);
+                }
+            };
+        }
+
+        /// <summary>
+        /// Adds an event to activate on Numeric key presses.
+        /// </summary>
+        /// <param name="e">Event to add</param>
+        public void AddNumBind(Event e)
+        {
+            SingleKey += () =>
+            {
+                if (NumIsPressed())
+                {
+                    e.CallEvent();
+                }
+            };
+        }
+
+        /// <summary>
+        /// Removes an event from activating on Numeric key presses.
+        /// </summary>
+        /// <Warning> Currently does not work. </Warning>
+        /// <param name="e">Event to remove</param>
+        public void RemoveNumBind(Event e)
+        {
+            SingleKey -= () =>
+            {
+                if (NumIsPressed())
+                {
+                    e.CallEvent();
+                }
+            };
+        }
+
+        /// <summary>
+        /// Adds an event to activate on Alphabetical and Numeric key presses.
+        /// </summary>
+        /// <param name="e">Event to add</param>
+        public void AddAlphaNumBind(Event e)
+        {
+            SingleKey += () =>
+            {
+                if (AlphaIsPressed() || NumIsPressed())
+                {
+                    e.CallEvent();
+                }
+            };
+        }
+
+        /// <summary>
+        /// Removes an event from activating on Alphabetical and Numeric key presses.
+        /// </summary>
+        /// <Warning> Currently does not work. </Warning>
+        /// <param name="e">Event to remove</param>
+        public void RemoveAlphaNumBind(Event e)
+        {
+            SingleKey -= () =>
+            {
+                if (AlphaIsPressed() || NumIsPressed())
+                {
+                    e.CallEvent();
+                }
+            };
         }
 
         /// <summary>
@@ -162,227 +447,5 @@ namespace SharpSlugsEngine.Input
         /// <param name="sender">The parameter is not used.</param>
         /// <param name="args">Contains the key to set as not pressed</param>
         private void RegisterKeyUp(object sender, KeyEventArgs args) => asyncKeys[args.KeyCode] = false;
-
-        #region Timothy WIP
-        /// <summary>
-        /// Checks if any alphabetical key is pressed
-        /// </summary>
-        /// <returns>True if an alphabetical key is pressed, False otherwise</returns>
-        public bool AlphaIsPressed()
-        {
-            foreach (KeyValuePair<Keys, bool> entry in currentKeys)
-            {
-                if (entry.Key <= Keys.Z && entry.Key >= Keys.A)
-                {
-                    if (entry.Value == true)
-                    {
-                        return true;
-                    }
-                }
-            }
-
-            return false;
-        }
-
-        /// <summary>
-        /// Returns a list of alphabetical <see cref="Keys"/> pressed
-        /// </summary>
-        /// <returns>List of alphabetical <see cref="Keys"/> pressed</returns>
-        public List<Keys> ListAlphaPressed()
-        {
-            List<Keys> o = new List<Keys>();
-            foreach (KeyValuePair<Keys, bool> entry in currentKeys)
-            {
-                if (entry.Key <= Keys.Z && entry.Key >= Keys.A)
-                {
-                    if (entry.Value == true)
-                    { 
-                        o.Add(entry.Key);
-                    }
-                }
-            }
-
-            return o;
-        }
-
-        /// <summary>
-        /// checks if any numerical keys are pressed
-        /// </summary>
-        /// <returns>true if a numerical key is pressed, false otherwise</returns>
-        public bool NumIsPressed()
-        {
-            foreach (KeyValuePair<Keys, bool> entry in currentKeys)
-            {
-                if ((entry.Key <= Keys.NumPad9 && entry.Key >= Keys.NumPad0)
-                    || (entry.Key <= Keys.D9 && entry.Key >= Keys.D0))
-                {
-                    if (entry.Value == true)
-                    {
-                        return true;
-                    }
-                }
-            }
-
-            return false;
-        }
-
-        /// <summary>
-        /// Returns a list of numerical <see cref="Keys"/> pressed
-        /// </summary>
-        /// <returns>List of numerical keys pressed</returns>
-        public List<Keys> ListNumPressed()
-        {
-            List<Keys> o = new List<Keys>();
-            foreach (KeyValuePair<Keys, bool> entry in currentKeys)
-            {
-                if ((entry.Key <= Keys.NumPad9 && entry.Key >= Keys.NumPad0)
-                    || (entry.Key <= Keys.D9 && entry.Key >= Keys.D0))
-                {
-                    if (entry.Value == true)
-                    {
-                        o.Add(entry.Key);
-                    }
-                }
-            }
-
-            return o;
-        }
-
-        public bool ArrowIsPressed() ////Todo Timothy
-        {
-            return false;
-        }
-
-        public delegate void KeyPress();
-
-        private event KeyPress _singleKey;
-
-        public event KeyPress SingleKey
-        {
-            add => _singleKey += value;
-            remove => _singleKey -= value;
-        }
-
-        public void AddKeybind(Keys key, Event e)
-        {
-            SingleKey += () => 
-            {
-                if (IsPressed(key))
-                {
-                    e.CallEvent();
-                }
-            };
-        }
-
-        public void RemoveKeybind(Keys key, Event e)
-        {
-            SingleKey -= () => 
-            {
-                if (IsPressed(key))
-                {
-                    e.CallEvent();
-                }
-            };
-        }
-
-        public void AddMultiBind(List<Keys> l, Event e)
-        {
-            SingleKey += () => 
-            {
-                if (l.TrueForAll(c => IsPressed(c)))
-                {
-                    e.CallEvent();
-                }
-            };
-        }
-
-        public void AddAlphaBind(Event e)
-        {
-            SingleKey += () => 
-            {
-                if (AlphaIsPressed())
-                {
-                    e.CallEvent();
-                }
-            };
-        }
-
-        public void RemoveAlphaBind(Event e)
-        {
-            SingleKey -= () => 
-            {
-                if (AlphaIsPressed())
-                {
-                    e.CallEvent();
-                }
-            };
-        }
-
-        public void AddMassAlphaBind(Event e)
-        {
-            SingleKey += () => 
-            {
-                foreach (Keys key in ListAlphaPressed())
-                {
-                    e.CallEvent(key);
-                }
-            };
-        }
-
-        public void RemoveMassAlphaBind(Event e)
-        {
-            SingleKey -= () => 
-            {
-                foreach (Keys key in ListAlphaPressed())
-                {
-                    e.CallEvent(key);
-                }
-            };
-        }
-
-        public void AddNumBind(Event e)
-        {
-            SingleKey += () =>
-            {
-                if (NumIsPressed())
-                {
-                    e.CallEvent();
-                }
-            };
-        }
-
-        public void RemoveNumBind(Event e)
-        {
-            SingleKey -= () => 
-            {
-                if (NumIsPressed())
-                {
-                    e.CallEvent();
-                }
-            };
-        }
-
-        public void AddAlphaNumBind(Event e)
-        {
-            SingleKey += () => 
-            {
-                if (AlphaIsPressed() || NumIsPressed())
-                {
-                    e.CallEvent();
-                }
-            };
-        }
-
-        public void RemoveAlphaNumBind(Event e)
-        {
-            SingleKey -= () => 
-            {
-                if (AlphaIsPressed() || NumIsPressed())
-                {
-                    e.CallEvent();
-                }
-            };
-        }
-        #endregion
     }
 }
