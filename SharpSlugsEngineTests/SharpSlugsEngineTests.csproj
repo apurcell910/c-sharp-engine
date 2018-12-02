@@ -60,6 +60,7 @@
     <Compile Include="Physics\ColliderTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SerializationUtilityTests.cs" />
+    <Compile Include="Vector2Tests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
