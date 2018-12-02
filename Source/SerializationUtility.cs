@@ -72,7 +72,7 @@ namespace SharpSlugsEngine
             // Need to loop to check all of the base types as well
             while (t != null)
             {
-                if (t.CustomAttributes.Any(attr => attr.AttributeType == typeof(NonSerializedAttribute)))
+                if (t.CustomAttributes.Any(attr => attr.AttributeType == typeof(NonSerializable)))
                 {
                     return false;
                 }
@@ -373,16 +373,14 @@ namespace SharpSlugsEngine
                 byte[] nameBytes = Encoding.ASCII.GetBytes(objType.AssemblyQualifiedName);
                 stream.Write(BitConverter.GetBytes(nameBytes.Length));
                 stream.Write(nameBytes);
+
+                // Skip over non-serializable members
+                fields = fields.Where(f => IsSerializable(f.FieldType) && !f.CustomAttributes.Any(attr => attr.AttributeType == typeof(NonSerializable))).ToArray();
+
                 stream.Write(BitConverter.GetBytes(fields.Length));
 
                 foreach (FieldInfo field in fields)
                 {
-                    // Skip over non-serializable members
-                    if (!IsSerializable(field.GetType()) || field.CustomAttributes.Any(attr => attr.AttributeType == typeof(NonSerializedAttribute)))
-                    {
-                        continue;
-                    }
-
                     // Write field name
                     nameBytes = Encoding.ASCII.GetBytes(field.Name);
                     stream.Write(BitConverter.GetBytes(nameBytes.Length));
@@ -590,6 +588,14 @@ namespace SharpSlugsEngine
             {
                 return Deserialize(fieldType, bytes, ref bytePos, cacheFields);
             }
+        }
+
+        /// <summary>
+        /// Indicates that a class or field should not be serialized
+        /// </summary>
+        [AttributeUsage(AttributeTargets.Field | AttributeTargets.Class)]
+        public class NonSerializable : Attribute
+        {
         }
     }
 }
