@@ -18,6 +18,7 @@ Contents:
    Game
    GameTime
    GraphicsManager
+   SerializationUtility
    Vector2
    
    Input
