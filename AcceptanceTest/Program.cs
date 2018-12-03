@@ -214,7 +214,6 @@ namespace AcceptanceTest {
                 up.AddDevice(newController);
                 down.AddDevice(newController);
                 shoot.AddDevice(newController);
-                Console.WriteLine("Controller added");
             };
         }
 
