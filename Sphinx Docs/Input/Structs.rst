@@ -171,7 +171,7 @@ Gets an int indicating the Y coordinate of the mouse.
 
 :csharp:`Vector2 Location { get; }`
 
-Gets a :doc:`Vector2 <Vector2>` indicating the location of the mouse.
+Gets a :doc:`Vector2 <../Vector2>` indicating the location of the mouse.
 
 .. _InputStructsXboxControllerButtonState:
 
@@ -183,7 +183,7 @@ A simple struct containing information on all of the buttons of an Xbox controll
 Fields/Properties
 -----------------
 
-.. InputStructsXboxControllerButtonStateA:
+.. _InputStructsXboxControllerButtonStateA:
 
 :csharp:`Button A { get; }`
 
@@ -192,7 +192,7 @@ the controller.
 
 ----
 
-.. InputStructsXboxControllerButtonStateB:
+.. _InputStructsXboxControllerButtonStateB:
 
 :csharp:`Button B { get; }`
 
@@ -201,7 +201,7 @@ the controller.
 
 ----
 
-.. InputStructsXboxControllerButtonStateX:
+.. _InputStructsXboxControllerButtonStateX:
 
 :csharp:`Button X { get; }`
 
@@ -210,7 +210,7 @@ the controller.
 
 ----
 
-.. InputStructsXboxControllerButtonStateY:
+.. _InputStructsXboxControllerButtonStateY:
 
 :csharp:`Button Y { get; }`
 
@@ -219,7 +219,7 @@ the controller.
 
 ----
 
-.. InputStructsXboxControllerButtonStateLB:
+.. _InputStructsXboxControllerButtonStateLB:
 
 :csharp:`Button LB { get; }`
 
@@ -228,7 +228,7 @@ the controller.
 
 ----
 
-.. InputStructsXboxControllerButtonStateRB:
+.. _InputStructsXboxControllerButtonStateRB:
 
 :csharp:`Button RB { get; }`
 
@@ -237,7 +237,7 @@ the controller.
 
 ----
 
-.. InputStructsXboxControllerButtonStateBack:
+.. _InputStructsXboxControllerButtonStateBack:
 
 :csharp:`Button Back { get; }`
 
@@ -246,7 +246,7 @@ button on the controller.
 
 ----
 
-.. InputStructsXboxControllerButtonStateStart:
+.. _InputStructsXboxControllerButtonStateStart:
 
 :csharp:`Button Start { get; }`
 
@@ -255,7 +255,7 @@ button on the controller.
 
 ----
 
-.. InputStructsXboxControllerButtonStateDPadLeft:
+.. _InputStructsXboxControllerButtonStateDPadLeft:
 
 :csharp:`Button DPadLeft { get; }`
 
@@ -264,7 +264,7 @@ button on the controller.
 
 ----
 
-.. InputStructsXboxControllerButtonStateDPadRight:
+.. _InputStructsXboxControllerButtonStateDPadRight:
 
 :csharp:`Button DPadRight { get; }`
 
@@ -273,7 +273,7 @@ button on the controller.
 
 ----
 
-.. InputStructsXboxControllerButtonStateDPadUp:
+.. _InputStructsXboxControllerButtonStateDPadUp:
 
 :csharp:`Button DPadUp { get; }`
 
@@ -282,7 +282,7 @@ button on the controller.
 
 ----
 
-.. InputStructsXboxControllerButtonStateDPadDown:
+.. _InputStructsXboxControllerButtonStateDPadDown:
 
 :csharp:`Button DPadDown { get; }`
 

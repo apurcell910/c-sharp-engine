@@ -11,4 +11,5 @@ Sprite
    Sprite/SImage
    Sprite/Sprite
    Sprite/SpriteEvents
+   Sprite/SEvent
    Sprite/SpriteList

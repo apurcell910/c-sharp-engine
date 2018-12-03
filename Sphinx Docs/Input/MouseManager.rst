@@ -53,6 +53,7 @@ Called when right mouse button is clicked.
 Called when middle mouse button is clicked.
 
 ----
+
 .. _MouseManagerBroadcast:
 
 :csharp:`event BroadcastLocation Broadcast`
@@ -147,5 +148,3 @@ Removes an event to get sent current mouse location.
 
 .. warning::
    Event class currently not functioning.
-
-----

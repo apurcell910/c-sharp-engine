@@ -16,7 +16,7 @@ A class that is used to store callable events.
 Events
 ^^^^^^
 
-.. _EventActions
+.. _EventActions:
 
 :csharp:`delegate void Actions(Keys key, Vector2 Location)`
 
@@ -24,7 +24,7 @@ The delegate type used for storing an action.
 
 ----
 
-.. _EventSnippets
+.. _EventSnippets:
 
 :csharp:`event Actions Snippets`
 
@@ -33,7 +33,7 @@ Called when :ref:`CallEvent <EventCallEvent>` is called.
 Methods
 ^^^^^^^^
 
-.. _EventCallEvent
+.. _EventCallEvent:
 
 :csharp:`virtual void CallEvent()`
 

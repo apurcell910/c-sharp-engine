@@ -24,7 +24,7 @@ The delegate type used for storing an action.
 
 ----
 
-.. _SEventChange
+.. _SEventChange:
 
 :csharp:`event SpriteAction Change`
 
@@ -33,7 +33,7 @@ Called when :ref:`Call <SEventCall>` is called.
 Methods
 ^^^^^^^^
 
-.. _SEventCall
+.. _SEventCall:
 
 :csharp:`void Call()`
 
@@ -41,7 +41,7 @@ Calls :ref:`Change <SEventChange>`.
 
 ----
 
-.. _SEventEnable
+.. _SEventEnable:
 
 :csharp:`void Enable()`
 
@@ -49,7 +49,7 @@ Enables the SEvent so that it will be called.
 
 ----
 
-.. _SEventDisable
+.. _SEventDisable:
 
 :csharp:`void Disable()`
 
@@ -57,7 +57,7 @@ Disables the SEvent so that it won't be called.
 
 ----
 
-.. _SEventSwap
+.. _SEventSwap:
 
 :csharp:`void Swap()`
 
