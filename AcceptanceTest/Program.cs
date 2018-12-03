@@ -102,7 +102,7 @@ namespace AcceptanceTest {
             if (action.right.IsPressed) this.SetVelocityX((int)(75));
             if (action.left.IsPressed) this.SetVelocityX((int)(-75));
 
-            if (this.collider.IsTouching(game.Sprites.getSprite("Wall").collider)) {
+            if (this.collider.IsTouching(game.Sprites.GetSprite("Wall").collider)) {
                 this.SetVelocityX(0);
                 if (playerOne) {
                     MoveX(-1);
@@ -170,17 +170,17 @@ namespace AcceptanceTest {
                 this.Kill();
             }
             if (playerOne) {
-                if (this.collider.IsTouching(game.Sprites.getSprite("Player2").collider)) {
+                if (this.collider.IsTouching(game.Sprites.GetSprite("Player2").collider)) {
                     game.Sprites.sprites["Player2"].Kill();
                     this.Kill();
                 }
             } else {
-                if (this.collider.IsTouching(game.Sprites.getSprite("Player1").collider)) {
+                if (this.collider.IsTouching(game.Sprites.GetSprite("Player1").collider)) {
                     game.Sprites.sprites["Player1"].Kill();
                     this.Kill();
                 }
             }
-            if (this.collider.IsTouching(game.Sprites.getSprite("Wall").collider)) {
+            if (this.collider.IsTouching(game.Sprites.GetSprite("Wall").collider)) {
                 this.SetVelocityX(0);
             }
         }
