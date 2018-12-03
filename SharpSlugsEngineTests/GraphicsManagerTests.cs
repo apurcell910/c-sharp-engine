@@ -18,7 +18,7 @@ namespace SharpSlugsEngine.Tests
             Vector2 worldScale = Vector2.Zero;
 
             worldScale = game.Graphics.ToWorldScale(worldScale);
-            if(worldScale == Vector2.Zero) Assert.Fail();
+            if(worldScale != Vector2.Zero) Assert.Fail();
         }
 
         [TestMethod()]
@@ -28,7 +28,7 @@ namespace SharpSlugsEngine.Tests
             Vector2 worldScale = Vector2.Zero;
 
             worldScale = game.Graphics.ToResolutionScale(worldScale);
-            if (worldScale == Vector2.Zero) Assert.Fail();
+            if (worldScale != Vector2.Zero) Assert.Fail();
         }
     }
 
