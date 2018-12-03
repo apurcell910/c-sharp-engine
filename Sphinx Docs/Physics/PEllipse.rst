@@ -18,6 +18,9 @@ Constructors
 Initializes a new instance of PEllipse struct with given
 center v1, and (Width, Height) width, height.
 
+.. note::
+	Width and height are in terms of the x and y radius of the ellipse, not the diameter.
+
 Field/Properties
 ^^^^^^^^^^^^^^^^
 
@@ -31,7 +34,7 @@ Returns area of the PEllipse.
 
 .. _PEllipseCenter:
 
-:csharp:`Vector2 Center {get; }`
+:csharp:`Vector2 Center { get; }`
 
 Center of the PEllipse.
 
@@ -39,7 +42,7 @@ Center of the PEllipse.
 
 .. _PEllipseTriangles:
 
-:csharp:`List<PTriangle> Triangles {get; }`
+:csharp:`List<PTriangle> Triangles { get; }`
 
 List of all triangles that the PEllipse is 
 made out of.

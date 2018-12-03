@@ -13,6 +13,7 @@ namespace SharpSlugsEngine
         /// <summary>
         /// Initializes a new instance of the <see cref="Rect"/> class.
         /// </summary>
+        /// <param name="game">The game object using this rectangle.</param>
         /// <param name="x">X position of new rectangle.</param>
         /// <param name="y">Y position of new rectangle.</param>
         /// <param name="w">Width of new rectangle.</param>

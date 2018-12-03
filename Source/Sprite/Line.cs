@@ -12,6 +12,7 @@ namespace SharpSlugsEngine
         /// <summary>
         /// Initializes a new instance of the <see cref="Line"/> class.
         /// </summary>
+        /// <param name="game">The game object using this sprite.</param>
         /// <param name="p1">First point of the line.</param>
         /// <param name="p2">Second point of the line.</param>
         /// <param name="color">Color of the line.</param>
@@ -32,6 +33,7 @@ namespace SharpSlugsEngine
         /// <summary>
         /// Initializes a new instance of the <see cref="Line"/> class.
         /// </summary>
+        /// <param name="game">The game object using this line.</param>
         /// <param name="x1">X of first point.</param>
         /// <param name="y1">Y of first point.</param>
         /// <param name="x2">X of second point.</param>

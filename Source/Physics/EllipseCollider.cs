@@ -17,7 +17,8 @@
             TrianglesInternal = new PEllipse(new Vector2((float)x, (float)y), (float)h, (float)w).Triangles.ToArray();
 
             VerticesInternal = new Vector2[TrianglesInternal.Length];
-            for (int i = 0; i < VerticesInternal.Length; i++) {
+            for (int i = 0; i < VerticesInternal.Length; i++)
+            {
                 VerticesInternal[i] = TrianglesInternal[i].VertexTwo;
             }
         }

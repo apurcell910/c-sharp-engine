@@ -14,12 +14,15 @@ namespace SharpSlugsEngine.Physics
         /// <summary>
         /// Initializes a new instance of the <see cref="MovementManager"/> class.
         /// </summary>
-        public MovementManager() { }
+        public MovementManager()
+        {
+        }
 
         /// <summary>
         /// Updates all of the sprites according to velocity and gravity.
         /// </summary>
         /// <param name="sprites">Reference to dictionary of the various sprites.</param>
+        /// <param name="gameTime">The current game time.</param>
         public void UpdateSprites(ref Dictionary<string, Sprite> sprites, GameTime gameTime)
         {
             foreach (KeyValuePair<string, Sprite> obj in sprites)

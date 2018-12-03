@@ -13,6 +13,7 @@ namespace SharpSlugsEngine
         /// <summary>
         /// Initializes a new instance of the <see cref="Ellipse"/> class.
         /// </summary>
+        /// <param name="game">The game object using this sprite.</param>
         /// <param name="x">Upper left hand corner x position.</param>
         /// <param name="y">Upper left hand corner y position.</param>
         /// <param name="w">Width of ellipse.</param>

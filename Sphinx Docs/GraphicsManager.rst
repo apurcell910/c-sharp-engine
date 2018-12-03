@@ -30,7 +30,6 @@ rather than draw using pixel coordinates on the screen.
 :csharp:`Color BackColor{ get; set; }`
 
 Gets the background color and sets the background color.
-<<<<<<< HEAD
 
 -----
 
@@ -410,6 +409,8 @@ by setting the argument DrawType type to either World or Screen.
 .. _GraphicsManagerSetWorldScale:
 
 :csharp:`void SetWorldScale(Vector2 scaleFactor)`
+
+.. code-block:: csharp
 
    // Create a GraphicsManager by giving it a reference to the game.
    GraphicsManager graphics = new GraphicsManager(this); 

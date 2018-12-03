@@ -11,6 +11,7 @@
         /// <summary>
         /// Initializes a new instance of the <see cref="SImage" /> class.
         /// </summary>
+        /// <param name="game">The game object using this image.</param>
         /// <param name="x">X position of new sprite</param>
         /// <param name="y">Y position of new sprite</param>
         /// <param name="w">Width of new sprite</param>

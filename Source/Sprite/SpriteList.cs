@@ -17,6 +17,7 @@ namespace SharpSlugsEngine
         /// Initializes a new instance of the <see cref="SpriteList" /> class.
         /// </summary>
         /// <param name="graphics">Graphics manager to use</param>
+        /// <param game="game">The game object that is holding the SpriteList.</param>
         public SpriteList(GraphicsManager graphics, Game game)
         {
             this.graphics = graphics;
@@ -26,6 +27,7 @@ namespace SharpSlugsEngine
         /// <summary>
         /// Function to update the sprites. Not called by user.
         /// </summary>
+        /// <param name="gameTime">The current time of the game.</param>
         public void Update(GameTime gameTime)
         {
             movement.UpdateSprites(ref sprites, gameTime);

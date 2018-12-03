@@ -26,12 +26,17 @@ namespace SharpSlugsEngine
         /// Overridable Draw() function that is looped.
         /// </summary>
         /// <param name="graphics">Graphics manager of the sprite.</param>
-        public virtual void Draw(GraphicsManager graphics) { }
+        public virtual void Draw(GraphicsManager graphics)
+        {
+        }
 
         /// <summary>
         /// Overridable Update() function that is looped.
         /// </summary>
-        public virtual void Update(GameTime gameTime) { }
+        /// <param name="gameTime">The current time of the game, to assist in calculations.</param>
+        public virtual void Update(GameTime gameTime)
+        {
+        }
 
         /// <summary>
         /// For any sprite that will never be used again, "kills" it.
