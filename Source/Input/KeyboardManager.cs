@@ -23,17 +23,17 @@ namespace SharpSlugsEngine.Input
         }
 
         /// <summary>
-        /// Gets a value indicating whether the key is pressed
+        /// Returns a bool indicating if the given key is pressed.
         /// </summary>
         public bool IsPressed { get; private set; }
 
         /// <summary>
-        /// Gets a value indicating whether the key was pressed
+        /// Returns a bool indicating if the given key was pressed.
         /// </summary>
         public bool WasPressed { get; private set; }
 
         /// <summary>
-        /// Gets the key that this <see cref="KeyState"/> represents
+        /// Returns the key that this <xsee cref="KeyState"/> represents
         /// </summary>
         public Keys Key { get; private set; }
     }
@@ -105,7 +105,7 @@ namespace SharpSlugsEngine.Input
         public KeyState this[Keys key] => new KeyState(key, IsPressed(key), WasPressed(key));
 
         /// <summary>
-        /// Checks if a given key is pressed
+        /// Returns a bool indicating if the given key is pressed.
         /// </summary>
         /// <param name="key">The key to check</param>
         /// <returns>A value indicating whether the key is pressed</returns>

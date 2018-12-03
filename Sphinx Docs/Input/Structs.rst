@@ -32,6 +32,30 @@ Gets a bool indicating whether the Button is currently pressed.
 
 Gets a bool indicating whether the Button was pressed on the last frame.
 
+.. _InputStructsClick:
+
+Click
+^^^^^
+
+A simple struct containing the state of a mouse button
+
+Fields/Properties
+-----------------
+
+.. _InputSturctsClickIsClicked:
+
+:csharp:`bool IsClicked { get; }`
+
+Gets a bool indicating whether the button is currently clicked.
+
+----
+
+.. _InputSturctsClickWasClicked:
+
+:csharp:`bool WasClicked { get; }`
+
+Gets a bool indicating whether the button was clicked on the last frame.
+
 .. _InputStructsControlStick:
 
 ControlStick
@@ -89,6 +113,65 @@ Gets a bool indicating whether the key was pressed on the last frame.
 :csharp:`Keys Key { get; }`
 
 Gets the key that this KeyState represents.
+
+.. _InputStructsMouseManagerMouseState:
+
+MouseManager.MouseState
+^^^^^^^^^^^^^^^^^^^^^^^
+
+A simple struct containing information on the location and buttons on a mouse.
+
+Fields/Properties
+-----------------
+
+.. _InputStructsMouseManagerMouseStateCenter:
+
+:csharp:`Click Center { get; }`
+
+Gets a :ref:`Click <InputStructsClick>` containing information on the Center button on
+the mouse.
+
+----
+
+.. _InputStructsMouseManagerMouseStateLeft:
+
+:csharp:`Click Left { get; }`
+
+Gets a :ref:`Click <InputStructsClick>` containing information on the Left button on
+the mouse.
+
+----
+
+.. _InputStructsMouseManagerMouseStateRight:
+
+:csharp:`Click Right { get; }`
+
+Gets a :ref:`Click <InputStructsClick>` containing information on the Right button on
+the mouse.
+
+----
+
+.. _InputStructsMouseManagerMouseStateX:
+
+:csharp:`int X { get; }`
+
+Gets an int indicating the X coordinate of the mouse.
+
+----
+
+.. _InputStructsMouseManagerMouseStateY:
+
+:csharp:`int Y { get; }`
+
+Gets an int indicating the Y coordinate of the mouse.
+
+----
+
+.. _InputStructsMouseManagerMouseStateLocation:
+
+:csharp:`Vector2 Location { get; }`
+
+Gets a :doc:`Vector2 <Vector2>` indicating the location of the mouse.
 
 .. _InputStructsXboxControllerButtonState:
 
